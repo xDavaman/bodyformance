@@ -1,17 +1,43 @@
-//
-//  FitScanApp.swift
-//  FitScan
-//
-//  Created by Sean-John Davis on 08.10.26.
-//
-
+import Combine
 import SwiftUI
 
 @main
 struct FitScanApp: App {
+    @StateObject private var health = HealthManager()
+    @StateObject private var profile = UserProfile()
+    @StateObject private var store = TrainingStore()
+    @StateObject private var foodLog = FoodLog()
+    @StateObject private var recipeStore = RecipeStore()
+    @StateObject private var foodStore = FoodStore()
+    @StateObject private var nav = AppNav()
+    @StateObject private var community = CommunityService()
+    @StateObject private var steps = StepTracker()
+    @StateObject private var session = WorkoutSession()
+    @StateObject private var sessionLog = SessionLog()
+    @StateObject private var scanSchedule = ScanSchedule()
+    @StateObject private var avatar = AvatarStore()
+    @Environment(\.scenePhase) private var scenePhase
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(health)
+                .environmentObject(profile)
+                .environmentObject(store)
+                .environmentObject(foodLog)
+                .environmentObject(recipeStore)
+                .environmentObject(foodStore)
+                .environmentObject(nav)
+                .environmentObject(community)
+                .environmentObject(steps)
+                .environmentObject(session)
+                .environmentObject(sessionLog)
+                .environmentObject(scanSchedule)
+                .environmentObject(avatar)
+                .onChange(of: scenePhase) { _, phase in
+                    if phase == .active { steps.start() } else if !session.running { steps.stop() }
+                }
+                .onAppear { steps.start() }
         }
     }
 }
