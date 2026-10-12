@@ -1,7 +1,7 @@
 import Foundation
 
 // AUTOMATISCH ERZEUGT (tools/exercises) – nicht von Hand bearbeiten.
-// 174 Familien, 4294 Übungen. Aufbau siehe ExerciseGenerator.swift.
+// 212 Familien, 4294 Übungen. Aufbau siehe ExerciseGenerator.swift.
 enum ExerciseDB {
     static let families = #"""
 strength|w|ch|sh tri|benchPress|Mittlere Brust|||0|0|0.4|Schulterblätter zusammenziehen und leicht ins Polster drücken.~Gewicht kontrolliert zur unteren Brust senken, Unterarme bleiben senkrecht.~Füße fest am Boden, Gesäß bleibt auf der Bank.
@@ -168,7 +168,7 @@ mobility|sec|ab|lb gl|hollowHold|Beweglichkeit|back|2 × 40 s|40|0|0|Rumpf aktiv
 mobility|sec|ne|tr|neckTilt|Dehnung|neck|2 × 30 s pro Seite|30|1|0|Schulter bleibt tief.~Sehr sanft.~Kein Wippen.
 mobility|sec|sh|tr|crossBody|Dehnung|shoulder|2 × 30 s pro Seite|30|1|0|Schulter nicht hochziehen.~Sanft ziehen.~Ruhig atmen.
 mobility|sec|ch|sh|chestStretch|Dehnung|shoulder|2 × 30 s pro Seite|30|1|0|Brust öffnen.~Rippen unten.~Ruhig atmen.
-mobility|sec|tri|sh|wallSlide|Dehnung|shoulder|2 × 30 s pro Seite|30|1|0|Rücken gerade.~Sanft.~Atmen.
+mobility|sec|tri|sh|tricepStretch|Dehnung|shoulder|2 × 30 s pro Seite|30|1|0|Rücken gerade.~Sanft.~Atmen.
 mobility|sec|lb la|tr|childPose|Dehnung|back|2 × 30 s pro Seite|30|1|0|Nie in Schmerz.~Atmung führt.~Ruhig bleiben.
 mobility|sec|hf gl|ad|hipStretch|Dehnung|hip|2 × 30 s pro Seite|30|1|0|Becken neutral.~Nicht ins Hohlkreuz.~Atmen.
 mobility|sec|qu|hf|quadStretch|Dehnung|legs|2 × 30 s pro Seite|30|1|0|Becken aufrecht.~Sanft.~Atmen.
@@ -178,6 +178,44 @@ mobility|sec|fo|tri|wristRock|Dehnung|wrist|2 × 30 s|30|0|0|Sanft.~Nie ruckarti
 mobility|sec|qu ha gl|la ca|idle|Dehnung|legs|2 × 45 s pro Seite|45|1|0|Langsam rollen.~Auf Druckpunkten kurz verweilen.~Nie auf Gelenken.
 mobility|sec|sh tr|la|wallSlide|Dehnung|shoulder|2 × 40 s|40|0|0|Leicht und kontrolliert.~Schultern tief.~Nacken locker.
 mobility|sec|gl lb|ab|bridge|Dehnung|back|2 × 30 s|30|0|0|Sehr kontrolliert.~Schmerzfrei bleiben.~Qualität vor Menge.
+mobility|sec|lb|ab|childPose|Beweglichkeit|back|2 × 40 s|40|0|0|Atmung bestimmt das Tempo.~Spüren statt kämpfen.~Nie in Schmerz ziehen.
+mobility|sec|lb|ab|catCow|Beweglichkeit|back|2 × 40 s|40|0|0|Atmung bestimmt das Tempo.~Spüren statt kämpfen.~Nie in Schmerz ziehen.
+mobility|sec|lb|ab|downDog|Beweglichkeit|back|2 × 40 s|40|0|0|Atmung bestimmt das Tempo.~Spüren statt kämpfen.~Nie in Schmerz ziehen.
+mobility|sec|lb|ab|cobra|Beweglichkeit|back|2 × 40 s|40|0|0|Atmung bestimmt das Tempo.~Spüren statt kämpfen.~Nie in Schmerz ziehen.
+mobility|sec|lb|ab|warrior1|Beweglichkeit|back|2 × 40 s|40|0|0|Atmung bestimmt das Tempo.~Spüren statt kämpfen.~Nie in Schmerz ziehen.
+mobility|sec|lb|ab|warrior2|Beweglichkeit|back|2 × 40 s|40|0|0|Atmung bestimmt das Tempo.~Spüren statt kämpfen.~Nie in Schmerz ziehen.
+mobility|sec|lb|ab|tree|Beweglichkeit|back|2 × 40 s|40|0|0|Atmung bestimmt das Tempo.~Spüren statt kämpfen.~Nie in Schmerz ziehen.
+mobility|sec|lb|ab|bridge|Beweglichkeit|back|2 × 40 s|40|0|0|Atmung bestimmt das Tempo.~Spüren statt kämpfen.~Nie in Schmerz ziehen.
+mobility|sec|lb|ab|boat|Beweglichkeit|back|2 × 40 s|40|0|0|Atmung bestimmt das Tempo.~Spüren statt kämpfen.~Nie in Schmerz ziehen.
+mobility|sec|lb|ab|chair|Beweglichkeit|back|2 × 40 s|40|0|0|Atmung bestimmt das Tempo.~Spüren statt kämpfen.~Nie in Schmerz ziehen.
+mobility|sec|lb|ab|forwardFold|Beweglichkeit|back|2 × 40 s|40|0|0|Atmung bestimmt das Tempo.~Spüren statt kämpfen.~Nie in Schmerz ziehen.
+mobility|sec|lb|ab|seatTwist|Beweglichkeit|back|2 × 40 s|40|0|0|Atmung bestimmt das Tempo.~Spüren statt kämpfen.~Nie in Schmerz ziehen.
+mobility|sec|lb|ab|camel|Beweglichkeit|back|2 × 40 s|40|0|0|Atmung bestimmt das Tempo.~Spüren statt kämpfen.~Nie in Schmerz ziehen.
+mobility|sec|ab|lb gl|hundred|Beweglichkeit|back|2 × 40 s|40|0|0|Rumpf aktiv.~Langsam und fließend.~Atmung koordinieren.
+mobility|sec|ab|lb gl|rollUp|Beweglichkeit|back|2 × 40 s|40|0|0|Rumpf aktiv.~Langsam und fließend.~Atmung koordinieren.
+mobility|sec|ab|lb gl|singleLegStretch|Beweglichkeit|back|2 × 40 s|40|0|0|Rumpf aktiv.~Langsam und fließend.~Atmung koordinieren.
+mobility|sec|ab|lb gl|doubleLegStretch|Beweglichkeit|back|2 × 40 s|40|0|0|Rumpf aktiv.~Langsam und fließend.~Atmung koordinieren.
+mobility|sec|ab|lb gl|scissors|Beweglichkeit|back|2 × 40 s|40|0|0|Rumpf aktiv.~Langsam und fließend.~Atmung koordinieren.
+mobility|sec|ab|lb gl|teaser|Beweglichkeit|back|2 × 40 s|40|0|0|Rumpf aktiv.~Langsam und fließend.~Atmung koordinieren.
+mobility|sec|ab|lb gl|cobra|Beweglichkeit|back|2 × 40 s|40|0|0|Rumpf aktiv.~Langsam und fließend.~Atmung koordinieren.
+mobility|sec|ab|lb gl|swimming|Beweglichkeit|back|2 × 40 s|40|0|0|Rumpf aktiv.~Langsam und fließend.~Atmung koordinieren.
+mobility|sec|ab|lb gl|sitFold|Beweglichkeit|back|2 × 40 s|40|0|0|Rumpf aktiv.~Langsam und fließend.~Atmung koordinieren.
+mobility|sec|tri|sh|tricepStretch|Dehnung|shoulder|2 × 30 s pro Seite|30|1|0|Rücken gerade.~Sanft.~Atmen.
+mobility|sec|lb la|tr|catCow|Dehnung|back|2 × 30 s pro Seite|30|1|0|Nie in Schmerz.~Atmung führt.~Ruhig bleiben.
+mobility|sec|lb la|tr|supKneeHug|Dehnung|back|2 × 30 s pro Seite|30|1|0|Nie in Schmerz.~Atmung führt.~Ruhig bleiben.
+mobility|sec|lb la|tr|supTwist|Dehnung|back|2 × 30 s pro Seite|30|1|0|Nie in Schmerz.~Atmung führt.~Ruhig bleiben.
+mobility|sec|lb la|tr|sideBend|Dehnung|back|2 × 30 s pro Seite|30|1|0|Nie in Schmerz.~Atmung führt.~Ruhig bleiben.
+mobility|sec|lb la|tr|hang|Dehnung|back|2 × 30 s pro Seite|30|1|0|Nie in Schmerz.~Atmung führt.~Ruhig bleiben.
+mobility|sec|lb la|tr|cobra|Dehnung|back|2 × 30 s pro Seite|30|1|0|Nie in Schmerz.~Atmung führt.~Ruhig bleiben.
+mobility|sec|lb la|tr|sitFold|Dehnung|back|2 × 30 s pro Seite|30|1|0|Nie in Schmerz.~Atmung führt.~Ruhig bleiben.
+mobility|sec|hf gl|ad|deepSquat|Dehnung|hip|2 × 30 s pro Seite|30|1|0|Becken neutral.~Nicht ins Hohlkreuz.~Atmen.
+mobility|sec|hf gl|ad|cossack|Dehnung|hip|2 × 30 s pro Seite|30|1|0|Becken neutral.~Nicht ins Hohlkreuz.~Atmen.
+mobility|sec|hf gl|ad|bridge|Dehnung|hip|2 × 30 s pro Seite|30|1|0|Becken neutral.~Nicht ins Hohlkreuz.~Atmen.
+mobility|sec|qu|hf|sitFold|Dehnung|legs|2 × 30 s pro Seite|30|1|0|Becken aufrecht.~Sanft.~Atmen.
+mobility|sec|qu|hf|forwardFold|Dehnung|legs|2 × 30 s pro Seite|30|1|0|Becken aufrecht.~Sanft.~Atmen.
+mobility|sec|qu|hf|supineHam|Dehnung|legs|2 × 30 s pro Seite|30|1|0|Becken aufrecht.~Sanft.~Atmen.
+mobility|sec|qu|hf|cossack|Dehnung|legs|2 × 30 s pro Seite|30|1|0|Becken aufrecht.~Sanft.~Atmen.
+mobility|sec|ca|ha|downDog|Dehnung|ankle|2 × 30 s pro Seite|30|1|0|Ferse bleibt am Boden.~Fuß gerade.~Atmen.
 """#
 
     static let rows = #"""
@@ -4258,59 +4296,59 @@ Skilanglauf-Imitation (Cardio-Gerät, klassisch)|158|cardio|Diagonalschritt.
 Skilanglauf-Imitation (Cardio-Gerät, Skating)|158|cardio|Seitliche Schritte.
 Skilanglauf-Imitation (Cardio-Gerät, Doppelstock)|158|cardio|Beide Stöcke.
 Yoga (Körpergewicht)|159|none|
-Yoga (Körpergewicht, Kind (Balasana))|159|none|Stirn auf den Boden, Arme nach vorn.
-Yoga (Körpergewicht, Katze-Kuh)|159|none|Wirbelsäule im Wechsel runden und strecken.
-Yoga (Körpergewicht, Herabschauender Hund)|159|none|Hüfte hoch, Fersen Richtung Boden.
-Yoga (Körpergewicht, Kobra)|159|none|Brust heben, Beine ruhig.
-Yoga (Körpergewicht, Krieger I)|159|none|Hinteres Bein gestreckt, Hüfte nach vorn.
-Yoga (Körpergewicht, Krieger II)|159|none|Weite Grätsche, Blick über die Hand.
+Yoga (Körpergewicht, Kind (Balasana))|174|none|Stirn auf den Boden, Arme nach vorn.
+Yoga (Körpergewicht, Katze-Kuh)|175|none|Wirbelsäule im Wechsel runden und strecken.
+Yoga (Körpergewicht, Herabschauender Hund)|176|none|Hüfte hoch, Fersen Richtung Boden.
+Yoga (Körpergewicht, Kobra)|177|none|Brust heben, Beine ruhig.
+Yoga (Körpergewicht, Krieger I)|178|none|Hinteres Bein gestreckt, Hüfte nach vorn.
+Yoga (Körpergewicht, Krieger II)|179|none|Weite Grätsche, Blick über die Hand.
 Yoga (Körpergewicht, Dreieck)|159|none|Seitlich öffnen.
-Yoga (Körpergewicht, Baum)|159|none|Auf einem Bein stehen.
+Yoga (Körpergewicht, Baum)|180|none|Auf einem Bein stehen.
 Yoga (Körpergewicht, Taube)|159|none|Hüfte öffnen.
-Yoga (Körpergewicht, Brücke)|159|none|Hüfte heben.
-Yoga (Körpergewicht, Boot)|159|none|V-Sitz.
-Yoga (Körpergewicht, Stuhl)|159|none|Hocke mit hohem Armen.
-Yoga (Körpergewicht, Raupe (Uttanasana))|159|none|Vorbeuge.
+Yoga (Körpergewicht, Brücke)|181|none|Hüfte heben.
+Yoga (Körpergewicht, Boot)|182|none|V-Sitz.
+Yoga (Körpergewicht, Stuhl)|183|none|Hocke mit hohem Armen.
+Yoga (Körpergewicht, Raupe (Uttanasana))|184|none|Vorbeuge.
 Yoga (Körpergewicht, Sonnengruß A)|159|none|Fließende Folge.
 Yoga (Körpergewicht, Sonnengruß B)|159|none|Fließende Folge, tiefer.
-Yoga (Körpergewicht, Drehsitz)|159|none|Wirbelsäule drehen.
+Yoga (Körpergewicht, Drehsitz)|185|none|Wirbelsäule drehen.
 Yoga (Körpergewicht, Krieger III)|159|none|Balance auf einem Bein.
 Yoga (Körpergewicht, Halber Mond)|159|none|Seitliche Balance.
 Yoga (Körpergewicht, Pflug)|159|none|Beine über den Kopf (nur wenn geübt).
-Yoga (Körpergewicht, Kamel)|159|none|Brust öffnen.
+Yoga (Körpergewicht, Kamel)|186|none|Brust öffnen.
 Pilates (Körpergewicht)|160|none|
-Pilates (Körpergewicht, Hundred)|160|none|Arme pumpen, Beine in der Luft.
-Pilates (Körpergewicht, Roll-up)|160|none|Wirbel für Wirbel.
-Pilates (Körpergewicht, Single Leg Stretch)|160|none|Knie abwechselnd zur Brust.
-Pilates (Körpergewicht, Double Leg Stretch)|160|none|Beide Beine.
-Pilates (Körpergewicht, Schere)|160|none|Beine abwechselnd.
-Pilates (Körpergewicht, Teaser)|160|none|V-Position.
-Pilates (Körpergewicht, Swan)|160|none|Brust heben.
+Pilates (Körpergewicht, Hundred)|187|none|Arme pumpen, Beine in der Luft.
+Pilates (Körpergewicht, Roll-up)|188|none|Wirbel für Wirbel.
+Pilates (Körpergewicht, Single Leg Stretch)|189|none|Knie abwechselnd zur Brust.
+Pilates (Körpergewicht, Double Leg Stretch)|190|none|Beide Beine.
+Pilates (Körpergewicht, Schere)|191|none|Beine abwechselnd.
+Pilates (Körpergewicht, Teaser)|192|none|V-Position.
+Pilates (Körpergewicht, Swan)|193|none|Brust heben.
 Pilates (Körpergewicht, Seitlicher Beinkreis)|160|none|Seitlage.
-Pilates (Körpergewicht, Swimming)|160|none|Bauchlage, Arme/Beine im Wechsel.
-Pilates (Körpergewicht, Spine Stretch)|160|none|Wirbelsäule langziehen.
+Pilates (Körpergewicht, Swimming)|194|none|Bauchlage, Arme/Beine im Wechsel.
+Pilates (Körpergewicht, Spine Stretch)|195|none|Wirbelsäule langziehen.
 Pilates (Widerstandsband)|160|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen.
-Pilates (Widerstandsband, Hundred)|160|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Arme pumpen, Beine in der Luft.
-Pilates (Widerstandsband, Roll-up)|160|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Wirbel für Wirbel.
-Pilates (Widerstandsband, Single Leg Stretch)|160|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Knie abwechselnd zur Brust.
-Pilates (Widerstandsband, Double Leg Stretch)|160|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Beide Beine.
-Pilates (Widerstandsband, Schere)|160|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Beine abwechselnd.
-Pilates (Widerstandsband, Teaser)|160|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. V-Position.
-Pilates (Widerstandsband, Swan)|160|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Brust heben.
+Pilates (Widerstandsband, Hundred)|187|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Arme pumpen, Beine in der Luft.
+Pilates (Widerstandsband, Roll-up)|188|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Wirbel für Wirbel.
+Pilates (Widerstandsband, Single Leg Stretch)|189|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Knie abwechselnd zur Brust.
+Pilates (Widerstandsband, Double Leg Stretch)|190|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Beide Beine.
+Pilates (Widerstandsband, Schere)|191|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Beine abwechselnd.
+Pilates (Widerstandsband, Teaser)|192|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. V-Position.
+Pilates (Widerstandsband, Swan)|193|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Brust heben.
 Pilates (Widerstandsband, Seitlicher Beinkreis)|160|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Seitlage.
-Pilates (Widerstandsband, Swimming)|160|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Bauchlage, Arme/Beine im Wechsel.
-Pilates (Widerstandsband, Spine Stretch)|160|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Wirbelsäule langziehen.
+Pilates (Widerstandsband, Swimming)|194|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Bauchlage, Arme/Beine im Wechsel.
+Pilates (Widerstandsband, Spine Stretch)|195|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Wirbelsäule langziehen.
 Pilates (Medizinball)|160|medball|Ball nach Technik wählen, lieber leicht und sauber.
-Pilates (Medizinball, Hundred)|160|medball|Ball nach Technik wählen, lieber leicht und sauber. Arme pumpen, Beine in der Luft.
-Pilates (Medizinball, Roll-up)|160|medball|Ball nach Technik wählen, lieber leicht und sauber. Wirbel für Wirbel.
-Pilates (Medizinball, Single Leg Stretch)|160|medball|Ball nach Technik wählen, lieber leicht und sauber. Knie abwechselnd zur Brust.
-Pilates (Medizinball, Double Leg Stretch)|160|medball|Ball nach Technik wählen, lieber leicht und sauber. Beide Beine.
-Pilates (Medizinball, Schere)|160|medball|Ball nach Technik wählen, lieber leicht und sauber. Beine abwechselnd.
-Pilates (Medizinball, Teaser)|160|medball|Ball nach Technik wählen, lieber leicht und sauber. V-Position.
-Pilates (Medizinball, Swan)|160|medball|Ball nach Technik wählen, lieber leicht und sauber. Brust heben.
+Pilates (Medizinball, Hundred)|187|medball|Ball nach Technik wählen, lieber leicht und sauber. Arme pumpen, Beine in der Luft.
+Pilates (Medizinball, Roll-up)|188|medball|Ball nach Technik wählen, lieber leicht und sauber. Wirbel für Wirbel.
+Pilates (Medizinball, Single Leg Stretch)|189|medball|Ball nach Technik wählen, lieber leicht und sauber. Knie abwechselnd zur Brust.
+Pilates (Medizinball, Double Leg Stretch)|190|medball|Ball nach Technik wählen, lieber leicht und sauber. Beide Beine.
+Pilates (Medizinball, Schere)|191|medball|Ball nach Technik wählen, lieber leicht und sauber. Beine abwechselnd.
+Pilates (Medizinball, Teaser)|192|medball|Ball nach Technik wählen, lieber leicht und sauber. V-Position.
+Pilates (Medizinball, Swan)|193|medball|Ball nach Technik wählen, lieber leicht und sauber. Brust heben.
 Pilates (Medizinball, Seitlicher Beinkreis)|160|medball|Ball nach Technik wählen, lieber leicht und sauber. Seitlage.
-Pilates (Medizinball, Swimming)|160|medball|Ball nach Technik wählen, lieber leicht und sauber. Bauchlage, Arme/Beine im Wechsel.
-Pilates (Medizinball, Spine Stretch)|160|medball|Ball nach Technik wählen, lieber leicht und sauber. Wirbelsäule langziehen.
+Pilates (Medizinball, Swimming)|194|medball|Ball nach Technik wählen, lieber leicht und sauber. Bauchlage, Arme/Beine im Wechsel.
+Pilates (Medizinball, Spine Stretch)|195|medball|Ball nach Technik wählen, lieber leicht und sauber. Wirbelsäule langziehen.
 Nackendehnung (Körpergewicht)|161|none|
 Nackendehnung (Körpergewicht, seitlich)|161|none|Ohr zur Schulter.
 Nackendehnung (Körpergewicht, schräg vorn)|161|none|Nase zur Achsel.
@@ -4338,72 +4376,72 @@ Brustdehnung (Faszienrolle, auf dem Boden)|163|foam|Langsam rollen, auf Druckpun
 Brustdehnung (Faszienrolle, an der Stange)|163|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Hand an Stange, wegdrehen.
 Brustdehnung (Faszienrolle, Faszienrolle quer)|163|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Rolle längs der Wirbelsäule.
 Trizepsdehnung (Körpergewicht)|164|none|
-Trizepsdehnung (Körpergewicht, Überkopf)|164|none|Ellbogen nach oben ziehen.
-Trizepsdehnung (Körpergewicht, mit Handtuch)|164|none|Handtuch im Nacken.
-Trizepsdehnung (Körpergewicht, Wand)|164|none|Ellbogen an der Wand.
+Trizepsdehnung (Körpergewicht, Überkopf)|196|none|Ellbogen nach oben ziehen.
+Trizepsdehnung (Körpergewicht, mit Handtuch)|196|none|Handtuch im Nacken.
+Trizepsdehnung (Körpergewicht, Wand)|196|none|Ellbogen an der Wand.
 Rückendehnung (Körpergewicht)|165|none|
 Rückendehnung (Körpergewicht, Kind-Position)|165|none|Gesäß zu den Fersen, Arme vorn.
-Rückendehnung (Körpergewicht, Katze-Kuh)|165|none|Wirbelsäule rund/lang.
-Rückendehnung (Körpergewicht, Knie zur Brust)|165|none|Rückenlage.
-Rückendehnung (Körpergewicht, Rotation in Rückenlage)|165|none|Knie fallen seitlich.
-Rückendehnung (Körpergewicht, Seitbeuge im Stand)|165|none|Arm über Kopf.
-Rückendehnung (Körpergewicht, Hängende Dehnung)|165|none|Hängen an der Stange.
+Rückendehnung (Körpergewicht, Katze-Kuh)|197|none|Wirbelsäule rund/lang.
+Rückendehnung (Körpergewicht, Knie zur Brust)|198|none|Rückenlage.
+Rückendehnung (Körpergewicht, Rotation in Rückenlage)|199|none|Knie fallen seitlich.
+Rückendehnung (Körpergewicht, Seitbeuge im Stand)|200|none|Arm über Kopf.
+Rückendehnung (Körpergewicht, Hängende Dehnung)|201|none|Hängen an der Stange.
 Rückendehnung (Körpergewicht, Nadelöhr)|165|none|Arm unter dem Körper hindurch.
-Rückendehnung (Körpergewicht, Sphinx)|165|none|Unterarme, Brust heben.
-Rückendehnung (Körpergewicht, Vorbeuge im Sitzen)|165|none|Beine gestreckt.
+Rückendehnung (Körpergewicht, Sphinx)|202|none|Unterarme, Brust heben.
+Rückendehnung (Körpergewicht, Vorbeuge im Sitzen)|203|none|Beine gestreckt.
 Rückendehnung (Körpergewicht, Latissimus am Türrahmen)|165|none|Hände am Rahmen, Hüfte zurück.
 Rückendehnung (Faszienrolle)|165|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken.
 Rückendehnung (Faszienrolle, Kind-Position)|165|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Gesäß zu den Fersen, Arme vorn.
-Rückendehnung (Faszienrolle, Katze-Kuh)|165|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Wirbelsäule rund/lang.
-Rückendehnung (Faszienrolle, Knie zur Brust)|165|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Rückenlage.
-Rückendehnung (Faszienrolle, Rotation in Rückenlage)|165|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Knie fallen seitlich.
-Rückendehnung (Faszienrolle, Seitbeuge im Stand)|165|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Arm über Kopf.
-Rückendehnung (Faszienrolle, Hängende Dehnung)|165|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Hängen an der Stange.
+Rückendehnung (Faszienrolle, Katze-Kuh)|197|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Wirbelsäule rund/lang.
+Rückendehnung (Faszienrolle, Knie zur Brust)|198|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Rückenlage.
+Rückendehnung (Faszienrolle, Rotation in Rückenlage)|199|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Knie fallen seitlich.
+Rückendehnung (Faszienrolle, Seitbeuge im Stand)|200|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Arm über Kopf.
+Rückendehnung (Faszienrolle, Hängende Dehnung)|201|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Hängen an der Stange.
 Rückendehnung (Faszienrolle, Nadelöhr)|165|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Arm unter dem Körper hindurch.
-Rückendehnung (Faszienrolle, Sphinx)|165|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Unterarme, Brust heben.
-Rückendehnung (Faszienrolle, Vorbeuge im Sitzen)|165|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Beine gestreckt.
+Rückendehnung (Faszienrolle, Sphinx)|202|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Unterarme, Brust heben.
+Rückendehnung (Faszienrolle, Vorbeuge im Sitzen)|203|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Beine gestreckt.
 Rückendehnung (Faszienrolle, Latissimus am Türrahmen)|165|foam|Langsam rollen, auf Druckpunkten kurz verweilen, nie auf Gelenken. Hände am Rahmen, Hüfte zurück.
 Hüftdehnung (Körpergewicht)|166|none|
 Hüftdehnung (Körpergewicht, Hüftbeuger-Ausfallschritt)|166|none|Hinteres Knie am Boden, Hüfte vor.
 Hüftdehnung (Körpergewicht, Taube)|166|none|Unterschenkel quer.
 Hüftdehnung (Körpergewicht, Schmetterling)|166|none|Fußsohlen zusammen.
 Hüftdehnung (Körpergewicht, Frosch)|166|none|Knie weit, Hüfte zurück.
-Hüftdehnung (Körpergewicht, Tiefe Hocke)|166|none|Ellbogen drücken Knie.
+Hüftdehnung (Körpergewicht, Tiefe Hocke)|204|none|Ellbogen drücken Knie.
 Hüftdehnung (Körpergewicht, 90/90)|166|none|Beide Knie 90°.
 Hüftdehnung (Körpergewicht, Figur-Vier)|166|none|Fuß auf Knie.
-Hüftdehnung (Körpergewicht, Adduktoren seitlich)|166|none|Grätsche, Gewicht verlagern.
+Hüftdehnung (Körpergewicht, Adduktoren seitlich)|205|none|Grätsche, Gewicht verlagern.
 Hüftdehnung (Körpergewicht, Piriformis)|166|none|Rückenlage.
 Hüftdehnung (Körpergewicht, Couch-Stretch)|166|none|Fuß an der Wand.
-Hüftdehnung (Körpergewicht, Glute Bridge Hold)|166|none|Kurzer Halt.
+Hüftdehnung (Körpergewicht, Glute Bridge Hold)|206|none|Kurzer Halt.
 Oberschenkeldehnung (Körpergewicht)|167|none|
 Oberschenkeldehnung (Körpergewicht, Quadrizeps stehend)|167|none|Ferse zum Gesäß.
 Oberschenkeldehnung (Körpergewicht, Quadrizeps liegend)|167|none|Seitlage.
-Oberschenkeldehnung (Körpergewicht, Beinbeuger sitzend)|167|none|Vorbeuge.
-Oberschenkeldehnung (Körpergewicht, Beinbeuger im Stand)|167|none|Ferse auf Erhöhung.
-Oberschenkeldehnung (Körpergewicht, Beinbeuger liegend mit Band)|167|none|Band um den Fuß.
-Oberschenkeldehnung (Körpergewicht, Adduktoren)|167|none|Grätsche.
+Oberschenkeldehnung (Körpergewicht, Beinbeuger sitzend)|207|none|Vorbeuge.
+Oberschenkeldehnung (Körpergewicht, Beinbeuger im Stand)|208|none|Ferse auf Erhöhung.
+Oberschenkeldehnung (Körpergewicht, Beinbeuger liegend mit Band)|209|none|Band um den Fuß.
+Oberschenkeldehnung (Körpergewicht, Adduktoren)|210|none|Grätsche.
 Oberschenkeldehnung (Körpergewicht, Abduktoren (ITB))|167|none|Beine kreuzen.
 Oberschenkeldehnung (Körpergewicht, Kniesehne im Ausfallschritt)|167|none|Vorderbein gestreckt.
 Oberschenkeldehnung (Widerstandsband)|167|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen.
 Oberschenkeldehnung (Widerstandsband, Quadrizeps stehend)|167|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Ferse zum Gesäß.
 Oberschenkeldehnung (Widerstandsband, Quadrizeps liegend)|167|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Seitlage.
-Oberschenkeldehnung (Widerstandsband, Beinbeuger sitzend)|167|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Vorbeuge.
-Oberschenkeldehnung (Widerstandsband, Beinbeuger im Stand)|167|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Ferse auf Erhöhung.
-Oberschenkeldehnung (Widerstandsband, Beinbeuger liegend mit Band)|167|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Band um den Fuß.
-Oberschenkeldehnung (Widerstandsband, Adduktoren)|167|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Grätsche.
+Oberschenkeldehnung (Widerstandsband, Beinbeuger sitzend)|207|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Vorbeuge.
+Oberschenkeldehnung (Widerstandsband, Beinbeuger im Stand)|208|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Ferse auf Erhöhung.
+Oberschenkeldehnung (Widerstandsband, Beinbeuger liegend mit Band)|209|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Band um den Fuß.
+Oberschenkeldehnung (Widerstandsband, Adduktoren)|210|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Grätsche.
 Oberschenkeldehnung (Widerstandsband, Abduktoren (ITB))|167|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Beine kreuzen.
 Oberschenkeldehnung (Widerstandsband, Kniesehne im Ausfallschritt)|167|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Vorderbein gestreckt.
 Wadendehnung (Körpergewicht)|168|none|
 Wadendehnung (Körpergewicht, an der Wand, gestreckt)|168|none|Hinteres Bein gestreckt.
 Wadendehnung (Körpergewicht, an der Wand, gebeugt)|168|none|Knie gebeugt (Soleus).
 Wadendehnung (Körpergewicht, auf der Treppenstufe)|168|none|Ferse tiefer.
-Wadendehnung (Körpergewicht, Herabschauender Hund)|168|none|Fersen abwechselnd.
+Wadendehnung (Körpergewicht, Herabschauender Hund)|211|none|Fersen abwechselnd.
 Wadendehnung (Körpergewicht, mit Band)|168|none|Band um den Fuß.
 Wadendehnung (Widerstandsband)|168|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen.
 Wadendehnung (Widerstandsband, an der Wand, gestreckt)|168|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Hinteres Bein gestreckt.
 Wadendehnung (Widerstandsband, an der Wand, gebeugt)|168|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Knie gebeugt (Soleus).
 Wadendehnung (Widerstandsband, auf der Treppenstufe)|168|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Ferse tiefer.
-Wadendehnung (Widerstandsband, Herabschauender Hund)|168|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Fersen abwechselnd.
+Wadendehnung (Widerstandsband, Herabschauender Hund)|211|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Fersen abwechselnd.
 Wadendehnung (Widerstandsband, mit Band)|168|band|Band bleibt über die ganze Bewegung gespannt, Stärke nach Gefühl wählen. Band um den Fuß.
 Sprunggelenk-Mobilisation (Körpergewicht)|169|none|
 Sprunggelenk-Mobilisation (Körpergewicht, Knie zur Wand)|169|none|Knie über den Zeh bringen.

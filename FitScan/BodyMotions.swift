@@ -71,6 +71,25 @@ enum BodyMotion: String, CaseIterable {
     case walk
     case farmer
     case run
+    case downDog
+    case hundred
+    case boat
+    case teaser
+    case rollUp
+    case singleLegStretch
+    case doubleLegStretch
+    case scissors
+    case swimming
+    case warrior1
+    case warrior2
+    case tree
+    case chair
+    case seatTwist
+    case sideBend
+    case camel
+    case supKneeHug
+    case supTwist
+    case tricepStretch
 }
 
 extension BodyRig {
@@ -144,5 +163,24 @@ extension BodyRig {
         .walk: Motion(period: 1.15, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .none),
         .farmer: Motion(period: 1.3, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .dumbbell),
         .run: Motion(period: 0.72, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .none),
+        .downDog: Motion(period: 8.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 1.2, camY: 0.45, props: .none),
+        .hundred: Motion(period: 1.6, lying: false, bench: false, free: true, wallZ: nil, yaw: 1.2, camY: 0.4, props: .none),
+        .boat: Motion(period: 6.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 1.2, camY: 0.5, props: .none),
+        .teaser: Motion(period: 7.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 1.2, camY: 0.5, props: .none),
+        .rollUp: Motion(period: 7.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 1.2, camY: 0.5, props: .none),
+        .singleLegStretch: Motion(period: 4.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 1.2, camY: 0.4, props: .none),
+        .doubleLegStretch: Motion(period: 4.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 1.2, camY: 0.4, props: .none),
+        .scissors: Motion(period: 3.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 1.2, camY: 0.4, props: .none),
+        .swimming: Motion(period: 2.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 1.2, camY: 0.3, props: .none),
+        .warrior1: Motion(period: 14.0, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.9, camY: 0.8, props: .none),
+        .warrior2: Motion(period: 10.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 0.15, camY: 0.85, props: .none),
+        .tree: Motion(period: 14.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 0.35, camY: 0.85, props: .none),
+        .chair: Motion(period: 7.0, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .none),
+        .seatTwist: Motion(period: 10.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 0.12, camY: 0.5, props: .none),
+        .sideBend: Motion(period: 10.0, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.35, camY: 0.9, props: .none),
+        .camel: Motion(period: 8.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 1.2, camY: 0.6, props: .none),
+        .supKneeHug: Motion(period: 6.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 1.2, camY: 0.4, props: .none),
+        .supTwist: Motion(period: 10.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 0.25, camY: 0.5, props: .none),
+        .tricepStretch: Motion(period: 10.0, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.35, camY: 0.9, props: .none),
     ]
 }
