@@ -46,7 +46,7 @@ final class MeshScanModel: ObservableObject {
 
     /// Schreibt alle Mesh-Anker in Weltkoordinaten in eine OBJ-Datei.
     private static func writeOBJ(anchors: [ARMeshAnchor]) throws -> URL {
-        var out = "# FitScan Mesh\n"
+        var out = "# Bodyformance Mesh\n"
         var vertexOffset = 0
 
         for anchor in anchors {

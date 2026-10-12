@@ -204,10 +204,10 @@ final class GymRoom {
                 }
                 if logo {
                     let para = NSMutableParagraphStyle(); para.alignment = .center
-                    let a: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 150, weight: .black),
+                    let a: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 120, weight: .black),
                                                            .foregroundColor: UIColor(red: 0.85, green: 0.16, blue: 0.14, alpha: 1),
                                                            .paragraphStyle: para, .kern: 12]
-                    ("FITSCAN" as NSString).draw(in: CGRect(x: 0, y: s.height * 0.12, width: s.width, height: 200), withAttributes: a)
+                    ("BODYFORMANCE" as NSString).draw(in: CGRect(x: 0, y: s.height * 0.12, width: s.width, height: 200), withAttributes: a)
                     let b: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 56, weight: .bold),
                                                            .foregroundColor: UIColor(white: 0.25, alpha: 1), .paragraphStyle: para, .kern: 6]
                     ("TRAIN  ·  MOVE  ·  RECOVER" as NSString).draw(in: CGRect(x: 0, y: s.height * 0.12 + 190, width: s.width, height: 80), withAttributes: b)

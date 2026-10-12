@@ -18,7 +18,7 @@ enum OpenFoodFacts {
         guard clean.count >= 6,
               let url = URL(string: "https://world.openfoodfacts.org/api/v2/product/\(clean).json?fields=product_name,brands,nutriments,serving_quantity") else { return nil }
         var req = URLRequest(url: url)
-        req.setValue("FitScan/1.0 (iOS Fitness App)", forHTTPHeaderField: "User-Agent")
+        req.setValue("Bodyformance/1.0 (iOS Fitness App)", forHTTPHeaderField: "User-Agent")
         req.timeoutInterval = 15
         guard let (data, _) = try? await URLSession.shared.data(for: req),
               let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -41,7 +41,7 @@ enum OpenFoodFacts {
         ]
         guard let url = comps.url else { return [] }
         var req = URLRequest(url: url)
-        req.setValue("FitScan/1.0 (iOS Fitness App)", forHTTPHeaderField: "User-Agent")
+        req.setValue("Bodyformance/1.0 (iOS Fitness App)", forHTTPHeaderField: "User-Agent")
         req.timeoutInterval = 20
         guard let (data, _) = try? await URLSession.shared.data(for: req),
               let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],

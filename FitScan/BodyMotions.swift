@@ -58,6 +58,19 @@ enum BodyMotion: String, CaseIterable {
     case squatDb
     case lungeDb
     case calfDb
+    case fly
+    case pullover
+    case frontRaise
+    case uprightRow
+    case kickback
+    case skull
+    case pushdown
+    case facePull
+    case flyCable
+    case swing
+    case walk
+    case farmer
+    case run
 }
 
 extension BodyRig {
@@ -96,7 +109,7 @@ extension BodyRig {
         .sitFold: Motion(period: 8.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 1.2, camY: 0.4, props: .none),
         .supineHam: Motion(period: 8.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 1.2, camY: 0.4, props: .none),
         .hipStretch: Motion(period: 14.0, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.9, camY: 0.8, props: .none),
-        .wgs: Motion(period: 14.0, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.9, camY: 0.8, props: .none),
+        .wgs: Motion(period: 15.0, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.9, camY: 0.8, props: .none),
         .calfWall: Motion(period: 8.0, lying: false, bench: false, free: false, wallZ: 0.64, yaw: 1.15, camY: 0.9, props: .none),
         .kneeWall: Motion(period: 5.0, lying: false, bench: false, free: false, wallZ: 0.64, yaw: 1.15, camY: 0.9, props: .none),
         .wallSlide: Motion(period: 5.0, lying: false, bench: false, free: false, wallZ: -0.125, yaw: 1.15, camY: 0.95, props: .none),
@@ -118,5 +131,18 @@ extension BodyRig {
         .squatDb: Motion(period: 3.9, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .dumbbell),
         .lungeDb: Motion(period: 8.0, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .dumbbell),
         .calfDb: Motion(period: 3.2, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .dumbbell),
+        .fly: Motion(period: 4.2, lying: true, bench: true, free: false, wallZ: nil, yaw: 1.15, camY: 0.55, props: .dumbbell),
+        .pullover: Motion(period: 4.6, lying: true, bench: true, free: false, wallZ: nil, yaw: 1.15, camY: 0.55, props: .dumbbell),
+        .frontRaise: Motion(period: 3.8, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .dumbbell),
+        .uprightRow: Motion(period: 3.8, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .dumbbell),
+        .kickback: Motion(period: 3.6, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .dumbbell),
+        .skull: Motion(period: 4.0, lying: true, bench: true, free: false, wallZ: nil, yaw: 1.15, camY: 0.55, props: .dumbbell),
+        .pushdown: Motion(period: 3.4, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .dumbbell),
+        .facePull: Motion(period: 3.8, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .dumbbell),
+        .flyCable: Motion(period: 3.8, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .dumbbell),
+        .swing: Motion(period: 2.6, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .dumbbell),
+        .walk: Motion(period: 1.15, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .none),
+        .farmer: Motion(period: 1.3, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .dumbbell),
+        .run: Motion(period: 0.72, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .none),
     ]
 }

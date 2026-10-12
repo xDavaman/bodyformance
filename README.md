@@ -1,4 +1,4 @@
-# FitScan
+# Bodyformance (BFC)
 
 iOS-Fitness-App (SwiftUI, RealityKit): 3D-animierte Übungen, Trainingsplan, Ernährung mit Barcode-Scan, Körperscan mit Intervall, Schritt- und Workout-Tracking, Rezept-Community.
 

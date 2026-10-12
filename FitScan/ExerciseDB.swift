@@ -6,13 +6,13 @@ enum ExerciseDB {
     static let families = #"""
 strength|w|ch|sh tri|benchPress|Mittlere Brust|||0|0|0.4|Schulterblätter zusammenziehen und leicht ins Polster drücken.~Gewicht kontrolliert zur unteren Brust senken, Unterarme bleiben senkrecht.~Füße fest am Boden, Gesäß bleibt auf der Bank.
 strength|w|ch|sh tri|benchPress|Mittlere Brust|||0|0|0|Sitz so einstellen, dass die Griffe auf Brusthöhe starten.~Schulterblätter zurück und unten, Brust bleibt offen.~Arme nicht ganz durchdrücken, Spannung halten.
-strength|w|ch|sh|benchPress|Brust (Dehnungsreiz)|||0|0|0.1|Ellbogen leicht gebeugt und fixiert, wie eine Umarmung bewegen.~Nur so weit öffnen, wie die Schulter schmerzfrei bleibt.~Oben Brust bewusst zusammendrücken, nicht Hantel gegen Hantel schlagen.
-strength|w|ch|sh|benchPress|Innere Brust|||0|0|0|Leichter Ausfallschritt, Rumpf leicht vorgeneigt, Ellbogen leicht gebeugt.~Hände auf einem Bogen vor dem Körper zusammenführen.~Am Ende Brust anspannen, Schultern bleiben unten.
+strength|w|ch|sh|fly|Brust (Dehnungsreiz)|||0|0|0.1|Ellbogen leicht gebeugt und fixiert, wie eine Umarmung bewegen.~Nur so weit öffnen, wie die Schulter schmerzfrei bleibt.~Oben Brust bewusst zusammendrücken, nicht Hantel gegen Hantel schlagen.
+strength|w|ch|sh|flyCable|Innere Brust|||0|0|0|Leichter Ausfallschritt, Rumpf leicht vorgeneigt, Ellbogen leicht gebeugt.~Hände auf einem Bogen vor dem Körper zusammenführen.~Am Ende Brust anspannen, Schultern bleiben unten.
 calisthenics|bw|ch|sh tri ab|pushup|Brust|||0|0|0|Körper bildet eine Linie von Kopf bis Ferse.~Ellbogen etwa 45 Grad vom Körper, Brust fast bis zum Boden.~Zu schwer: Hände erhöhen oder Knie abstützen. Zu leicht: Füße erhöhen.
 calisthenics|bw|ch|sh tri|pushup|Brust (Schnellkraft)|||0|0|0|Kraftvoll nach oben abdrücken, bis die Hände den Boden verlassen.~Weich landen, Ellbogen leicht gebeugt.~Nur mit sauberer Technik, bei Ermüdung beenden.
 calisthenics|bw|tri ch|sh|triceps|Trizeps / untere Brust|||0|0|0|Schultern runter, nicht in die Schultern hängen.~Oberkörper leicht nach vorn für mehr Brust, aufrecht für mehr Trizeps.~Nur so tief, wie die Schulter schmerzfrei bleibt.
 calisthenics|bw|tri|sh ch|triceps|Trizeps|||0|0|0|Hände hinter dem Körper auf der Bank, Finger zeigen nach vorn.~Ellbogen zeigen nach hinten, nicht zur Seite.~Nur so tief, dass die Schulter nicht nach vorn rutscht.
-strength|w|ch la|tri|benchPress|Brust / Latissimus|||0|0|0|Arme nahezu gestreckt, Bewegung kommt aus der Schulter.~Rippen bleiben unten, nicht ins Hohlkreuz fallen.~Nur bis zu einer Dehnung gehen, die ohne Schmerz bleibt.
+strength|w|ch la|tri|pullover|Brust / Latissimus|||0|0|0|Arme nahezu gestreckt, Bewegung kommt aus der Schulter.~Rippen bleiben unten, nicht ins Hohlkreuz fallen.~Nur bis zu einer Dehnung gehen, die ohne Schmerz bleibt.
 strength|w|ch sh|tri ab|overhead|Obere Brust / vordere Schulter|||0|0|0|Stange in Ecke oder Halterung, Last mit beiden Händen auf Brusthöhe greifen.~Schräg nach oben drücken, Rumpf bleibt fest.~Schulterblatt führt die Bewegung mit.
 strength|w|ch|tri|benchPress|Innere Brust|||0|0|0|Hanteln aneinanderpressen und die ganze Zeit zusammenhalten.~Drückbewegung gerade nach oben, Ellbogen eng.~Die Spannung zwischen den Hanteln ist der Reiz, nicht das Gewicht.
 strength|sec|ch|sh|benchPress|Innere Brust||3 × 15 s halten|0|0|0|Handflächen vor der Brust gegeneinanderdrücken.~Schultern unten, Ellbogen auf Höhe der Hände.~Spannung 10–20 Sekunden halten.
@@ -22,7 +22,7 @@ strength|w|la tr|bi lb|row|Mittlerer Rücken|||0|0|0.35|Oberkörper etwa 45 Grad
 strength|w|la tr|bi|row|Mittlerer Rücken|||0|0|0|Aufrecht sitzen, Brust raus, Schulterblätter zusammen.~Griff zum Bauch ziehen, Ellbogen eng.~Nicht mit dem Oberkörper schwingen.
 strength|w|tr la|bi|row|Oberer Rücken|||0|0|0|Brust auf Pad oder Bank, Nacken neutral.~Ellbogen führen, Hände folgen.~Oben Schulterblätter kurz zusammenpressen.
 strength|w|la|bi tr|row|Latissimus|||0|0|0.2|Eine Hand und ein Knie auf der Bank abstützen.~Hantel zur Hüfte ziehen, nicht zur Schulter.~Gewichtsangabe der einen Hantel eintragen.
-strength|w|tr sh|la|row|Hintere Schulter / oberer Rücken|||0|0|0|Seil auf Gesichtshöhe, zu den Ohren ziehen.~Ellbogen hoch, Hände trennen sich am Ende.~Schultern unten, Nacken entspannt.
+strength|w|tr sh|la|facePull|Hintere Schulter / oberer Rücken|||0|0|0|Seil auf Gesichtshöhe, zu den Ohren ziehen.~Ellbogen hoch, Hände trennen sich am Ende.~Schultern unten, Nacken entspannt.
 calisthenics|bw|la tr|sh|pullup|Schulterblatt-Stabilität|||0|0|0|Arme gestreckt hängen, nur die Schulterblätter nach unten ziehen.~Ohne Armbeugen.~Langsam wieder entspannen.
 calisthenics|bw|la tr|bi|row|Rückenmitte|||0|0|0|Körper gerade wie ein Brett, Brust zur Stange ziehen.~Ellbogen eng am Körper.~Je flacher der Körperwinkel, desto schwerer.
 strength|w|lb gl|ha tr qu|rdl|Rückenstrecker / Gesäß|||0|0|0.6|Stange nah am Körper, Rücken gerade, Brust raus.~Mit den Beinen anschieben, dann Hüfte strecken.~Oben nicht ins Hohlkreuz überstrecken.
@@ -34,12 +34,12 @@ strength|w|tr la|bi|row|Oberer Rücken|||0|0|0|Arme gestreckt, nur Schulterblät
 strength|w|tr sh|la|lateral|Unterer Trapez|||0|0|0.04|Arme im Y schräg nach oben, Daumen zeigen nach oben.~Schulterblätter zurück und unten.~Leichte Gewichte reichen.
 strength|w|tr sh|la|lateral|Mittlerer Trapez|||0|0|0.04|Arme waagerecht seitlich, Daumen nach oben.~Schulterblätter zusammenziehen.~Leicht und sauber.
 strength|w|tr|fo|row|Oberer Trapez|||0|0|0.3|Schultern gerade nach oben ziehen, nicht kreisen.~Oben kurz halten.~Arme bleiben gestreckt.
-strength|w|sh tr|bi|row|Seitliche Schulter / Trapez|||0|0|0.25|Last nah am Körper bis unter Brusthöhe ziehen.~Ellbogen führen, nicht höher als die Schultern bei Beschwerden.~Griff schulterbreit oder etwas breiter.
+strength|w|sh tr|bi|uprightRow|Seitliche Schulter / Trapez|||0|0|0.25|Last nah am Körper bis unter Brusthöhe ziehen.~Ellbogen führen, nicht höher als die Schultern bei Beschwerden.~Griff schulterbreit oder etwas breiter.
 calisthenics|bw|lb gl|ha|cobra|Rückenstrecker|||0|0|0|Bauchlage, Arme und Beine gleichzeitig vom Boden heben.~Kurz halten, Nacken neutral.~Nicht überstrecken.
 strength|w|sh|tri tr|overhead|Vordere und seitliche Schulter|||0|0|0.15|Core anspannen, nicht ins Hohlkreuz fallen.~Last auf Schulterhöhe starten, über dem Kopf strecken.~Kopf leicht nach hinten, dann wieder unter der Last.
 strength|w|sh|tri qu|overhead|Schulter (explosiv)|||0|0|0|Kurzer Kniebeugeimpuls, dann explosiv drücken.~Last wandert gerade über dem Kopf.~Rumpf bleibt fest, kein Hohlkreuz.
 strength|w|sh|tr|lateral|Seitliche Schulter|||0|0|0.07|Arme leicht gebeugt bis auf Schulterhöhe anheben.~Ohne Schwung, nicht höher als die Schulter.~Eher leicht wählen.
-strength|w|sh|ch|lateral|Vordere Schulter|||0|0|0.06|Arme gerade nach vorn bis auf Schulterhöhe.~Rumpf bleibt gerade.~Nicht schwingen.
+strength|w|sh|ch|frontRaise|Vordere Schulter|||0|0|0.06|Arme gerade nach vorn bis auf Schulterhöhe.~Rumpf bleibt gerade.~Nicht schwingen.
 strength|w|sh tr|la|lateral|Hintere Schulter|||0|0|0.05|Vorgebeugt, Rücken gerade, Arme leicht gebeugt.~Zur Seite öffnen bis auf Schulterhöhe.~Schulterblätter nicht zu stark zusammenziehen.
 strength|w|sh|tr|lateral|Rotatorenmanschette (hinten)|||0|0|0.02|Ellbogen eng am Körper, Unterarm nach außen drehen.~Sehr leichtes Gewicht, saubere Kontrolle.~Wichtig für gesunde Schultern.
 strength|w|sh|ch|lateral|Rotatorenmanschette (vorn)|||0|0|0.02|Ellbogen eng am Körper, Unterarm nach innen drehen.~Sehr leicht und kontrolliert.~Schulter bleibt ruhig.
@@ -55,17 +55,17 @@ strength|w|bi|fo|curl|Bizeps / Unterarm|||0|0|0|Hoch im Untergriff, oben die Hä
 strength|w|bi|fo|curl|Bizeps (Spitze)|||0|0|0|Arme seitlich auf Schulterhöhe, Griffe zum Kopf ziehen.~Ellbogen bleiben auf Höhe.~Oben Spannung.
 calisthenics|bw|bi la|fo|pullup|Bizeps|||0|0|0|Hochspringen, im Untergriff langsam absenken.~5 Sekunden Ablassen.~Gut zum Aufbau von Klimmzügen.
 calisthenics|bw|bi|fo|curl|Bizeps|||0|0|0|Rückenlage unter den Griffen, Körper gerade.~Arme beugen, Stirn zu den Händen.~Je flacher, desto schwerer.
-strength|w|tri||triceps|Trizeps|||0|0|0|Ellbogen eng am Körper, nur die Unterarme bewegen.~Unten vollständig strecken und kurz anspannen.~Oberkörper bleibt ruhig.
+strength|w|tri||pushdown|Trizeps|||0|0|0|Ellbogen eng am Körper, nur die Unterarme bewegen.~Unten vollständig strecken und kurz anspannen.~Oberkörper bleibt ruhig.
 strength|w|tri||triceps|Trizeps (langer Kopf)|||0|0|0.1|Ellbogen zeigen nach vorn, Oberarme bleiben nahe am Kopf.~Unterarme beugen, dann strecken.~Rumpf stabil, kein Hohlkreuz.
-strength|w|tri||triceps|Trizeps|||0|0|0.15|Ellbogen zeigen zur Decke, Oberarme bleiben fest.~Last kontrolliert zur Stirn oder hinter den Kopf senken.~Dann strecken, ohne die Ellbogen zu öffnen.
-strength|w|tri||triceps|Trizeps|||0|0|0.05|Oberkörper vorgebeugt, Oberarm parallel zum Körper.~Unterarm nach hinten strecken.~Leicht und sauber.
+strength|w|tri||skull|Trizeps|||0|0|0.15|Ellbogen zeigen zur Decke, Oberarme bleiben fest.~Last kontrolliert zur Stirn oder hinter den Kopf senken.~Dann strecken, ohne die Ellbogen zu öffnen.
+strength|w|tri||kickback|Trizeps|||0|0|0.05|Oberkörper vorgebeugt, Oberarm parallel zum Körper.~Unterarm nach hinten strecken.~Leicht und sauber.
 strength|w|tri|ch sh|benchPress|Trizeps|||0|0|0.35|Hände etwa schulterbreit, Ellbogen eng.~Stange zur unteren Brust.~Nicht zu schmal greifen (Handgelenke).
 strength|w|tri|ch|triceps|Trizeps|||0|0|0.25|Mischform aus Skull Crusher und enges Bankdrücken.~Ellbogen bleiben nach vorn.~Mit leichtem Gewicht lernen.
 strength|w|tri|ch|triceps|Trizeps|||0|0|0|Oberkörper aufrecht, Ellbogen eng.~Sitz so einstellen, dass die Schultern nicht hochgezogen werden.~Voll strecken.
 calisthenics|bw|tri|ch sh|pushup|Trizeps|||0|0|0|Hände eng, Ellbogen bleiben am Körper.~Körper bleibt in einer Linie.~Stufe mit Knien oder Händen erhöht möglich.
 calisthenics|bw|tri||triceps|Trizeps|||0|0|0|Hände unter dem Kopf auf einer Erhöhung, Körper schräg.~Ellbogen beugen, Stirn zu den Händen.~Gerade nach oben strecken.
 strength|w|fo||curl|Handgelenkbeuger|||0|0|0.05|Unterarme aufgelegt, nur die Hände bewegen.~Langsam und vollständig.~Leichtes Gewicht, hohe Wiederholungen.
-functional|sec|fo tr|ab gl|idle|Griffkraft / Rumpf||3 × 30–40 m|0|0|0|Aufrecht gehen, Schultern unten, Bauch fest.~Gewicht gleich auf beide Seiten verteilen.~Kurze, kontrollierte Schritte.
+functional|sec|fo tr|ab gl|farmer|Griffkraft / Rumpf||3 × 30–40 m|0|0|0|Aufrecht gehen, Schultern unten, Bauch fest.~Gewicht gleich auf beide Seiten verteilen.~Kurze, kontrollierte Schritte.
 calisthenics|sec|fo la|sh|hang|Griffkraft||3 × 20–40 s|0|0|0|Schultern leicht aktiv, Rippen unten.~Entspannt aber stabil hängen.~Griffwechsel bei Ermüdung.
 strength|w|fo||curl|Finger|||0|0|0.03|Gewicht in den Fingern abrollen.~Langsam öffnen und wieder greifen.~Leicht beginnen.
 functional|sec|fo||idle|Zangengriff||3 × 20–30 s|0|0|0|Scheiben glatt aneinander zwischen Daumen und Fingern halten.~Aufrecht stehen.~Zeit bis zur Ermüdung.
@@ -119,10 +119,10 @@ core|w|ab||crunch|Gerade Bauchmuskeln|||0|0|0.3|Becken fixiert, Brust zum Becken
 core|w|lb|gl|rdl|Unterer Rücken|||0|0|0.3|Polster fest, Rücken gerade bewegen.~Nicht überstrecken.~Kontrolliert.
 core|bw|lb ab|gl sh|deadBug|Rumpfstabilität|||0|0|0|Vierfüßler, Arm und Gegenbein strecken.~Becken bleibt ruhig.~Kurz halten.
 core|sec|ab sh|lb|plank|Rumpfstabilität||3 × 30 s|0|0|0|Plank, abwechselnd Arm nach vorn.~Hüfte ruhig.~Langsam.
-functional|sec|ab|fo tr|idle|Rumpf (seitlich)||3 × 30 m|0|0|0|Last auf einer Seite, aufrecht bleiben.~Nicht zur Last neigen.~Kleine Schritte.
-functional|sec|sh ab|tr|idle|Schulterstabilität||3 × 20–30 m|0|0|0|Last über dem Kopf, Rippen unten.~Arm gestreckt, Schulter aktiv.~Langsam gehen.
-cardio|sec|qu ha|gl ca|buttKick|Herz-Kreislauf||3 × 5 min|300|0|0|Aufrecht laufen, Blick nach vorn.~Landung unter dem Körper.~Gleichmäßig atmen.
-cardio|sec|qu gl|ca ha|kneeRaise|Grundlagenausdauer||3 × 5 min|300|0|0|Aufrechte Haltung.~Ganzer Fußabrollschritt.~Zügig, aber entspannt.
+functional|sec|ab|fo tr|farmer|Rumpf (seitlich)||3 × 30 m|0|0|0|Last auf einer Seite, aufrecht bleiben.~Nicht zur Last neigen.~Kleine Schritte.
+functional|sec|sh ab|tr|farmer|Schulterstabilität||3 × 20–30 m|0|0|0|Last über dem Kopf, Rippen unten.~Arm gestreckt, Schulter aktiv.~Langsam gehen.
+cardio|sec|qu ha|gl ca|run|Herz-Kreislauf||3 × 5 min|300|0|0|Aufrecht laufen, Blick nach vorn.~Landung unter dem Körper.~Gleichmäßig atmen.
+cardio|sec|qu gl|ca ha|walk|Grundlagenausdauer||3 × 5 min|300|0|0|Aufrechte Haltung.~Ganzer Fußabrollschritt.~Zügig, aber entspannt.
 cardio|sec|qu gl|ha ca|kneeRaise|Beinausdauer||3 × 5 min|300|0|0|Sattel richtig einstellen.~Rücken lang, Schultern locker.~Rund treten.
 cardio|sec|la qu|gl ha bi|row|Ganzkörper-Ausdauer||3 × 5 min|300|0|0|Erst Beine drücken, dann Rücken, dann Arme.~Zurück in umgekehrter Reihenfolge.~Rücken lang.
 cardio|sec|la sh|ab gl|pullup|Ganzkörper schonend||3 × 5 min|300|0|0|Lange Züge.~Rumpf stabil.~Ruhig ausatmen ins Wasser.
@@ -138,14 +138,14 @@ plyo|bw|ch sh|tri ab|overhead|Explosive Ganzkörperkraft|||0|0|0|Weich landen, K
 strength|w|gl qu|sh tr ha|overhead|Ganzkörper-Schnellkraft|||0|0|0|Stange nah am Körper, Hüfte und Beine strecken.~Unter die Stange tauchen, Arme aktiv.~Kontrolliert ablegen.
 strength|w|gl qu|tr ha lb|rdl|Ganzkörper-Schnellkraft|||0|0|0|Stange eng an den Beinen nach oben.~Ellbogen schnell unter die Stange.~In stabiler Front-Position landen.
 strength|w|sh tri|gl qu|overhead|Schulter und Beine|||0|0|0|Mit Beinen Schwung holen.~Stange gerade über den Kopf.~Rumpf fest.
-strength|w|gl ha|lb qu|rdl|Hüftkraft|||0|0|0|Hüfte schnappt nach vorn, nicht die Arme heben.~Rücken lang, Kettlebell schwingt zwischen den Beinen.~Oben Gesäß und Bauch fest.
+strength|w|gl ha|lb qu|swing|Hüftkraft|||0|0|0|Hüfte schnappt nach vorn, nicht die Arme heben.~Rücken lang, Kettlebell schwingt zwischen den Beinen.~Oben Gesäß und Bauch fest.
 strength|w|sh ab|gl qu|bridge|Ganzkörper-Stabilität|||0|0|0|Blick bleibt auf der Kettlebell.~Arm bleibt senkrecht.~Jede Position kurz stabilisieren.
 strength|w|qu gl|ab|squat|Beine|||0|0|0|Gewicht vor der Brust.~Tiefe Hocke.~Rücken lang.
 core|w|ab|sh gl|bwsRotate|Rumpf und Schulter|||0|0|0|Blick zur Hand oben.~Hüfte nach hinten schieben.~Arm bleibt senkrecht.
 functional|sec|qu gl|ca ha|squat|Beine, Kondition||4 × 20 m|0|0|0|Körper schräg, Arme gestreckt.~Kurze kräftige Schritte.~Rücken flach.
 functional|sec|sh|ab bi tri|overhead|Schulterausdauer||4 × 30 s|0|0|0|Leicht gebeugte Knie.~Wellen aus Schultern und Hüfte.~Rücken stabil.
 functional|w|gl qu|la ha|rdl|Ganzkörperkraft|||0|0|0|Reifen mit geradem Rücken unterfassen.~Aus den Beinen kippen.~Aufstehen mit Hüfte.
-functional|sec|fo tr|ab gl|idle|Griff und Rumpf||4 × 30 m|0|0|0|Aufrecht gehen, Schultern tief.~Fester Griff.~Kleine Schritte.
+functional|sec|fo tr|ab gl|farmer|Griff und Rumpf||4 × 30 m|0|0|0|Aufrecht gehen, Schultern tief.~Fester Griff.~Kleine Schritte.
 functional|w|gl qu|la ab|squat|Ganzkörper|||0|0|0|Sack eng am Körper.~Rumpf fest.~Aufrecht bleiben.
 functional|bw|la ab|sh tri|overhead|Explosive Kraft|||0|0|0|Hochstrecken, dann mit ganzem Körper abwerfen.~Knie beugen.~Ball schnell wieder greifen.
 calisthenics|sec|fo|la|hang|Griffkraft||3 × 20 s|0|0|0|Schultern aktiv.~Nicht ruckartig loslassen.~Kurze Intervalle.
@@ -156,11 +156,11 @@ drill|sec|ca qu|ab|jumpRope|Beweglichkeit||3 × 1 min|0|0|0|Leicht auf den Fußb
 functional|sec|sh ab|qu gl|plank|Ganzkörper||3 × 20 m|0|0|0|Hüfte tief, Rücken gerade.~Gegenarm-Gegenbein.~Langsam und kontrolliert.
 functional|sec|qu gl|la ab|squat|Berufsfitness||3 × 2 min|0|0|0|Immer mit sauberer Technik.~Dosiert starten.~Auf Atmung achten.
 functional|sec|la bi|fo ab|pullup|Zugkraft||4 × 1 min|0|0|0|Hüfte nah an der Wand.~Mit Beinen drücken.~Griffe sicher greifen.
-cardio|sec|gl qu|ca ha|buttKick|Beschleunigung||8 × 15 s|0|0|0|Körper leicht vorgelehnt.~Hohes Knie.~Vollgas nach oben, locker zurückgehen.
-cardio|sec|qu gl|ca|kneeRaise|Beine, Kondition||6 × 30 s|0|0|0|Ganzen Fuß aufsetzen.~Aufrecht bleiben.~Beim Absteigen langsam.
+cardio|sec|gl qu|ca ha|run|Beschleunigung||8 × 15 s|0|0|0|Körper leicht vorgelehnt.~Hohes Knie.~Vollgas nach oben, locker zurückgehen.
+cardio|sec|qu gl|ca|walk|Beine, Kondition||6 × 30 s|0|0|0|Ganzen Fuß aufsetzen.~Aufrecht bleiben.~Beim Absteigen langsam.
 plyo|bw|qu gl|ca ab|squat|Beweglichkeit|||0|0|0|Weich landen.~Blick nach vorn.~Mit niedrigen Hindernissen beginnen.
 calisthenics|bw|la ch|tri bi ab|pullup|Ganzkörper|||0|0|0|Mit Aufwärmen beginnen.~Sauber vor viel.~Stange sicher greifen.
-cardio|sec|qu gl|ca ha|kneeRaise|Ausdauer||60 min|0|0|0|Fester Schritt.~Stöcke einsetzen.~Auf Untergrund achten.
+cardio|sec|qu gl|ca ha|walk|Ausdauer||60 min|0|0|0|Fester Schritt.~Stöcke einsetzen.~Auf Untergrund achten.
 cardio|sec|la sh|ab bi|row|Oberkörper-Ausdauer||20 min|0|0|0|Aus dem Rumpf rotieren.~Rücken lang.~Gleichmäßiger Schlag.
 cardio|sec|qu gl la|tri sh|kneeRaise|Ganzkörper||20 min|0|0|0|Rhythmisch.~Stockeinsatz mit dem Körper.~Aufrecht.
 mobility|sec|lb|ab|childPose|Beweglichkeit|back|2 × 40 s|40|0|0|Atmung bestimmt das Tempo.~Spüren statt kämpfen.~Nie in Schmerz ziehen.
