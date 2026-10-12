@@ -295,8 +295,17 @@ enum ExerciseCatalog {
 
     static var all: [Exercise] { training + mobility }
 
+    /// Gesamte Bibliothek: handverlesene + erzeugte Übungen (ohne Dopplungen).
+    static let library: [Exercise] = {
+        var seen = Set<String>()
+        return (training + mobility + ExerciseGenerator.all).filter { seen.insert($0.name).inserted }
+    }()
+    static var libraryTraining: [Exercise] { library.filter { !$0.isMobility } }
+    static var libraryMobility: [Exercise] { library.filter { $0.isMobility } }
+    private static let byName: [String: Exercise] = Dictionary(library.map { ($0.name, $0) }, uniquingKeysWith: { a, _ in a })
+
     static func exercise(named name: String) -> Exercise? {
-        all.first { $0.name == name }
+        all.first { $0.name == name } ?? byName[name]
     }
 
     static func mobility(in region: MobilityRegion) -> [Exercise] {

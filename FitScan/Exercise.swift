@@ -23,6 +23,17 @@ enum Equipment: String, CaseIterable, Codable {
     case dumbbell = "Kurzhanteln"
     case barbell = "Langhantel und Bank"
     case bar = "Klimmzugstange / Barren"
+    case cable = "Kabelzug"
+    case machine = "Maschine"
+    case kettlebell = "Kettlebell"
+    case band = "Widerstandsband"
+    case sling = "Schlingentrainer / Ringe"
+    case medball = "Medizinball"
+    case foam = "Faszienrolle"
+    case cardioGear = "Cardio-Gerät"
+    case outdoor = "Draußen"
+    case bike = "Fahrrad"
+    case pool = "Schwimmbad"
 }
 
 /// Welche Ausstattung jemand hat.
@@ -30,19 +41,22 @@ enum Setup: String, CaseIterable, Identifiable {
     case gym = "Fitnessstudio (alles)"
     case home = "Zuhause mit Kurzhanteln"
     case bodyweight = "Nur Körpergewicht (Calisthenics)"
+    case outdoor = "Draußen / Park"
     var id: String { rawValue }
 
     func allows(_ e: Equipment) -> Bool {
         switch self {
         case .gym: return true
-        case .home: return e == .none || e == .dumbbell
-        case .bodyweight: return e == .none || e == .bar
+        case .home: return [.none, .dumbbell, .band, .kettlebell, .medball, .foam, .sling].contains(e)
+        case .bodyweight: return [.none, .bar, .band, .sling, .foam].contains(e)
+        case .outdoor: return [.none, .bar, .band, .sling, .foam, .outdoor, .bike, .pool].contains(e)
         }
     }
 }
 
 enum Category: String, CaseIterable, Identifiable {
     case strength = "Kraft", calisthenics = "Calisthenics", core = "Rumpf", drill = "Lauf-ABC", mobility = "Mobility"
+    case cardio = "Cardio", plyo = "Plyometrie", functional = "Funktionell"
     var id: String { rawValue }
 }
 
@@ -87,6 +101,10 @@ struct Exercise: Identifiable, Hashable {
     let tips: [String]
     /// Grobe Orientierung für das Eintragen: Startgewicht als Faktor des Körpergewichts
     var startFactor: Double? = nil
+    /// Schlüssel der 3D-Bewegung (BodyMotion.rawValue), sonst automatisch aus dem Namen
+    var motionKey: String? = nil
+    /// Kurzbeschreibung des Trainingsziels (z. B. "Gerade Bauchmuskeln")
+    var target: String = ""
 
     var isMobility: Bool { category == .mobility }
     var allMuscles: [Muscle] { primary + secondary }

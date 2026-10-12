@@ -8,7 +8,7 @@ struct MobilityView: View {
     @State private var region: MobilityRegion? = nil
 
     private var items: [Exercise] {
-        ExerciseCatalog.mobility.filter {
+        ExerciseCatalog.libraryMobility.filter {
             (region == nil || $0.region == region) && profile.setup.allows($0.equipment)
         }
     }

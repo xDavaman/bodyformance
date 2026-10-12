@@ -49,12 +49,12 @@ struct TrainingView: View {
                     NavigationLink {
                         ExerciseLibraryView()
                     } label: {
-                        Label("Alle Übungen (\(ExerciseCatalog.training.count))", systemImage: "list.bullet")
+                        Label("Alle Übungen (\(ExerciseCatalog.libraryTraining.count))", systemImage: "list.bullet")
                     }
                     NavigationLink {
                         MobilityView()
                     } label: {
-                        Label("Mobility (\(ExerciseCatalog.mobility.count) Übungen)", systemImage: "figure.flexibility")
+                        Label("Mobility (\(ExerciseCatalog.libraryMobility.count) Übungen)", systemImage: "figure.flexibility")
                     }
                 }
             }
@@ -92,30 +92,45 @@ struct ExerciseRow: View {
 struct ExerciseLibraryView: View {
     @EnvironmentObject var profile: UserProfile
     @State private var category: Category? = nil
-    @State private var onlyMine = true
+    @State private var muscle: Muscle? = nil
+    @State private var equipment: Equipment? = nil
+    @State private var onlyMine = false
     @State private var search = ""
 
     private var items: [Exercise] {
-        ExerciseCatalog.training.filter { ex in
+        let q = search.trimmingCharacters(in: .whitespaces)
+        return ExerciseCatalog.library.filter { ex in
             (category == nil || ex.category == category)
+                && (muscle == nil || ex.primary.contains(muscle!))
+                && (equipment == nil || ex.equipment == equipment)
                 && (!onlyMine || profile.setup.allows(ex.equipment))
-                && (search.isEmpty || ex.name.localizedCaseInsensitiveContains(search)
-                    || ex.primary.contains { $0.rawValue.localizedCaseInsensitiveContains(search) })
+                && (q.isEmpty || ex.name.localizedCaseInsensitiveContains(q)
+                    || ex.primary.contains { $0.rawValue.localizedCaseInsensitiveContains(q) })
         }
     }
 
     var body: some View {
+        let list = items
         List {
             Section {
                 Picker("Kategorie", selection: $category) {
                     Text("Alle").tag(Category?.none)
-                    ForEach([Category.strength, .calisthenics, .core, .drill]) { Text($0.rawValue).tag(Category?.some($0)) }
+                    ForEach(Category.allCases) { Text($0.rawValue).tag(Category?.some($0)) }
                 }
-                .pickerStyle(.segmented)
+                Picker("Muskelgruppe", selection: $muscle) {
+                    Text("Alle").tag(Muscle?.none)
+                    ForEach(Muscle.allCases) { Text($0.rawValue).tag(Muscle?.some($0)) }
+                }
+                Picker("Gerät / Ort", selection: $equipment) {
+                    Text("Alle").tag(Equipment?.none)
+                    ForEach(Equipment.allCases, id: \.self) { Text($0.rawValue).tag(Equipment?.some($0)) }
+                }
                 Toggle("Nur Übungen für meine Ausstattung", isOn: $onlyMine)
+            } footer: {
+                Text("\(list.count) von \(ExerciseCatalog.library.count) Übungen")
             }
             Section {
-                ForEach(items) { ex in
+                ForEach(list) { ex in
                     NavigationLink {
                         ExerciseDetailView(exercise: ex)
                     } label: {

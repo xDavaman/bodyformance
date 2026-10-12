@@ -11,13 +11,14 @@ struct ExerciseDetailView: View {
         List {
             Section(exercise.isMobility ? "Bewegung und gedehnte Muskeln" : "Bewegung und trainierte Muskeln") {
                 MuscleModelView(primary: exercise.primary, secondary: exercise.secondary, height: 340,
-                                motion: BodyMotion.forExercise(name: exercise.name, primary: exercise.primary))
+                                motion: exercise.motionKey.flatMap { BodyMotion(rawValue: $0) } ?? BodyMotion.forExercise(name: exercise.name, primary: exercise.primary))
                     .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
             }
 
             Section("Details") {
                 LabeledContent("Bereich", value: exercise.region?.rawValue ?? exercise.category.rawValue)
                 LabeledContent("Geräte", value: exercise.equipment.rawValue)
+                if !exercise.target.isEmpty { LabeledContent("Ziel", value: exercise.target) }
                 if exercise.isMobility {
                     LabeledContent("Dauer", value: exercise.dose)
                 } else {
