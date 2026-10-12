@@ -11,7 +11,7 @@ struct ExerciseDetailView: View {
         List {
             Section(exercise.isMobility ? "Bewegung und gedehnte Muskeln" : "Bewegung und trainierte Muskeln") {
                 MuscleModelView(primary: exercise.primary, secondary: exercise.secondary, height: 340,
-                                motion: exercise.motionKey.flatMap { BodyMotion(rawValue: $0) } ?? BodyMotion.forExercise(name: exercise.name, primary: exercise.primary))
+                                motion: BodyMotion.scene(for: exercise).0, gear: BodyMotion.scene(for: exercise).1)
                     .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
             }
 

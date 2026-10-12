@@ -49,6 +49,15 @@ enum BodyMotion: String, CaseIterable {
     case pushup
     case deadBug
     case hollowHold
+    case squatBar
+    case benchBar
+    case overheadBar
+    case rdlBar
+    case rowBar
+    case curlBar
+    case squatDb
+    case lungeDb
+    case calfDb
 }
 
 extension BodyRig {
@@ -100,5 +109,14 @@ extension BodyRig {
         .pushup: Motion(period: 3.8, lying: false, bench: false, free: true, wallZ: nil, yaw: 1.2, camY: 0.4, props: .none),
         .deadBug: Motion(period: 8.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 1.2, camY: 0.4, props: .none),
         .hollowHold: Motion(period: 6.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 1.2, camY: 0.4, props: .none),
+        .squatBar: Motion(period: 4.4, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .barbell),
+        .benchBar: Motion(period: 4.2, lying: true, bench: true, free: false, wallZ: nil, yaw: 1.15, camY: 0.55, props: .barbell),
+        .overheadBar: Motion(period: 4.0, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .barbell),
+        .rdlBar: Motion(period: 4.6, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .barbell),
+        .rowBar: Motion(period: 3.8, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .barbell),
+        .curlBar: Motion(period: 3.8, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .barbell),
+        .squatDb: Motion(period: 3.9, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .dumbbell),
+        .lungeDb: Motion(period: 8.0, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .dumbbell),
+        .calfDb: Motion(period: 3.2, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .dumbbell),
     ]
 }

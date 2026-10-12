@@ -3,7 +3,11 @@ import RealityKit
 import UIKit
 import simd
 
-enum MotionProps { case none, dumbbell, pullbar }
+enum MotionProps { case none, dumbbell, pullbar, barbell }
+
+/// Wie die Hand-Requisiten dargestellt werden: auto = wie bisher (Kurzhanteln, Kabelturm bei Curl/Seitheben),
+/// dumbbell = immer Kurzhanteln, band = Widerstandsband unter den Füßen, cable = Kabelturm
+enum PropGear { case auto, dumbbell, band, cable }
 
 /// Beschreibung einer Bewegung (Lage, Requisiten, Kamera). Die Gelenkdaten stehen in FitScan_Motions.bin.
 struct Motion {
@@ -81,6 +85,36 @@ enum MotionStore {
 }
 
 extension BodyMotion {
+    /// Bewegung und Darstellung der Hilfsmittel passend zur Übung (Langhantel, Kurzhantel, Band, Kabelturm).
+    static func scene(for ex: Exercise) -> (BodyMotion, PropGear) {
+        var m = ex.motionKey.flatMap { BodyMotion(rawValue: $0) } ?? forExercise(name: ex.name, primary: ex.primary)
+        var gear = PropGear.auto
+        switch ex.equipment {
+        case .barbell:
+            switch m {
+            case .benchPress: m = .benchBar
+            case .squat, .deepSquat: m = .squatBar
+            case .overhead: m = .overheadBar
+            case .rdl: m = .rdlBar
+            case .row: m = .rowBar
+            case .curl: m = .curlBar
+            default: break
+            }
+        case .dumbbell, .kettlebell:
+            gear = .dumbbell
+            switch m {
+            case .squat: m = .squatDb
+            case .lunge: m = .lungeDb
+            case .calf: m = .calfDb
+            default: break
+            }
+        case .band: gear = .band
+        case .cable: gear = .cable
+        default: break
+        }
+        return (m, gear)
+    }
+
     /// Bewegung passend zum Übungsnamen, sonst anhand der trainierten Muskeln.
     static func forExercise(name: String, primary: [Muscle]) -> BodyMotion {
         let n = name.lowercased()
@@ -194,6 +228,29 @@ final class BodyRig {
     /// Gym-Raum mit Boden, Wänden, Decke, Lichtern und Geräten
     let gym = GymRoom()
     private var dumbbells: [Entity] = []
+    /// Langhantel (Stange 2,2 m + je 2 Scheiben), Achse = lokale y-Achse
+    let barbell: Entity = {
+        let e = Entity()
+        let steel = SimpleMaterial(color: UIColor(white: 0.72, alpha: 1), roughness: 0.25, isMetallic: true)
+        let plate = SimpleMaterial(color: UIColor(white: 0.10, alpha: 1), roughness: 0.5, isMetallic: false)
+        let red = SimpleMaterial(color: UIColor(red: 0.80, green: 0.12, blue: 0.10, alpha: 1), roughness: 0.5, isMetallic: false)
+        e.addChild(ModelEntity(mesh: .generateCylinder(height: 2.2, radius: 0.014), materials: [steel]))
+        for s: Float in [-1, 1] {
+            let sleeve = ModelEntity(mesh: .generateCylinder(height: 0.40, radius: 0.025), materials: [steel])
+            sleeve.position = [0, s * 0.80, 0]
+            e.addChild(sleeve)
+            for (k, y) in [0.50, 0.545, 0.58].enumerated() {
+                let pl = ModelEntity(mesh: .generateCylinder(height: 0.04, radius: k == 0 ? 0.225 : 0.17), materials: [k == 0 ? red : plate])
+                pl.position = [0, s * Float(y), 0]
+                e.addChild(pl)
+            }
+        }
+        e.isEnabled = false
+        return e
+    }()
+    /// Widerstandsband: zwei Stränge (Fuß → Hand) mit Griffen
+    private var bands: [ModelEntity] = []
+    private var bandGrips: [ModelEntity] = []
     var cableMode: Bool { gym.layout.cableHeight != nil }
     private(set) var body: ModelEntity?
     private var jointMap: [Int] = []
@@ -216,6 +273,18 @@ final class BodyRig {
             dumbbells.append(db)
         }
         root.addChild(gym.root)
+        root.addChild(barbell)
+        let bandMat = SimpleMaterial(color: UIColor(red: 0.95, green: 0.55, blue: 0.10, alpha: 1), roughness: 0.6, isMetallic: false)
+        for _ in 0..<2 {
+            let b = ModelEntity(mesh: .generateCylinder(height: 1, radius: 0.007), materials: [bandMat])
+            b.isEnabled = false
+            root.addChild(b)
+            bands.append(b)
+            let g = ModelEntity(mesh: .generateCylinder(height: 0.11, radius: 0.014), materials: [dark])
+            g.isEnabled = false
+            root.addChild(g)
+            bandGrips.append(g)
+        }
         iRoot = MotionStore.jointNames.firstIndex(of: "root") ?? 0
         iSpine2 = MotionStore.jointNames.firstIndex(of: "spine2") ?? 0
         iHead = MotionStore.jointNames.firstIndex(of: "head") ?? 0
@@ -261,13 +330,16 @@ final class BodyRig {
 
     // MARK: Pose setzen
 
-    func apply(_ mo: Motion, clip: MotionClip?, time rawTime: Float) {
+    func apply(_ mo: Motion, clip: MotionClip?, time rawTime: Float, gear: PropGear = .auto) {
         // Leicht schwankendes Tempo: keine Wiederholung gleicht exakt der vorigen
         let time = rawTime + 0.10 * sin(rawTime * 0.37) + 0.05 * sin(rawTime * 1.13)
         bench.isEnabled = mo.bench
         pullBar.isEnabled = mo.props == .pullbar
-        let cableOn = cableMode && mo.props == .dumbbell
-        for db in dumbbells { db.isEnabled = mo.props == .dumbbell && !cableOn }
+        let bandOn = gear == .band && mo.props == .dumbbell && !mo.free
+        let cableOn = cableMode && mo.props == .dumbbell && !bandOn
+        for db in dumbbells { db.isEnabled = mo.props == .dumbbell && !cableOn && !bandOn }
+        barbell.isEnabled = mo.props == .barbell
+        for k in 0..<2 { bands[k].isEnabled = bandOn; bandGrips[k].isEnabled = bandOn }
         if let wz = mo.wallZ {
             wall.isEnabled = true
             wall.position = [0, 1.25, wz + (wz > 0 ? 0.015 : -0.015)]
@@ -294,6 +366,11 @@ final class BodyRig {
             tr[jointMap[j]] = Transform(scale: [1, 1, 1], rotation: q, translation: p)
         }
         body.jointTransforms = tr
+        if mo.props == .barbell, clip.propCount > 0 {
+            let b0 = i0 * clip.propCount, b1 = i1 * clip.propCount
+            barbell.position = clip.propPos[b0] + (clip.propPos[b1] - clip.propPos[b0]) * a
+            barbell.orientation = simd_slerp(simd_quatf(vector: clip.propRot[b0]), simd_quatf(vector: clip.propRot[b1]), a)
+        }
         if mo.props == .dumbbell {
             for k in 0..<min(dumbbells.count, clip.propCount) {
                 let b0 = i0 * clip.propCount + k, b1 = i1 * clip.propCount + k
@@ -301,6 +378,19 @@ final class BodyRig {
                 dumbbells[k].orientation = simd_slerp(simd_quatf(vector: clip.propRot[b0]), simd_quatf(vector: clip.propRot[b1]), a)
             }
             if cableOn { gym.updateCables(dumbbells.map { ($0.position, $0.orientation) }) }
+            if bandOn {
+                for k in 0..<min(2, dumbbells.count) {
+                    let hand = dumbbells[k].position
+                    let anchor = mo.lying ? SIMD3<Float>(hand.x < 0 ? -0.10 : 0.10, 0.22, -0.2) : SIMD3<Float>(hand.x < 0 ? -0.11 : 0.11, 0.03, 0.04)
+                    let d = hand - anchor
+                    let len = max(simd_length(d), 0.01)
+                    bands[k].position = anchor + d * 0.5
+                    bands[k].scale = [1, len, 1]
+                    bands[k].orientation = simd_quatf(from: [0, 1, 0], to: d / len)
+                    bandGrips[k].position = hand
+                    bandGrips[k].orientation = dumbbells[k].orientation
+                }
+            }
         }
     }
 }

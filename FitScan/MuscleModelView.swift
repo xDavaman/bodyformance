@@ -104,10 +104,12 @@ struct MuscleModelView: View {
     var height: CGFloat = 300
     /// Bewegung des Körpers; nil = ruhige Standhaltung (Atmung)
     var motion: BodyMotion? = nil
+    var gear: PropGear = .auto
     @State private var showBack: Bool
 
-    init(primary: [Muscle], secondary: [Muscle] = [], height: CGFloat = 300, motion: BodyMotion? = nil) {
+    init(primary: [Muscle], secondary: [Muscle] = [], height: CGFloat = 300, motion: BodyMotion? = nil, gear: PropGear = .auto) {
         self.motion = motion
+        self.gear = gear
         self.primary = primary
         self.secondary = secondary
         self.height = height
@@ -117,7 +119,7 @@ struct MuscleModelView: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            MuscleRealityScene(primary: primary, secondary: secondary, showBack: showBack, motion: motion ?? .idle)
+            MuscleRealityScene(primary: primary, secondary: secondary, showBack: showBack, motion: motion ?? .idle, gear: gear)
                 .frame(height: height)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             Picker("Ansicht", selection: $showBack) {
@@ -160,6 +162,7 @@ struct MuscleRealityScene: UIViewRepresentable {
     let secondary: [Muscle]
     let showBack: Bool
     var motion: BodyMotion = .idle
+    var gear: PropGear = .auto
 
     static let neutralBody = UIColor(white: 0.80, alpha: 1)
 
@@ -173,6 +176,7 @@ struct MuscleRealityScene: UIViewRepresentable {
         var dragging = false
         let rig = BodyRig()
         var motion: BodyMotion = .idle
+        var gear: PropGear = .auto
         var motionDef: Motion = BodyRig.library[.idle]!
         var clip: MotionClip? = MotionStore.clips["idle"]
         var camera: PerspectiveCamera?
@@ -203,7 +207,7 @@ struct MuscleRealityScene: UIViewRepresentable {
             // Sanftes Pendeln, solange man nicht dreht; Vorne/Hinten gleitet weich
             baseYaw += (targetYaw - baseYaw) * min(1, dt * 6)
             let sway: Float = dragging ? 0 : (motion == .idle ? 0.22 : 0.07) * sin(time * 0.7)
-            rig.apply(motionDef, clip: clip, time: time)
+            rig.apply(motionDef, clip: clip, time: time, gear: gear)
             // Der Raum steht fest, die Kamera kreist um den Körper
             let a = baseYaw + userYaw + sway
             let r = layout.radius
@@ -248,14 +252,15 @@ struct MuscleRealityScene: UIViewRepresentable {
 
     func updateUIView(_ view: ARView, context: Context) {
         let c = context.coordinator
-        if c.motion != motion || !c.started {
+        if c.motion != motion || c.gear != gear || !c.started {
             c.started = true
             c.motion = motion
+            c.gear = gear
             let def = BodyRig.library[motion] ?? BodyRig.library[.idle]!
             c.motionDef = def
             c.clip = MotionStore.clips[motion.rawValue] ?? MotionStore.clips["idle"]
             c.time = 0
-            c.layout = GymLayout.forMotion(motion, def: def)
+            c.layout = GymLayout.forMotion(motion, def: def, gear: gear)
             c.rig.gym.setLayout(c.layout)
             c.camera?.camera.fieldOfViewInDegrees = c.layout.fov
         }

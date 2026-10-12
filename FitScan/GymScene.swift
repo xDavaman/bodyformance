@@ -18,14 +18,21 @@ struct GymLayout {
     var fov: Float = 36
     var radius: Float = 3.0
 
-    static func forMotion(_ m: BodyMotion, def: Motion) -> GymLayout {
+    static func forMotion(_ m: BodyMotion, def: Motion, gear: PropGear = .auto) -> GymLayout {
         var l = GymLayout()
-        switch m {
-        case .curl, .lateral:
+        let wantsCable = gear == .cable ? (def.props == .dumbbell && !def.lying && !def.free)
+                                        : (gear == .auto && (m == .curl || m == .lateral))
+        if wantsCable {
             l.cableHeight = 0.22
             l.yaw = 1.45
             l.fov = 48
             l.radius = 3.2
+        }
+        switch m {
+        case .squatBar, .squatDb:
+            l.squatRack = m == .squatBar
+        case .curl, .lateral:
+            break
         case .pullup, .hang, .legRaise:
             l.pullRig = true
         case .squat, .deepSquat:
@@ -34,6 +41,7 @@ struct GymLayout {
             break
         }
         if def.free || (def.lying && !def.bench) { l.mat = true }
+        if (def.lying || def.free) && l.cableHeight == nil { l.radius = 2.4 }
         return l
     }
 }
@@ -339,10 +347,6 @@ final class GymRoom {
             _ = box([0.10, 0.05, 0.12], [x, 1.40, z + 0.10], red, parent: squatRack)
         }
         _ = box([1.50, 0.06, 0.06], [0, 2.28, z], frame, parent: squatRack)
-        let bar = ModelEntity(mesh: .generateCylinder(height: 2.2, radius: 0.014), materials: [GymTex.steel(0.7)])
-        bar.orientation = simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
-        bar.position = [0, 1.46, z + 0.10]
-        squatRack.addChild(bar)
         for sx: Float in [-1, 1] {
             let plate = ModelEntity(mesh: .generateCylinder(height: 0.04, radius: 0.225), materials: [GymTex.paint(UIColor(white: 0.1, alpha: 1))])
             plate.orientation = simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
