@@ -56,7 +56,7 @@ struct PrivacySection: View {
     var body: some View {
         Section {
             Toggle("Apple-Health-Daten verwenden", isOn: $consentHealth)
-            NavigationLink { LegalTextView() } label: { Label("Datenschutzerklärung und Impressum", systemImage: "hand.raised") }
+            NavigationLink { LegalTextView() } label: { Label("Datenschutz, Haftung und Impressum", systemImage: "hand.raised") }
             if let url = exportURL {
                 ShareLink(item: url) { Label("Meine Daten exportieren (JSON)", systemImage: "square.and.arrow.up") }
             } else {
@@ -109,34 +109,19 @@ struct PrivacySection: View {
 struct LegalTextView: View {
     var body: some View {
         List {
-            Section("Datenschutzerklärung (Kurzfassung)") {
-                Text("""
-                Verantwortlicher: \(LegalInfo.responsibleName), \(LegalInfo.responsibleAddress), \(LegalInfo.contactEmail)
-
-                Daten: Körpermaße, Gewicht, Körperfett, Trainings- und Ernährungsdaten, Schritte und Aktivität aus Apple Health, optionale Scans und Fotos, Profilname und Profilbild, optional Standort während eines Trainings.
-
-                Zweck: Anzeige deiner Fortschritte, Trainingsplanung, Rang-System und Teilen auf deinen Wunsch.
-
-                Rechtsgrundlage: deine ausdrückliche Einwilligung (Art. 6 Abs. 1 lit. a, Art. 9 Abs. 2 lit. a DSGVO). Widerruf jederzeit unter Profil → Datenschutz.
-
-                Speicherung: ausschließlich auf deinem Gerät. Es werden keine Gesundheitsdaten an Server oder Dritte übertragen und keine Daten verkauft.
-
-                Weitergabe: nur, wenn du selbst etwas teilst (z. B. per WhatsApp).
-
-                Deine Rechte: Auskunft, Berichtigung, Löschung, Export (Profil → Datenschutz), Widerruf und Beschwerde bei einer Aufsichtsbehörde.
-
-                Hinweis: BFC ersetzt keine ärztliche Beratung.
-                """)
-                .font(.footnote)
+            Section {
+                Text("Datenschutzerklärung").font(.title2.bold())
+                Text("Dies ist die vollständige Fassung. Sie gilt für BFC und BFC Scanner.").font(.footnote).foregroundStyle(.secondary)
             }
-            Section("Haftungsausschluss") {
-                Text("Haftungsausschluss: BFC liefert allgemeine Informationen zu Training, Ernährung und Bewegung. Es ist keine medizinische, therapeutische oder Ernährungsberatung und ersetzt keinen Arzt. Alle Angaben, Berechnungen, Pläne, Kalorien- und Trainingsvorschläge sind Richtwerte ohne Gewähr. Die Nutzung erfolgt auf eigene Verantwortung. Sprich vor Diät, Fasten oder neuem Training mit einem Arzt, besonders bei Vorerkrankungen, Medikamenten, Schwangerschaft oder Essstörungen. Der Entwickler haftet nicht für Schäden, die aus der Nutzung der App oder aus dem Befolgen ihrer Vorschläge entstehen, soweit gesetzlich zulässig. Unberührt bleibt die Haftung für Vorsatz und grobe Fahrlässigkeit sowie für die Verletzung von Leben, Körper oder Gesundheit, soweit das Gesetz sie vorschreibt. Das gilt besonders für den Extrem-Modus.").font(.footnote)
+            ForEach(Array(LegalTexts.privacy.enumerated()), id: \.offset) { _, sec in
+                Section(sec.title) { Text(sec.body).font(.footnote) }
             }
+            Section("Haftungsausschluss") { Text(LegalTexts.disclaimer).font(.footnote) }
             Section("Impressum") {
                 Text("\(LegalInfo.responsibleName)\n\(LegalInfo.responsibleAddress)\nE-Mail: \(LegalInfo.contactEmail)").font(.footnote)
             }
             if let u = LegalInfo.privacyURL {
-                Section { Link("Vollständige Datenschutzerklärung online", destination: u) }
+                Section { Link("Datenschutzerklärung online", destination: u) }
             }
         }
         .navigationTitle("Datenschutz")
