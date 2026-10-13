@@ -16,7 +16,7 @@ Ein Datenschutzbeauftragter ist nicht bestellt, weil hierzu keine gesetzliche Pf
 """),
         ("2. Grundprinzip: Deine Daten bleiben auf deinem Gerät", """
 BFC speichert deine Daten ausschließlich lokal auf deinem iPhone (im geschützten App-Speicher). Es gibt keinen BFC-Server, kein Benutzerkonto und keine Registrierung. Gesundheitsdaten, Körpermaße, Trainings- und Ernährungsdaten, Scans, Fotos und deine GPS-Strecken werden von BFC nicht an den Entwickler übertragen. Der Entwickler hat auf diese Daten keinen Zugriff.
-Ausnahmen, bei denen Daten dein Gerät verlassen, sind in den Abschnitten 7 (Lebensmittel-Datenbank), 12 (Teilen) und 13 (Community, falls aktiviert) beschrieben. Sie passieren nur durch eine Aktion von dir.
+Ausnahmen, bei denen Daten dein Gerät verlassen, sind in den Abschnitten 7 (Lebensmittel-Datenbank), 12 (Teilen), 13 (Community, falls aktiviert) und 15 (anonyme Statistik, nur mit Einwilligung) beschrieben. Sie passieren nur durch eine Aktion von dir.
 """),
         ("3. Welche Daten verarbeitet werden", """
 a) Profil- und Körperdaten: Alter, Größe, Gewicht, Taillen- und Halsumfang, Körperfett-Schätzung, Trainingstage, Ziel (Muskelaufbau, Erhalt, Diät), Tempo, Wunsch-Optik, Ausrüstung, Schwerpunkt-Muskeln. Du gibst sie selbst ein. Sie sind Gesundheitsdaten im Sinne von Art. 9 DSGVO.
@@ -59,7 +59,7 @@ Wenn du eine Strecke als Bild teilst, erscheint sie als Linie. Mit der Option �
 Apple Health (lesen), Bewegung & Fitness (Schritte, Strecke), Kamera und LiDAR, Standort (nur während Training), Benachrichtigungen (lokale Erinnerungen, z. B. Scan-Termin). Jede Berechtigung ist freiwillig und kann in den iOS-Einstellungen widerrufen werden. Ohne eine Berechtigung entfällt nur die zugehörige Funktion.
 """),
         ("11. Empfänger und Auftragsverarbeiter", """
-BFC gibt keine personenbezogenen Daten an Dritte weiter und verkauft keine Daten. Es sind keine Werbe-, Tracking- oder Analyse-Dienste eingebunden. Technisch beteiligt sind allein Apple (iOS, Apple Health, Share-Sheet, App Store) nach deren eigenen Bedingungen und Open Food Facts bei Lebensmittelabfragen (Abschnitt 7). Eine Übermittlung in Drittländer durch BFC findet nicht statt. Sollte künftig Werbung eingebunden werden, wird diese Erklärung vorher erweitert, du wirst um Einwilligung gebeten, und Gesundheitsdaten werden dafür nie verwendet.
+BFC gibt keine personenbezogenen Daten an Dritte weiter und verkauft keine Daten. Derzeit sind keine Werbe-, Tracking- oder Analyse-Dienste eingebunden; mögliche künftige Dienste (Firebase in Frankfurt, Werbung) sind vorab in den Abschnitten 15 bis 17 beschrieben und nur mit deiner Einwilligung aktiv. Technisch beteiligt sind allein Apple (iOS, Apple Health, Share-Sheet, App Store) nach deren eigenen Bedingungen und Open Food Facts bei Lebensmittelabfragen (Abschnitt 7). Eine Übermittlung in Drittländer durch BFC findet nicht statt. Gesundheitsdaten werden nie für Werbung oder Statistik verwendet.
 """),
         ("12. Teilen von Ergebnissen", """
 Über „Teilen“ erzeugt BFC lokal ein Bild (Tageskarte, Schritte, Gym, Essen, Lauf-Strecke, Rang). Du siehst die Vorschau und entscheidest, ob und an wen (z. B. WhatsApp, Instagram) du es über das iOS-Teilen-Menü sendest. Ab dem Versand gelten die Datenschutzbestimmungen der gewählten App. Das Bild kann dein Profilbild, deinen Namen und Gesundheitsdaten (z. B. Schritte, Kalorien) zeigen. Du trägst die Verantwortung dafür, was du veröffentlichst.
@@ -70,13 +70,28 @@ Die Community-Funktion ist optional und standardmäßig nicht verbunden. Falls d
         ("14. Extrem-Modus und Diät-Coach", """
 Der Diät-Coach berechnet Vorschläge aus deinen eigenen Angaben. Der Extrem-Modus erfordert eine gesonderte, ausdrückliche Bestätigung, die nur lokal gespeichert wird und nach 28 Tagen verfällt. Die Vorschläge sind allgemeine Informationen und keine medizinische Beratung (siehe Haftungsausschluss).
 """),
-        ("15. Sicherheit", """
+        ("15. Nutzungsstatistik (optional, nur mit Einwilligung)", """
+BFC kann anonyme Nutzungsstatistik erfassen, damit der Entwickler sieht, wie viele Personen die App nutzen, welche Funktionen genutzt werden und wo Abstürze auftreten. Das ist standardmäßig aus. Du schaltest es unter Profil → Datenschutz → „Anonyme Nutzungsstatistik“ ein und kannst es dort jederzeit wieder ausschalten.
+Stufe 1 (aktuell): Es läuft nur die Statistik von Apple (App Store Analytics, Abstürze). Sie ist aggregiert und für den Entwickler nur sichtbar, wenn du in den iOS-Einstellungen „Analyse und Verbesserungen → Mit App-Entwicklern teilen“ erlaubst. BFC sendet dafür selbst nichts.
+Stufe 2 (geplant): Google Firebase (Analytics) mit Datenhaltung in der EU, Region Frankfurt (Deutschland). Mit Google besteht ein Auftragsverarbeitungsvertrag. Bei möglichen Zugriffen aus Drittländern gelten Standardvertragsklauseln beziehungsweise das EU-US Data Privacy Framework. Vor dem Start dieser Stufe wird diese Erklärung aktualisiert und BFC fragt dich erneut.
+Erfasst werden nur anonyme Ereignisse (z. B. „Training gestartet“, „Scan abgeschlossen“, „Paywall geöffnet“), App-Version, iOS-Version, Gerätemodell, Sprache und eine zufällige Instanz-Kennung. Nie erfasst werden Name, E-Mail, Gesundheitswerte, Gewicht, Körperfett, Ernährung, Standort, Strecken, Fotos oder Scans.
+Rechtsgrundlage ist deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO, § 25 TDDDG). Du kannst sie jederzeit mit Wirkung für die Zukunft widerrufen. Die Ereignisdaten werden höchstens 14 Monate gespeichert, vorgesehen sind 2 Monate.
+"""),
+        ("16. Werbung (vorbereitet, derzeit nicht aktiv)", """
+BFC ist für optionale Werbung vorbereitet, um die App zu finanzieren. Solange in der App keine Werbung erscheint, wird dafür nichts verarbeitet. Bevor Werbung aktiviert wird, wird diese Erklärung um den Werbepartner, die übertragenen Daten und die Speicherdauer ergänzt.
+Dann gilt: Werbung erscheint nur mit deiner Einwilligung (Abfrage der Einwilligung und, wo nötig, die Apple-Abfrage zur App-Verfolgung). Ohne Einwilligung gibt es nur nicht personalisierte Werbung oder keine. Auf Seiten mit Gesundheitsbezug (Scan, Körperwerte, Diät, Extrem-Modus, Analysen) wird keine Werbung gezeigt, und Gesundheitsdaten werden nie für Werbung verwendet oder an Werbepartner gegeben. Mit Premium entfällt die Werbung. Die Einwilligung kannst du unter Profil → Datenschutz jederzeit widerrufen.
+"""),
+        ("17. Premium, Käufe und Abonnements", """
+Premium-Funktionen (z. B. zweiter Scan, vollständige Makros, Entwicklung des 3D-Modells, vollständige Analysen) werden über den App Store gekauft. Die Zahlung, Abrechnung, Kündigung und Rückerstattung wickelt ausschließlich Apple ab. BFC erhält keine Zahlungsdaten, keinen Namen und keine Apple-ID. Ob Premium aktiv ist, prüft die App auf dem Gerät über Apples StoreKit; der Status wird lokal gespeichert, damit Premium auch ohne Internet funktioniert.
+Abonnements verlängern sich automatisch, wenn du nicht mindestens 24 Stunden vor Ablauf kündigst. Du verwaltest und kündigst sie in den Einstellungen deiner Apple-ID unter „Abonnements“. Käufe lassen sich über „Käufe wiederherstellen“ auf neuen Geräten zurückholen. Gesetzliche Widerrufs- und Gewährleistungsrechte bleiben unberührt; für digitale Inhalte gelten die Bedingungen des App Stores.
+"""),
+        ("18. Sicherheit", """
 Deine Daten liegen im App-Speicher deines iPhones, der von iOS geschützt ist (Gerätesperre, Verschlüsselung bei gesetztem Code). Es gibt keine Datenübertragung zu BFC-Servern. Sichere dein Gerät mit einem Code oder Face ID. Der Export (JSON) und geteilte Dateien liegen unverschlüsselt in dem Ziel, das du wählst. Bei einer Verletzung des Schutzes personenbezogener Daten, soweit sie den Entwickler betrifft, werden Betroffene und gegebenenfalls die Aufsichtsbehörde nach den gesetzlichen Vorgaben informiert.
 """),
-        ("16. Kinder und Jugendliche", """
+        ("19. Kinder und Jugendliche", """
 BFC richtet sich an Personen ab 16 Jahren. Wenn du jünger bist, nutze die App nur mit Zustimmung deiner Eltern. Besonders Diät- und Extrem-Funktionen sind für Kinder und Jugendliche nicht geeignet.
 """),
-        ("17. Deine Rechte", """
+        ("20. Deine Rechte", """
 Du hast gegenüber dem Verantwortlichen folgende Rechte:
 • Auskunft (Art. 15 DSGVO) und Kopie der Daten
 • Berichtigung (Art. 16)
@@ -88,10 +103,10 @@ Du hast gegenüber dem Verantwortlichen folgende Rechte:
 Da die Daten fast ausschließlich lokal bei dir liegen, kannst du die meisten Rechte direkt in der App ausüben. Für alles Weitere schreibe an \(LegalInfo.contactEmail).
 Beschwerderecht: Du kannst dich bei einer Datenschutz-Aufsichtsbehörde beschweren, z. B. bei der Landesbeauftragten für Datenschutz und Informationsfreiheit Nordrhein-Westfalen (ldi.nrw.de), oder bei der Behörde an deinem Wohnort.
 """),
-        ("18. Pflichtangaben und Folgen eines Widerrufs", """
+        ("21. Pflichtangaben und Folgen eines Widerrufs", """
 Die Nutzung von BFC verlangt keine Pflichtangaben an den Entwickler. Ohne Einwilligung in die Verarbeitung von Apple-Health-Daten entfallen Schritt-Verlauf, Lifetime-Schritte, die Übernahme von Uhr-Workouts und Teile der Auswertung; du kannst weiter manuell Daten eintragen. Ein Widerruf wirkt nur für die Zukunft.
 """),
-        ("19. Änderungen dieser Erklärung", """
+        ("22. Änderungen dieser Erklärung", """
 Wenn sich die Apps oder die Rechtslage ändern, wird diese Erklärung angepasst. Die jeweils aktuelle Fassung findest du in der App unter Profil → Datenschutz und online unter der in App Store Connect angegebenen Adresse. Bei wesentlichen Änderungen (z. B. neue Datenübertragungen) fragt BFC erneut um deine Einwilligung.
 """),
     ]

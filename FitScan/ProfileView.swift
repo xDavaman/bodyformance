@@ -146,6 +146,7 @@ struct ProfileView: View {
                 LabeledContent("Protein", value: "\(profile.proteinGrams) g")
             }
 
+            PremiumAndAdsSection()
             PrivacySection()
         }
         .sheet(isPresented: $showExtremeConfirm) {

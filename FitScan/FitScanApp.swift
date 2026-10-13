@@ -17,6 +17,7 @@ struct FitScanApp: App {
     @StateObject private var scanSchedule = ScanSchedule()
     @StateObject private var avatar = AvatarStore()
     @StateObject private var rank = RankStore()
+    @StateObject private var premium = PremiumStore()
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
@@ -36,10 +37,11 @@ struct FitScanApp: App {
                 .environmentObject(scanSchedule)
                 .environmentObject(avatar)
                 .environmentObject(rank)
+                .environmentObject(premium)
                 .onChange(of: scenePhase) { _, phase in
                     if phase == .active { steps.start() } else if !session.running { steps.stop() }
                 }
-                .onAppear { steps.start(); health.sessionLog = sessionLog }
+                .onAppear { steps.start(); Analytics.track(.appOpen); health.sessionLog = sessionLog }
         }
     }
 }
