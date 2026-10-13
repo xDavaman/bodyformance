@@ -38,10 +38,11 @@ struct FitScanApp: App {
                 .environmentObject(avatar)
                 .environmentObject(rank)
                 .environmentObject(premium)
+                .keyboardFriendly()
                 .onChange(of: scenePhase) { _, phase in
                     if phase == .active { steps.start() } else if !session.running { steps.stop() }
                 }
-                .onAppear { steps.start(); Analytics.track(.appOpen); health.sessionLog = sessionLog }
+                .onAppear { KeyboardHelper.install(); steps.start(); Analytics.track(.appOpen); health.sessionLog = sessionLog }
         }
     }
 }
