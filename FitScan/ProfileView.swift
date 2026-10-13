@@ -69,6 +69,10 @@ struct ProfileView: View {
                 if profile.pace == .extreme {
                     Label("Extrem schnell ist nicht gesund und kann zu Gesundheitsschäden führen. Sprich vorher mit deinem Arzt. Noch \(profile.extremeDaysLeft) Tage, dann geht es automatisch auf „Schnell“ zurück.", systemImage: "exclamationmark.triangle.fill")
                         .font(.footnote).foregroundStyle(.red)
+                    Button(role: .destructive) { profile.extremeConfirmedAt = 0; profile.pace = .fast } label: {
+                        Label("Extrem-Modus abschalten", systemImage: "stop.circle")
+                    }
+                    Text("Bei erneutem Aktivieren musst du wieder alles bestätigen.").font(.caption2).foregroundStyle(.secondary)
                 }
                 Text(profile.pace.note(for: profile.goal)).font(.footnote).foregroundStyle(.secondary)
                 if let w = profile.weeksToGoal {

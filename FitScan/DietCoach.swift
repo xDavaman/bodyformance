@@ -90,7 +90,7 @@ extension UserProfile {
 struct DietCoachView: View {
     @EnvironmentObject var profile: UserProfile
     @State private var mode: DietMode = .comfort
-    @AppStorage("bfc.radical.confirmedAt") private var confirmedAt: Double = 0
+    private var confirmedAt: Double { profile.extremeConfirmedAt }
     @State private var showConfirm = false
 
     private var radicalActive: Bool { confirmedAt > 0 && Date().timeIntervalSince1970 - confirmedAt < 28 * 86400 }
@@ -160,7 +160,7 @@ struct DietCoachView: View {
         }
         .navigationTitle("Diät-Coach")
         .sheet(isPresented: $showConfirm) {
-            RadicalConfirmView { confirmedAt = Date().timeIntervalSince1970; mode = .radical }
+            RadicalConfirmView { profile.extremeConfirmedAt = Date().timeIntervalSince1970; mode = .radical }
         }
     }
 
@@ -182,6 +182,10 @@ struct DietCoachView: View {
                 if radicalActive {
                     let days = max(0, 28 - Int((Date().timeIntervalSince1970 - confirmedAt) / 86400))
                     Text("Bestätigt. Maximal noch \(days) Tage, danach Pause.").font(.footnote.bold())
+                    Button(role: .destructive) { profile.extremeConfirmedAt = 0; mode = .standard } label: {
+                        Label("Radikalen Modus beenden", systemImage: "stop.circle")
+                    }
+                    Text("Bei erneutem Aktivieren musst du wieder alles bestätigen.").font(.caption2).foregroundStyle(.secondary)
                 }
             }
         }
