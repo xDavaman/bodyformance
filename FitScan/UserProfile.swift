@@ -80,8 +80,17 @@ final class UserProfile: ObservableObject {
         get { Sport(rawValue: sportRaw) ?? .none }
         set { sportRaw = newValue.rawValue; objectWillChange.send() }
     }
+    /// Beginn des bestätigten Extrem-Tempos (0 = nie bestätigt). Läuft nach 28 Tagen ab.
+    @AppStorage("extremeConfirmedAt") var extremeConfirmedAt: Double = 0
+    var extremeActive: Bool { goal == .fatLoss && extremeConfirmedAt > 0 && Date().timeIntervalSince1970 - extremeConfirmedAt < 28 * 86400 }
+    var extremeDaysLeft: Int { max(0, 28 - Int((Date().timeIntervalSince1970 - extremeConfirmedAt) / 86400)) }
     var pace: Pace {
-        get { Pace(rawValue: paceRaw) ?? .normal }
+        get {
+            let p = Pace(rawValue: paceRaw) ?? .normal
+            // Extrem nur bei Diät und nur, solange die Bestätigung gilt – sonst zurück auf Schnell
+            if p == .extreme && !extremeActive { return .fast }
+            return p
+        }
         set { paceRaw = newValue.rawValue; objectWillChange.send() }
     }
     var focusMuscles: Set<Muscle> {
@@ -115,7 +124,7 @@ final class UserProfile: ObservableObject {
             break
         }
         switch pace {
-        case .fast: sets = sets.lowerBound...(sets.upperBound + 1)
+        case .fast, .extreme: sets = sets.lowerBound...(sets.upperBound + 1)
         case .slow: sets = sets.lowerBound...max(sets.lowerBound, sets.upperBound - 1)
         case .normal: break
         }
@@ -145,7 +154,12 @@ final class UserProfile: ObservableObject {
         let activity = 1.3 + 0.05 * Double(trainingDays) + (sport == .none ? 0 : 0.05)
         var kcal = bmr * activity
         switch goal {
-        case .fatLoss: kcal -= pace.deficit
+        case .fatLoss:
+            kcal -= pace.deficit
+            if pace == .extreme {
+                kcal = max(kcal, max(bmr, 1500))   // harte Untergrenze
+                return Int(kcal.rounded())
+            }
         case .muscle: kcal += pace.surplus
         case .maintain: break
         }
@@ -157,11 +171,11 @@ final class UserProfile: ObservableObject {
     var recommendedSteps: Int {
         switch goal {
         case .fatLoss:
-            switch pace { case .fast: return 12000; case .normal: return 10000; case .slow: return 8500 }
+            switch pace { case .fast, .extreme: return 12000; case .normal: return 10000; case .slow: return 8500 }
         case .maintain:
             return 8500
         case .muscle:
-            switch pace { case .fast: return 9000; case .normal: return 8000; case .slow: return 7000 }
+            switch pace { case .fast, .extreme: return 9000; case .normal: return 8000; case .slow: return 7000 }
         }
     }
     var stepGoal: Int { stepGoalCustom > 0 ? stepGoalCustom : recommendedSteps }

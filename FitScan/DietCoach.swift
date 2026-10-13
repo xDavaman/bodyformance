@@ -214,12 +214,12 @@ struct RadicalConfirmView: View {
                 Section {
                     Label("Achtung: gesundheitsschädlich", systemImage: "exclamationmark.triangle.fill")
                         .font(.title3.bold()).foregroundStyle(.red)
-                    Text("Der radikale Modus senkt die Kalorien stark. Das ist nicht gesund und kann deiner Gesundheit schaden: Muskel- und Leistungsverlust, Kreislaufprobleme, Gallensteine, Haarausfall, Nährstoffmangel, Stimmungstiefs. Er ist nur für kurze Zeit gedacht. BFC geht nie unter deinen Grundumsatz und nie unter 1 500 kcal.")
+                    Text("Der radikale Modus senkt die Kalorien stark. Das ist nicht gesund und kann deiner Gesundheit schaden: Muskel- und Leistungsverlust, Kreislaufprobleme, Gallensteine, Haarausfall, Nährstoffmangel, Stimmungstiefs. Er ist nur für kurze Zeit gedacht. Sprich vor dem Start unbedingt mit deinem Arzt, besonders bei Vorerkrankungen oder Medikamenten. BFC geht nie unter deinen Grundumsatz und nie unter 1 500 kcal.")
                         .font(.footnote)
                 }
                 Section("Bitte bestätigen") {
                     Toggle("Ich bin über 18 und gesund (keine Vorerkrankungen, nicht schwanger oder stillend, keine Essstörung)", isOn: $adult)
-                    Toggle("Ich habe vorher mit einer Ärztin oder einem Arzt gesprochen oder weiß, dass es mein Risiko ist", isOn: $healthy)
+                    Toggle("Ich habe mit meiner Ärztin oder meinem Arzt gesprochen oder spreche vor dem Start mit ihr oder ihm", isOn: $healthy)
                     Toggle("Ich verstehe die Risiken, nutze den Modus höchstens 4 Wochen und stoppe bei Beschwerden", isOn: $risks)
                     TextField("Zum Bestätigen „VERSTANDEN“ tippen", text: $typed).textInputAutocapitalization(.characters).autocorrectionDisabled()
                 }

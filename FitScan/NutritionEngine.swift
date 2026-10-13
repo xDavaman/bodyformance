@@ -92,11 +92,14 @@ enum Pace: String, CaseIterable, Identifiable {
     case fast = "Schnell"
     case normal = "Normal"
     case slow = "Langsam"
+    /// Kurz-Kur nur bei Diät: sehr großes Defizit, nur nach ausdrücklicher Bestätigung, nicht gesund auf Dauer
+    case extreme = "Extrem"
     var id: String { rawValue }
 
     var deficit: Double {
         switch self {
         case .fast: return 750
+        case .extreme: return 1000
         case .normal: return 500
         case .slow: return 300
         }
@@ -104,13 +107,14 @@ enum Pace: String, CaseIterable, Identifiable {
     var surplus: Double {
         switch self {
         case .fast: return 400
+        case .extreme: return 400
         case .normal: return 250
         case .slow: return 120
         }
     }
     var stepGoal: Int {
         switch self {
-        case .fast: return 12000
+        case .fast, .extreme: return 12000
         case .normal: return 10000
         case .slow: return 8500
         }
@@ -120,6 +124,8 @@ enum Pace: String, CaseIterable, Identifiable {
         case (.fatLoss, .fast): return "Schnell: großes Defizit (−750 kcal), ein Satz mehr pro Übung, 12 000 Schritte. Anstrengend; nicht länger als 8–12 Wochen am Stück."
         case (.fatLoss, .normal): return "Normal: moderates Defizit (−500 kcal), etwa 0,5 kg Fettverlust pro Woche, 10 000 Schritte."
         case (.fatLoss, .slow): return "Langsam: kleines Defizit (−300 kcal), schont Muskeln und Energie, ein Satz weniger, 8 500 Schritte."
+        case (.fatLoss, .extreme): return "Extrem schnell: sehr großes Defizit (bis −1 000 kcal, nie unter Grundumsatz oder 1 500 kcal). Nicht gesund auf Dauer und kann deiner Gesundheit schaden: höchstens 4 Wochen, danach Pause, vorher mit der Ärztin oder dem Arzt sprechen."
+        case (.muscle, .extreme): return "Extrem ist nur bei Diät verfügbar."
         case (.muscle, .fast): return "Schnell: größerer Überschuss (+400 kcal), ein Satz mehr pro Übung. Etwas mehr Fettzunahme möglich."
         case (.muscle, .normal): return "Normal: +250 kcal für sauberen Muskelaufbau."
         case (.muscle, .slow): return "Langsam: nur +120 kcal, sehr wenig Fettzunahme."

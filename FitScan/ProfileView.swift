@@ -5,6 +5,7 @@ import SwiftUI
 struct ProfileView: View {
     @EnvironmentObject var profile: UserProfile
     @EnvironmentObject var schedule: ScanSchedule
+    @State private var showExtremeConfirm = false
 
     var body: some View {
         Form {
@@ -59,10 +60,16 @@ struct ProfileView: View {
             }
 
             Section {
-                Picker("Tempo", selection: Binding(get: { profile.pace }, set: { profile.pace = $0 })) {
-                    ForEach(Pace.allCases) { Text($0.rawValue).tag($0) }
+                Picker("Tempo", selection: Binding(get: { profile.pace }, set: { new in
+                    if new == .extreme && !profile.extremeActive { showExtremeConfirm = true } else { profile.pace = new }
+                })) {
+                    ForEach(Pace.allCases.filter { $0 != .extreme || profile.goal == .fatLoss }) { Text($0.rawValue).tag($0) }
                 }
                 .pickerStyle(.segmented)
+                if profile.pace == .extreme {
+                    Label("Extrem schnell ist nicht gesund und kann zu Gesundheitsschäden führen. Sprich vorher mit deinem Arzt. Noch \(profile.extremeDaysLeft) Tage, dann geht es automatisch auf „Schnell“ zurück.", systemImage: "exclamationmark.triangle.fill")
+                        .font(.footnote).foregroundStyle(.red)
+                }
                 Text(profile.pace.note(for: profile.goal)).font(.footnote).foregroundStyle(.secondary)
                 if let w = profile.weeksToGoal {
                     LabeledContent("Voraussichtliche Dauer", value: "ca. \(w) Wochen")
@@ -136,6 +143,9 @@ struct ProfileView: View {
             }
 
             PrivacySection()
+        }
+        .sheet(isPresented: $showExtremeConfirm) {
+            RadicalConfirmView { profile.extremeConfirmedAt = Date().timeIntervalSince1970; profile.pace = .extreme }
         }
         .navigationTitle("Profil")
     }
