@@ -1,16 +1,35 @@
 import SwiftUI
 
-/// Diät-Coach (Demo): Was essen, wie oft – ohne Hunger. Dazu ein radikaler Modus mit Sicherheitsgrenzen und Bestätigung.
+/// Diät-Coach: Was essen, wie oft – ohne Hunger. Dazu ein radikaler Modus mit Sicherheitsgrenzen und Bestätigung.
 enum DietMode: String, CaseIterable, Identifiable {
-    case comfort = "Satt & entspannt"
-    case standard = "Standard"
-    case radical = "Radikal"
+    case comfort = "Satt"
+    case standard = "Normal"
+    case fast = "Schnell"
+    case radical = "Extrem"
     var id: String { rawValue }
     var icon: String {
         switch self {
         case .comfort: return "leaf"
         case .standard: return "target"
+        case .fast: return "hare"
         case .radical: return "bolt.heart"
+        }
+    }
+    /// Gleiche Stufe wie „Tempo“ im Profil – so hängen Coach und Tagesziel zusammen.
+    var pace: Pace {
+        switch self {
+        case .comfort: return .slow
+        case .standard: return .normal
+        case .fast: return .fast
+        case .radical: return .extreme
+        }
+    }
+    static func from(_ p: Pace) -> DietMode {
+        switch p {
+        case .slow: return .comfort
+        case .normal: return .standard
+        case .fast: return .fast
+        case .extreme: return .radical
         }
     }
 }
@@ -47,8 +66,9 @@ extension UserProfile {
         var kcal: Double
         var capped = false
         switch mode {
-        case .comfort: kcal = maint - 350
-        case .standard: kcal = maint - 550
+        case .comfort: kcal = maint - Pace.slow.deficit
+        case .standard: kcal = maint - Pace.normal.deficit
+        case .fast: kcal = maint - Pace.fast.deficit
         case .radical:
             kcal = maint - min(1000, maint * 0.35)
             // harte Untergrenze: nie unter Grundumsatz und nie unter 1 500 kcal
@@ -56,7 +76,7 @@ extension UserProfile {
             if kcal < floor { kcal = floor; capped = true }
         }
         if mode != .radical { kcal = max(kcal, bmr * 1.15) }
-        let proteinG = weightKg * (mode == .radical ? 2.3 : 2.0)
+        let proteinG = Double(proteinGrams)
         let fatG = max(kcal * 0.25 / 9, weightKg * 0.7)
         let carbG = max(0, (kcal - proteinG * 4 - fatG * 9) / 4)
         let perMeal = mode == .radical ? [0.3, 0.35, 0.35] : [0.25, 0.30, 0.15, 0.30]
@@ -89,7 +109,7 @@ extension UserProfile {
 
 struct DietCoachView: View {
     @EnvironmentObject var profile: UserProfile
-    @State private var mode: DietMode = .comfort
+    private var mode: DietMode { DietMode.from(profile.pace) }
     private var confirmedAt: Double { profile.extremeConfirmedAt }
     @State private var showConfirm = false
 
@@ -98,19 +118,26 @@ struct DietCoachView: View {
 
     var body: some View {
         List {
-            Section {
-                Label("Demo: Die Zahlen sind Vorschläge. Deine Tagesziele in der App ändern sich dadurch noch nicht.", systemImage: "eye")
-                    .font(.footnote).foregroundStyle(.secondary)
+            if profile.goal != .fatLoss {
+                Section {
+                    Label("Der Diät-Coach gilt für das Ziel „Diät“. Dein Ziel ist gerade „\(profile.goal.rawValue)“.", systemImage: "info.circle")
+                        .font(.footnote)
+                    Button { profile.goal = .fatLoss } label: { Label("Ziel auf Diät stellen", systemImage: "flame") }
+                }
             }
 
-            Section("Modus") {
-                Picker("Modus", selection: Binding(get: { mode }, set: { new in
-                    if new == .radical && !radicalActive { showConfirm = true } else { mode = new }
+            Section {
+                Picker("Tempo", selection: Binding(get: { mode }, set: { new in
+                    if new == .radical && !radicalActive { showConfirm = true } else { profile.pace = new.pace }
                 })) {
-                    ForEach(DietMode.allCases) { Label($0.rawValue, systemImage: $0.icon).tag($0) }
+                    ForEach(DietMode.allCases) { Text($0.rawValue).tag($0) }
                 }
                 .pickerStyle(.segmented)
                 Text(modeNote).font(.footnote).foregroundStyle(.secondary)
+            } header: {
+                Text("Tempo")
+            } footer: {
+                Text("Deine Wahl ist dieselbe wie „Tempo“ im Profil und bestimmt dein Tagesziel auf „Heute“, im Essens-Tagebuch und beim Schrittziel.")
             }
 
             if mode == .radical { radicalBanner }
@@ -122,6 +149,7 @@ struct DietCoachView: View {
                     big("\(plan.carbs) g", "Kohlenhydr.")
                     big("\(plan.fat) g", "Fett")
                 }
+                LabeledContent("Dein Tagesziel (gilt überall)", value: "\(profile.targetCalories) kcal")
                 LabeledContent("Erhaltungsbedarf", value: "\(plan.maintenance) kcal")
                 LabeledContent("Erwarteter Verlust", value: String(format: "ca. %.1f kg pro Woche", plan.kgPerWeek))
                 if plan.capped {
@@ -145,7 +173,7 @@ struct DietCoachView: View {
             } header: {
                 Text("\(plan.meals.count) Mahlzeiten am Tag")
             } footer: {
-                Text("Eiweiß auf alle Mahlzeiten verteilen. Das hält satt und schützt die Muskeln. Mengen sind grobe Beispiele, Rohgewicht.")
+                Text("Eiweiß auf alle Mahlzeiten verteilen. Das hält satt und schützt die Muskeln. Mengen sind grobe Beispiele, Rohgewicht. Allgemeine Information, keine medizinische oder Ernährungsberatung. Nutzung auf eigene Verantwortung, Haftung siehe Datenschutz und Haftungsausschluss.")
             }
 
             Section("Satt bleiben ohne Hunger") {
@@ -160,7 +188,7 @@ struct DietCoachView: View {
         }
         .navigationTitle("Diät-Coach")
         .sheet(isPresented: $showConfirm) {
-            RadicalConfirmView { profile.extremeConfirmedAt = Date().timeIntervalSince1970; mode = .radical }
+            RadicalConfirmView { profile.extremeConfirmedAt = Date().timeIntervalSince1970; profile.pace = .extreme }
         }
     }
 
@@ -168,6 +196,7 @@ struct DietCoachView: View {
         switch mode {
         case .comfort: return "Kleines Defizit, kaum Hunger, gut durchzuhalten. Etwa 0,3 bis 0,4 kg pro Woche."
         case .standard: return "Mittleres Defizit, der Normalfall. Etwa 0,5 kg pro Woche."
+        case .fast: return "Großes Defizit, anstrengender. Etwa 0,7 kg pro Woche, nicht länger als 8 bis 12 Wochen am Stück."
         case .radical: return "Großes Defizit für kurze Zeit. Nur für gesunde Erwachsene, maximal 4 Wochen, danach mindestens 2 Wochen Pause."
         }
     }
@@ -182,7 +211,7 @@ struct DietCoachView: View {
                 if radicalActive {
                     let days = max(0, 28 - Int((Date().timeIntervalSince1970 - confirmedAt) / 86400))
                     Text("Bestätigt. Maximal noch \(days) Tage, danach Pause.").font(.footnote.bold())
-                    Button(role: .destructive) { profile.extremeConfirmedAt = 0; mode = .standard } label: {
+                    Button(role: .destructive) { profile.extremeConfirmedAt = 0; profile.pace = .fast } label: {
                         Label("Radikalen Modus beenden", systemImage: "stop.circle")
                     }
                     Text("Bei erneutem Aktivieren musst du wieder alles bestätigen.").font(.caption2).foregroundStyle(.secondary)
@@ -224,7 +253,7 @@ struct RadicalConfirmView: View {
                 Section("Bitte bestätigen") {
                     Toggle("Ich bin über 18 und gesund (keine Vorerkrankungen, nicht schwanger oder stillend, keine Essstörung)", isOn: $adult)
                     Toggle("Ich habe mit meiner Ärztin oder meinem Arzt gesprochen oder spreche vor dem Start mit ihr oder ihm", isOn: $healthy)
-                    Toggle("Ich verstehe die Risiken, nutze den Modus höchstens 4 Wochen und stoppe bei Beschwerden", isOn: $risks)
+                    Toggle("Ich verstehe die Risiken, nutze den Modus höchstens 4 Wochen auf eigene Verantwortung und stoppe bei Beschwerden. Der Entwickler haftet nicht für Schäden, soweit gesetzlich zulässig", isOn: $risks)
                     TextField("Zum Bestätigen „VERSTANDEN“ tippen", text: $typed).textInputAutocapitalization(.characters).autocorrectionDisabled()
                 }
                 Section {

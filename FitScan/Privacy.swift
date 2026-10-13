@@ -27,6 +27,8 @@ struct ConsentView: View {
                     Label("Teilen passiert nur, wenn du selbst auf „Teilen“ tippst.", systemImage: "square.and.arrow.up")
                 }
                 .font(.subheadline)
+                Text("Wichtig: BFC ersetzt keinen Arzt, alle Angaben sind Richtwerte, die Nutzung erfolgt auf eigene Verantwortung. Der Entwickler haftet nicht für Schäden aus der Nutzung, soweit gesetzlich zulässig (Details unter Profil → Datenschutz → Haftungsausschluss).")
+                    .font(.footnote)
                 Text("Gesundheitsdaten sind besonders geschützt. Mit „Einverstanden“ willigst du ausdrücklich ein, dass BFC sie wie beschrieben verarbeitet. Du kannst das jederzeit unter Profil → Datenschutz widerrufen. BFC ersetzt keine ärztliche Beratung. Nutzung ab 16 Jahren.")
                     .font(.footnote).foregroundStyle(.secondary)
                 Button { health = true; answered = true } label: {
@@ -126,6 +128,9 @@ struct LegalTextView: View {
                 Hinweis: BFC ersetzt keine ärztliche Beratung.
                 """)
                 .font(.footnote)
+            }
+            Section("Haftungsausschluss") {
+                Text("Haftungsausschluss: BFC liefert allgemeine Informationen zu Training, Ernährung und Bewegung. Es ist keine medizinische, therapeutische oder Ernährungsberatung und ersetzt keinen Arzt. Alle Angaben, Berechnungen, Pläne, Kalorien- und Trainingsvorschläge sind Richtwerte ohne Gewähr. Die Nutzung erfolgt auf eigene Verantwortung. Sprich vor Diät, Fasten oder neuem Training mit einem Arzt, besonders bei Vorerkrankungen, Medikamenten, Schwangerschaft oder Essstörungen. Der Entwickler haftet nicht für Schäden, die aus der Nutzung der App oder aus dem Befolgen ihrer Vorschläge entstehen, soweit gesetzlich zulässig. Unberührt bleibt die Haftung für Vorsatz und grobe Fahrlässigkeit sowie für die Verletzung von Leben, Körper oder Gesundheit, soweit das Gesetz sie vorschreibt. Das gilt besonders für den Extrem-Modus.").font(.footnote)
             }
             Section("Impressum") {
                 Text("\(LegalInfo.responsibleName)\n\(LegalInfo.responsibleAddress)\nE-Mail: \(LegalInfo.contactEmail)").font(.footnote)
