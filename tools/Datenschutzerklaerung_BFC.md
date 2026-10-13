@@ -122,7 +122,9 @@ BFC ist für optionale Werbung vorbereitet, um die App zu finanzieren. Solange i
 
 Dann gilt: Werbung erscheint nur mit deiner Einwilligung (Abfrage der Einwilligung und, wo nötig, die Apple-Abfrage zur App-Verfolgung). Ohne Einwilligung gibt es nur nicht personalisierte Werbung oder keine. Auf Seiten mit Gesundheitsbezug (Scan, Körperwerte, Diät, Extrem-Modus, Analysen) wird keine Werbung gezeigt, und Gesundheitsdaten werden nie für Werbung verwendet oder an Werbepartner gegeben. Mit Premium entfällt die Werbung. Die Einwilligung kannst du unter Profil → Datenschutz jederzeit widerrufen.
 
-## 17. Premium, Käufe und Abonnements
+## 17. Premium, Käufe und Abonnements (vorbereitet, derzeit nicht aktiv)
+
+Während der Beta-Phase sind alle Funktionen kostenlos. Es wird nichts gekauft und kein Startdatum einer Testphase gespeichert. Die folgenden Angaben gelten ab dem Start von Premium; vorher wird die App entsprechend aktualisiert.
 
 Premium-Funktionen (z. B. zweiter Scan, vollständige Makros, Entwicklung des 3D-Modells, vollständige Analysen) werden über den App Store gekauft. Die Zahlung, Abrechnung, Kündigung und Rückerstattung wickelt ausschließlich Apple ab. BFC erhält keine Zahlungsdaten, keinen Namen und keine Apple-ID. Ob Premium aktiv ist, prüft die App auf dem Gerät über Apples StoreKit; der Status wird lokal gespeichert, damit Premium auch ohne Internet funktioniert.
 

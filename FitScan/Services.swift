@@ -122,7 +122,9 @@ enum TrialClock {
 
 enum PremiumConfig {
     /// SCHALTER: false = alle Funktionen frei (jetzt). true = Premium-Funktionen sind gesperrt.
-    static let enforceGating = true
+    /// Beta: false = alles frei, keine Testphase, keine Premium-Anzeige. Zum Start von Premium auf true setzen.
+    static let enforceGating = false
+    static var showPremiumUI: Bool { enforceGating }
     static let trialDays = 7
     /// Produkt-IDs, so in App Store Connect anlegen (Abo-Gruppe „BFC Premium“).
     static let productIDs = ["bfc.premium.monthly", "bfc.premium.yearly", "bfc.premium.lifetime"]
@@ -133,7 +135,7 @@ final class PremiumStore: ObservableObject {
     @Published private(set) var isPremium: Bool
     @Published private(set) var products: [Product] = []
     @Published var message: String?
-    let trialEnd: Date = TrialClock.startDate().addingTimeInterval(Double(PremiumConfig.trialDays) * 86_400)
+    lazy var trialEnd: Date = TrialClock.startDate().addingTimeInterval(Double(PremiumConfig.trialDays) * 86_400)
     var trialActive: Bool { Date() < trialEnd }
     var trialDaysLeft: Int { max(0, Int(ceil(trialEnd.timeIntervalSinceNow / 86_400))) }
     @AppStorage("bfc.premium.debugUnlock") var debugUnlock = false { didSet { objectWillChange.send() } }
@@ -320,15 +322,17 @@ struct PremiumAndAdsSection: View {
     @AppStorage(AdConfig.consentKey) private var adConsent = false
     var body: some View {
         Section {
-            NavigationLink { PaywallView() } label: {
-                Label(premium.isPremium ? "Premium aktiv" : "BFC Premium", systemImage: "star")
+            if PremiumConfig.showPremiumUI {
+                NavigationLink { PaywallView() } label: {
+                    Label(premium.isPremium ? "Premium aktiv" : "BFC Premium", systemImage: "star")
+                }
             }
             Toggle("Anonyme Nutzungsstatistik", isOn: $analytics)
             if AdConfig.enabled {
                 Toggle("Personalisierte Werbung", isOn: $adConsent)
             }
-        } header: { Text("Premium und Statistik") } footer: {
-            Text("Die Statistik ist aus, bis du sie einschaltest. Sie enthält nie Gesundheitswerte, Standort, Fotos oder Namen. Details in der Datenschutzerklärung, Abschnitt 15 bis 17.")
+        } header: { Text(PremiumConfig.showPremiumUI ? "Premium und Statistik" : "Statistik") } footer: {
+            Text("Die Statistik ist aus, bis du sie einschaltest. Sie enthält nie Gesundheitswerte, Standort, Fotos oder Namen. Details in der Datenschutzerklärung, Abschnitt 15.")
         }
     }
 }

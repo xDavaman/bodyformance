@@ -1,11 +1,11 @@
 # BFC: Premium, Werbung, Statistik – später einschalten
 
-Alles liegt in FitScan/Services.swift. Standard: alles frei, keine Werbung, Statistik aus.
+Alles liegt in FitScan/Services.swift. Beta-Stand: PremiumConfig.enforceGating = false (alles frei, Premium-Anzeige und Testphase aus). Zum Start von Premium auf true setzen: dann 7 Tage Testphase ab erstem Start (Schlüsselbund), danach Sperren. Keine Werbung, Statistik aus.
 
 ## Premium
 1. App Store Connect: Abo-Gruppe "BFC Premium", Produkte bfc.premium.monthly, bfc.premium.yearly, bfc.premium.lifetime (IDs stehen in PremiumConfig.productIDs).
 2. Test in Xcode: StoreKit-Konfigurationsdatei anlegen (File > New > StoreKit Configuration) und im Schema auswählen.
-3. Sperren: PremiumConfig.enforceGating = true. Funktionen mit .premiumGate(.secondScan) usw. umhüllen (zweiter Scan, Makros, 3D-Entwicklung, Analysen).
+3. Gesperrt sind: zweiter Scan, Makros (KH, Fett, Salz, Kosten), Analysen, Berichte, Plan-PDF, Lauf-Karte, Backup-Erstellen, Share-Designs. Zum Testen der Sperre: Profil > BFC Premium > Debug-Schalter. Testphase neu starten: Schlüsselbund-Eintrag de.bfc.trial löschen (App neu installieren reicht nicht).
 4. App Store verlangt: Abo-Bedingungen und Datenschutz-URL in den Metadaten, "Käufe wiederherstellen" (vorhanden).
 
 ## Statistik
