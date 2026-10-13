@@ -56,7 +56,9 @@ struct PrivacySection: View {
     var body: some View {
         Section {
             Toggle("Apple-Health-Daten verwenden", isOn: $consentHealth)
-            NavigationLink { LegalTextView() } label: { Label("Datenschutz, Haftung und Impressum", systemImage: "hand.raised") }
+            NavigationLink { PrivacyPolicyView() } label: { Label("Datenschutzerklärung", systemImage: "hand.raised") }
+            NavigationLink { DisclaimerView() } label: { Label("Haftungsausschluss", systemImage: "exclamationmark.shield") }
+            NavigationLink { ImprintView() } label: { Label("Impressum und Kontakt", systemImage: "person.text.rectangle") }
             if let url = exportURL {
                 ShareLink(item: url) { Label("Meine Daten exportieren (JSON)", systemImage: "square.and.arrow.up") }
             } else {
@@ -106,24 +108,64 @@ struct PrivacySection: View {
     }
 }
 
+/// Rechtliches: drei getrennte Kategorien.
 struct LegalTextView: View {
     var body: some View {
         List {
             Section {
+                NavigationLink { PrivacyPolicyView() } label: { Label("Datenschutzerklärung", systemImage: "hand.raised") }
+                NavigationLink { DisclaimerView() } label: { Label("Haftungsausschluss", systemImage: "exclamationmark.shield") }
+                NavigationLink { ImprintView() } label: { Label("Impressum und Kontakt", systemImage: "person.text.rectangle") }
+            } footer: {
+                Text("Gilt für BFC und BFC Scanner.")
+            }
+        }
+        .navigationTitle("Rechtliches")
+    }
+}
+
+/// Kategorie 1: Datenschutz – alles an einem Ort.
+struct PrivacyPolicyView: View {
+    var body: some View {
+        List {
+            Section {
                 Text("Datenschutzerklärung").font(.title2.bold())
-                Text("Dies ist die vollständige Fassung. Sie gilt für BFC und BFC Scanner.").font(.footnote).foregroundStyle(.secondary)
+                Text("Vollständige Fassung. Deine Daten bleiben auf diesem iPhone, es gibt kein Benutzerkonto.").font(.footnote).foregroundStyle(.secondary)
             }
             ForEach(Array(LegalTexts.privacy.enumerated()), id: \.offset) { _, sec in
                 Section(sec.title) { Text(sec.body).font(.footnote) }
-            }
-            Section("Haftungsausschluss") { Text(LegalTexts.disclaimer).font(.footnote) }
-            Section("Impressum") {
-                Text("\(LegalInfo.responsibleName)\n\(LegalInfo.responsibleAddress)\nE-Mail: \(LegalInfo.contactEmail)").font(.footnote)
             }
             if let u = LegalInfo.privacyURL {
                 Section { Link("Datenschutzerklärung online", destination: u) }
             }
         }
         .navigationTitle("Datenschutz")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+/// Kategorie 2: Haftungsausschluss.
+struct DisclaimerView: View {
+    var body: some View {
+        List {
+            Section {
+                Text("Haftungsausschluss").font(.title2.bold())
+                Text(LegalTexts.disclaimer).font(.footnote)
+            }
+        }
+        .navigationTitle("Haftungsausschluss")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+struct ImprintView: View {
+    var body: some View {
+        List {
+            Section("Verantwortlicher") {
+                Text("\(LegalInfo.responsibleName)\n\(LegalInfo.responsibleAddress)\nE-Mail: \(LegalInfo.contactEmail)").font(.footnote)
+            }
+        }
+        .navigationTitle("Impressum")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
