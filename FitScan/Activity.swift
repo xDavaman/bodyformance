@@ -96,6 +96,9 @@ struct SessionEntry: Identifiable, Codable {
     var kcal: Int
     /// GPS-Strecke (nur bei Laufen, Gehen, Draußen trainieren)
     var route: [RoutePoint]? = nil
+    /// UUID des Workouts in Apple Health (Apple Watch, Garmin & Co.), damit nichts doppelt landet
+    var healthID: String? = nil
+    var source: String? = nil
 }
 
 struct RoutePoint: Codable, Equatable {
@@ -125,11 +128,19 @@ final class RouteRecorder: NSObject, ObservableObject, CLLocationManagerDelegate
         points = []; distance = 0; last = nil; denied = false
         manager.requestWhenInUseAuthorization()
         if manager.authorizationStatus == .denied || manager.authorizationStatus == .restricted { denied = true; return }
+        // Hintergrund-GPS (gesperrter Bildschirm) nur, wenn die Fähigkeit wirklich im Projekt eingetragen ist – sonst würde iOS die App beenden.
+        let modes = Bundle.main.object(forInfoDictionaryKey: "UIBackgroundModes") as? [String] ?? []
+        if modes.contains("location") {
+            manager.allowsBackgroundLocationUpdates = true
+            manager.pausesLocationUpdatesAutomatically = false
+            manager.showsBackgroundLocationIndicator = true
+        }
         manager.startUpdatingLocation()
     }
 
     func stop() {
         manager.stopUpdatingLocation()
+        if manager.allowsBackgroundLocationUpdates { manager.allowsBackgroundLocationUpdates = false }
     }
 
     nonisolated func locationManager(_ m: CLLocationManager, didUpdateLocations locs: [CLLocation]) {
@@ -280,6 +291,25 @@ struct LiveRouteMap: View {
     }
 }
 
+/// Statt Karte: Status der GPS-Aufzeichnung (läuft auch bei gesperrtem Bildschirm).
+struct RouteStatus: View {
+    @ObservedObject var recorder: RouteRecorder
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Label("GPS-Strecke wird aufgezeichnet · \(recorder.points.count) Punkte", systemImage: "location.fill")
+                .font(.footnote)
+            if recorder.points.count > 2 {
+                RouteShape(points: recorder.points).stroke(Color.red, style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
+                    .frame(height: 120)
+            }
+            if recorder.denied {
+                Label("Standort ist aus. Unter Einstellungen → BFC → Standort erlauben.", systemImage: "location.slash")
+                    .font(.footnote).foregroundStyle(.orange)
+            }
+        }
+    }
+}
+
 struct WorkoutTrackerView: View {
     @EnvironmentObject var session: WorkoutSession
     @EnvironmentObject var log: SessionLog
@@ -302,7 +332,9 @@ struct WorkoutTrackerView: View {
                     metric("Strecke", String(format: "%.2f km", session.distanceM / 1000), "point.topleft.down.to.point.bottomright.curvepath")
                     metric("Tempo", WorkoutSession.paceText(session.paceSecPerKm), "speedometer")
                     metric("Kalorien (Schätzung)", "\(session.kcal) kcal", "flame")
-                    if session.kind.tracksRoute { LiveRouteMap(recorder: session.recorder) }
+                    if session.kind.tracksRoute {
+                        RouteStatus(recorder: session.recorder)
+                    }
                     Button(role: .destructive) {
                         let before = log.entries.count
                         session.finish(into: log)
@@ -364,7 +396,11 @@ struct WorkoutTrackerView: View {
                             Spacer()
                             Text(e.date, format: .dateTime.day().month().hour().minute()).font(.footnote).foregroundStyle(.secondary)
                         }
-                        Text("\(WorkoutSession.clock(e.seconds)) · \(e.steps) Schritte · \(String(format: "%.2f", e.distanceM / 1000)) km · \(e.kcal) kcal")
+                        if let r = e.route, r.count > 2 {
+                            RouteShape(points: r).stroke(Color.red, style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+                                .frame(height: 90).padding(.vertical, 4)
+                        }
+                        Text("\(e.source.map { "\($0) · " } ?? "")\(WorkoutSession.clock(e.seconds)) · \(e.steps) Schritte · \(String(format: "%.2f", e.distanceM / 1000)) km · \(e.kcal) kcal")
                             .font(.footnote).foregroundStyle(.secondary)
                     }
                 }

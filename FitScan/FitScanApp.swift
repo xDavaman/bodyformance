@@ -39,7 +39,7 @@ struct FitScanApp: App {
                 .onChange(of: scenePhase) { _, phase in
                     if phase == .active { steps.start() } else if !session.running { steps.stop() }
                 }
-                .onAppear { steps.start() }
+                .onAppear { steps.start(); health.sessionLog = sessionLog }
         }
     }
 }
