@@ -134,6 +134,8 @@ struct ProfileView: View {
                 LabeledContent("Kalorien", value: "\(profile.targetCalories) kcal")
                 LabeledContent("Protein", value: "\(profile.proteinGrams) g")
             }
+
+            PrivacySection()
         }
         .navigationTitle("Profil")
     }

@@ -247,6 +247,9 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Bodyformance;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_NSCameraUsageDescription = "FitScan nutzt die Kamera für den Körperscan und zum Scannen von Lebensmitteln (Barcode, Foto).";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "BFC zeigt deine Strecke live auf der Karte und zeichnet sie während eines Trainings draußen auf.";
+				INFOPLIST_KEY_UIBackgroundModes = location;
+				CODE_SIGN_ENTITLEMENTS = FitScan.entitlements;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "FitScan liest deine Workouts und Körperdaten, um deinen Fortschritt zu analysieren.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "FitScan darf Trainingsdaten in Apple Health speichern.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "FitScan zählt deine Schritte live und zeichnet Training mit dem Bewegungssensor auf.";
@@ -301,6 +304,9 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Bodyformance;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_NSCameraUsageDescription = "FitScan nutzt die Kamera für den Körperscan und zum Scannen von Lebensmitteln (Barcode, Foto).";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "BFC zeigt deine Strecke live auf der Karte und zeichnet sie während eines Trainings draußen auf.";
+				INFOPLIST_KEY_UIBackgroundModes = location;
+				CODE_SIGN_ENTITLEMENTS = FitScan.entitlements;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "FitScan liest deine Workouts und Körperdaten, um deinen Fortschritt zu analysieren.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "FitScan darf Trainingsdaten in Apple Health speichern.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "FitScan zählt deine Schritte live und zeichnet Training mit dem Bewegungssensor auf.";

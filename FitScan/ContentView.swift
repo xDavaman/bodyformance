@@ -5,8 +5,11 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject var health: HealthManager
     @EnvironmentObject var nav: AppNav
+    @EnvironmentObject var rank: RankStore
     /// Reiter werden beim ersten Öffnen erzeugt und bleiben danach erhalten (Scroll-Stand, Eingaben)
     @State private var visited: Set<Int> = [0]
+    @AppStorage("bfc.consent.answered") private var consentAnswered = false
+    @AppStorage("bfc.consent.health") private var consentHealth = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -20,7 +23,10 @@ struct ContentView: View {
             MainTabBar()
         }
         .onChange(of: nav.tab) { _, t in visited.insert(t) }
-        .task { await health.requestAuthorization() }
+        .task(id: consentHealth) { if consentHealth { await health.requestAuthorization() } }
+        .overlay { RankUpOverlay() }
+        .animation(.easeInOut, value: rank.pendingRankUp?.index)
+        .fullScreenCover(isPresented: Binding(get: { !consentAnswered }, set: { _ in })) { ConsentView() }
     }
 
     @ViewBuilder private func page<Content: View>(_ i: Int, @ViewBuilder content: () -> Content) -> some View {
@@ -42,6 +48,8 @@ struct DashboardView: View {
     @EnvironmentObject var session: WorkoutSession
     @EnvironmentObject var nav: AppNav
     @EnvironmentObject var scan: ScanSchedule
+    @EnvironmentObject var rank: RankStore
+    @EnvironmentObject var sessionLog: SessionLog
 
     var body: some View {
         NavigationStack {
@@ -49,6 +57,7 @@ struct DashboardView: View {
             let targets = profile.targets(for: dayType)
             let eaten = log.totals(day: Date())
             List {
+                Section { RankCard() } footer: { Text("„\(RankQuotes.daily())“") }
                 Section {
                     StepsCard(steps: max(health.stepsToday, tracker.steps), goal: profile.stepGoal, history: health.stepsHistory, live: tracker.live)
                 } header: {
@@ -57,12 +66,14 @@ struct DashboardView: View {
                     Text("Live vom iPhone-Bewegungssensor, der Verlauf aus Apple Health. Empfohlenes Ziel für „\(profile.goal.rawValue)“ (Tempo \(profile.pace.rawValue)): \(profile.recommendedSteps) Schritte. Anpassen im Profil.")
                 }
                 Section {
-                    ShareResultsButton(steps: max(health.stepsToday, tracker.steps), stepGoal: profile.stepGoal,
-                                       kcal: Int(eaten.kcal.rounded()), kcalTarget: targets.kcal,
-                                       protein: Int(eaten.protein.rounded()), proteinTarget: targets.protein,
-                                       workouts: health.workoutsLast30Days)
+                    LifetimeStepsRow()
+                    NavigationLink { ShareStudioView() } label: {
+                        Label("Ergebnisse teilen (Instagram, TikTok, WhatsApp …)", systemImage: "square.and.arrow.up")
+                    }
+                } header: {
+                    Text("Lifetime und Teilen")
                 } footer: {
-                    Text("Erstellt ein Bild mit deinem Profilbild, Schritten und Tagesbilanz zum Teilen auf Social Media.")
+                    Text("Wähle beim Teilen zwischen Schrittzähler, Gym-Zeit, Essen, Lauf-Strecke (auch transparent) und Rang.")
                 }
                 Section {
                     NavigationLink { WorkoutTrackerView() } label: {
@@ -118,7 +129,20 @@ struct DashboardView: View {
             }
             .navigationTitle("Heute")
             .refreshable { await health.refresh() }
+            .onChange(of: syncKey()) { _, _ in sync(targets: targets) }
+            .onAppear { sync(targets: targets) }
         }
+    }
+
+    private func syncKey() -> String {
+        "\(max(health.stepsToday, tracker.steps))-\(log.entries.count)-\(log.waterML(day: Date()))"
+    }
+
+    private func sync(targets: DayTargets) {
+        let today = FoodLog.key(Date())
+        rank.syncToday(steps: max(health.stepsToday, tracker.steps), stepGoal: profile.stepGoal,
+                       foodEntries: log.entries.filter { $0.day == today }.count,
+                       waterGoalReached: log.waterML(day: Date()) >= targets.waterML)
     }
 
     private func bar(_ title: String, _ value: Double, _ goal: Double, _ unit: String) -> some View {
@@ -193,5 +217,28 @@ struct StepsCard: View {
             }
         }
         .padding(.vertical, 4)
+    }
+}
+
+
+/// Lifetime-Schritte aus Apple Health (alle Quellen: iPhone, Apple Watch, Garmin & Co. über Health).
+struct LifetimeStepsRow: View {
+    @EnvironmentObject var health: HealthManager
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Label("Lifetime-Schritte", systemImage: "infinity")
+                Spacer()
+                Text(health.lifetimeSteps.formatted()).font(.headline).monospacedDigit()
+            }
+            if let d = health.firstStepDate {
+                Text("seit \(d.formatted(date: .abbreviated, time: .omitted)) · ca. \(Int(health.lifetimeKm.rounded()).formatted()) km")
+                    .font(.footnote).foregroundStyle(.secondary)
+            } else if !health.isAuthorized {
+                Text("Erlaube Apple Health, damit alle deine Schritte zählen.").font(.footnote).foregroundStyle(.secondary)
+            }
+            Text("Garmin, Fitbit & Co.: In deren App „Apple Health“ aktivieren, dann zählen die Schritte hier mit.")
+                .font(.caption2).foregroundStyle(.secondary)
+        }
     }
 }

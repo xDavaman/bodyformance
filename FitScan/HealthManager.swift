@@ -21,6 +21,12 @@ final class HealthManager: ObservableObject {
     @Published var runningKm7Days: Double = 0
     @Published var runningKm28Days: Double = 0
     @Published var stepsHistory: [DaySteps] = []
+    /// Alle Schritte aller Quellen (iPhone, Apple Watch, Garmin & Co., sofern sie in Apple Health schreiben) seit dem ersten Eintrag.
+    @Published var lifetimeSteps: Int = 0
+    @Published var firstStepDate: Date?
+    @Published var lifetimeKm: Double = 0
+    private var observer: HKObserverQuery?
+    private var liveTimer: Timer?
 
     private var readTypes: Set<HKObjectType> {
         var types: Set<HKObjectType> = [HKObjectType.workoutType()]
@@ -39,6 +45,7 @@ final class HealthManager: ObservableObject {
             try await store.requestAuthorization(toShare: [], read: readTypes)
             isAuthorized = true
             await refresh()
+            startLiveUpdates()
         } catch {
             isAuthorized = false
         }
@@ -53,6 +60,9 @@ final class HealthManager: ObservableObject {
         async let km7 = runningKm(days: 7)
         async let km28 = runningKm(days: 28)
         async let history = stepHistory(days: 7)
+        async let life = lifetimeTotal(.stepCount, unit: .count())
+        async let lifeKm = lifetimeTotal(.distanceWalkingRunning, unit: .meter())
+        async let first = firstSampleDate(.stepCount)
 
         stepsToday = Int(await steps)
         activeEnergyToday = Int(await energy)
@@ -62,6 +72,46 @@ final class HealthManager: ObservableObject {
         runningKm7Days = await km7
         runningKm28Days = await km28
         stepsHistory = await history
+        lifetimeSteps = Int(await life)
+        lifetimeKm = await lifeKm / 1000
+        firstStepDate = await first
+    }
+
+    /// Hält die Werte aktuell: sobald Health neue Schritte meldet (z. B. von der Watch), wird neu gelesen.
+    func startLiveUpdates() {
+        guard observer == nil, let type = HKQuantityType.quantityType(forIdentifier: .stepCount) else { return }
+        let q = HKObserverQuery(sampleType: type, predicate: nil) { [weak self] _, done, _ in
+            Task { @MainActor in await self?.refresh() }
+            done()
+        }
+        store.execute(q)
+        observer = q
+        let t = Timer(timeInterval: 30, repeats: true) { [weak self] _ in
+            Task { @MainActor in await self?.refresh() }
+        }
+        RunLoop.main.add(t, forMode: .common)
+        liveTimer = t
+    }
+
+    private func lifetimeTotal(_ id: HKQuantityTypeIdentifier, unit: HKUnit) async -> Double {
+        guard let type = HKQuantityType.quantityType(forIdentifier: id) else { return 0 }
+        return await withCheckedContinuation { cont in
+            let q = HKStatisticsQuery(quantityType: type, quantitySamplePredicate: nil, options: .cumulativeSum) { _, stats, _ in
+                cont.resume(returning: stats?.sumQuantity()?.doubleValue(for: unit) ?? 0)
+            }
+            store.execute(q)
+        }
+    }
+
+    private func firstSampleDate(_ id: HKQuantityTypeIdentifier) async -> Date? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: id) else { return nil }
+        let sort = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)
+        return await withCheckedContinuation { cont in
+            let q = HKSampleQuery(sampleType: type, predicate: nil, limit: 1, sortDescriptors: [sort]) { _, samples, _ in
+                cont.resume(returning: samples?.first?.startDate)
+            }
+            store.execute(q)
+        }
     }
 
     private func sumToday(_ id: HKQuantityTypeIdentifier, unit: HKUnit) async -> Double {

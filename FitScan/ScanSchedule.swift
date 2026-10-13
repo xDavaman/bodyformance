@@ -109,6 +109,7 @@ final class ScanSchedule: ObservableObject {
 struct ScanCheckInView: View {
     @EnvironmentObject var schedule: ScanSchedule
     @EnvironmentObject var profile: UserProfile
+    @EnvironmentObject var rank: RankStore
     @State private var saved = false
 
     var body: some View {
@@ -139,7 +140,7 @@ struct ScanCheckInView: View {
                 LabeledContent("Taille / Hals", value: String(format: "%.0f / %.0f cm", profile.waistCm, profile.neckCm))
                 LabeledContent("Körperfett (Schätzung)", value: profile.bodyFatEstimate.map { String(format: "%.1f %%", $0) } ?? "–")
                 Button {
-                    schedule.save(profile: profile)
+                    schedule.save(profile: profile); rank.scanDone()
                     saved = true
                 } label: { Label("3. Ergebnis ermitteln und speichern", systemImage: "checkmark.circle.fill") }
             } header: {
