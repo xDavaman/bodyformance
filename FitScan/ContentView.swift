@@ -57,6 +57,14 @@ struct DashboardView: View {
                     Text("Live vom iPhone-Bewegungssensor, der Verlauf aus Apple Health. Empfohlenes Ziel für „\(profile.goal.rawValue)“ (Tempo \(profile.pace.rawValue)): \(profile.recommendedSteps) Schritte. Anpassen im Profil.")
                 }
                 Section {
+                    ShareResultsButton(steps: max(health.stepsToday, tracker.steps), stepGoal: profile.stepGoal,
+                                       kcal: Int(eaten.kcal.rounded()), kcalTarget: targets.kcal,
+                                       protein: Int(eaten.protein.rounded()), proteinTarget: targets.protein,
+                                       workouts: health.workoutsLast30Days)
+                } footer: {
+                    Text("Erstellt ein Bild mit deinem Profilbild, Schritten und Tagesbilanz zum Teilen auf Social Media.")
+                }
+                Section {
                     NavigationLink { WorkoutTrackerView() } label: {
                         Label(session.running ? "Training läuft: \(WorkoutSession.clock(session.elapsed))" : "Training aufzeichnen",
                               systemImage: session.running ? "record.circle" : "play.circle")
@@ -132,6 +140,7 @@ struct DashboardView: View {
 
 /// Schrittzähler: Fortschrittsring für heute und Balken der letzten 7 Tage mit Zielmarke.
 struct StepsCard: View {
+    @EnvironmentObject var avatar: AvatarStore
     let steps: Int
     let goal: Int
     let history: [DaySteps]
@@ -146,7 +155,12 @@ struct StepsCard: View {
                         .trim(from: 0, to: min(1, Double(steps) / Double(max(goal, 1))))
                         .stroke(steps >= goal ? Color.green : Color.accentColor, style: StrokeStyle(lineWidth: 10, lineCap: .round))
                         .rotationEffect(.degrees(-90))
-                    Image(systemName: "figure.walk").font(.title2)
+                    if let img = avatar.image {
+                        Image(uiImage: img).resizable().scaledToFill()
+                            .frame(width: 62, height: 62).clipShape(Circle())
+                    } else {
+                        Image(systemName: "figure.walk").font(.title2)
+                    }
                 }
                 .frame(width: 84, height: 84)
                 VStack(alignment: .leading, spacing: 2) {

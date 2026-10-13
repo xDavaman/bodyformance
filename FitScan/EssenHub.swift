@@ -193,8 +193,8 @@ struct FoodScanTab: View {
 
     @ViewBuilder private var scanSection: some View {
         Section {
-            if BarcodeScannerView.supported && nav.tab == 2 && nav.essenPage == .scan && selected == nil && !showCustom {
-                BarcodeScannerView { code in Task { await lookup(code) } }
+            if BarcodeScannerView.supported && nav.tab == 2 && nav.essenPage == .scan {
+                BarcodeScannerView(active: selected == nil && !showCustom && !busy) { code in Task { await lookup(code) } }
                     .id(scanKey)
                     .frame(height: 300)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -202,6 +202,9 @@ struct FoodScanTab: View {
             } else if !BarcodeScannerView.supported {
                 Text("Der Kamera-Scanner läuft nur auf einem iPhone. Tippe den Barcode unten ein oder wechsle auf „Manuell“.")
                     .foregroundStyle(.secondary)
+            }
+            if BarcodeScannerView.supported {
+                Button { scanKey = UUID(); status = "" } label: { Label("Neuen Scan starten", systemImage: "barcode.viewfinder") }
             }
             HStack {
                 TextField("Barcode eintippen", text: $manualCode).keyboardType(.numberPad)

@@ -160,6 +160,7 @@ enum FoodVision {
 // MARK: Kamera
 
 struct BarcodeScannerView: UIViewControllerRepresentable {
+    var active: Bool = true
     var onCode: (String) -> Void
 
     static var supported: Bool { DataScannerViewController.isSupported && DataScannerViewController.isAvailable }
@@ -172,16 +173,32 @@ struct BarcodeScannerView: UIViewControllerRepresentable {
                                            isHighFrameRateTrackingEnabled: false, isPinchToZoomEnabled: true,
                                            isGuidanceEnabled: true, isHighlightingEnabled: true)
         vc.delegate = context.coordinator
-        DispatchQueue.main.async { try? vc.startScanning() }
+        context.coordinator.start(vc)
         return vc
     }
 
-    func updateUIViewController(_ vc: DataScannerViewController, context: Context) {}
+    func updateUIViewController(_ vc: DataScannerViewController, context: Context) {
+        context.coordinator.onCode = onCode
+        if active { if !vc.isScanning { context.coordinator.start(vc) } }
+        else if vc.isScanning { vc.stopScanning() }
+    }
 
     final class Coordinator: NSObject, DataScannerViewControllerDelegate {
-        let onCode: (String) -> Void
+        var onCode: (String) -> Void
         private var done = false
         init(onCode: @escaping (String) -> Void) { self.onCode = onCode }
+        /// Startet die Kamera neu (auch nach einem früheren Treffer); bei Fehlschlag ein zweiter Versuch.
+        func start(_ vc: DataScannerViewController, attempt: Int = 0) {
+            done = false
+            DispatchQueue.main.async {
+                do { try vc.startScanning() }
+                catch {
+                    if attempt < 3 {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { self.start(vc, attempt: attempt + 1) }
+                    }
+                }
+            }
+        }
         func dataScanner(_ dataScanner: DataScannerViewController, didAdd addedItems: [RecognizedItem], allItems: [RecognizedItem]) {
             guard !done else { return }
             for item in addedItems {
