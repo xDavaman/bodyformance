@@ -12,6 +12,7 @@ struct NutritionView: View {
     @EnvironmentObject var profile: UserProfile
     @EnvironmentObject var log: FoodLog
     @EnvironmentObject var recipes: RecipeStore
+    @EnvironmentObject var premium: PremiumStore
 
     @State private var day = Date()
     @State private var maxMinutes = 0          // 0 = egal
@@ -80,10 +81,14 @@ struct NutritionView: View {
             Text(dayType.note).font(.footnote).foregroundStyle(.secondary)
             bar("Kalorien", eaten.kcal, Double(targets.kcal), "kcal")
             bar("Protein", eaten.protein, Double(targets.protein), "g")
-            bar("Kohlenhydrate", eaten.carbs, Double(targets.carbs), "g")
-            bar("Fett", eaten.fat, Double(targets.fat), "g")
-            bar("Salz", eaten.salt, targets.saltMax, "g", decimals: true)
-            LabeledContent("Kosten heute", value: eur(eaten.price))
+            if premium.has(.fullMacros) {
+                bar("Kohlenhydrate", eaten.carbs, Double(targets.carbs), "g")
+                bar("Fett", eaten.fat, Double(targets.fat), "g")
+                bar("Salz", eaten.salt, targets.saltMax, "g", decimals: true)
+                LabeledContent("Kosten heute", value: eur(eaten.price))
+            } else {
+                LockedRow(feature: .fullMacros)
+            }
         } header: {
             Text("Tagesübersicht · Tempo: \(profile.pace.rawValue)")
         } footer: {

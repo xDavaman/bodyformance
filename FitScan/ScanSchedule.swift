@@ -110,7 +110,9 @@ struct ScanCheckInView: View {
     @EnvironmentObject var schedule: ScanSchedule
     @EnvironmentObject var profile: UserProfile
     @EnvironmentObject var rank: RankStore
+    @EnvironmentObject var premium: PremiumStore
     @State private var saved = false
+    @State private var showPaywall = false
 
     var body: some View {
         Form {
@@ -140,6 +142,7 @@ struct ScanCheckInView: View {
                 LabeledContent("Taille / Hals", value: String(format: "%.0f / %.0f cm", profile.waistCm, profile.neckCm))
                 LabeledContent("Körperfett (Schätzung)", value: profile.bodyFatEstimate.map { String(format: "%.1f %%", $0) } ?? "–")
                 Button {
+                    if !schedule.records.isEmpty && !premium.has(.secondScan) { showPaywall = true; return }
                     schedule.save(profile: profile); rank.scanDone()
                     saved = true
                 } label: { Label("3. Ergebnis ermitteln und speichern", systemImage: "checkmark.circle.fill") }
@@ -193,6 +196,7 @@ struct ScanCheckInView: View {
             }
         }
         .navigationTitle("Scan-Intervall")
+        .sheet(isPresented: $showPaywall) { NavigationStack { PaywallView() } }
     }
 
     private func resultRow(_ title: String, _ now: Double, _ before: Double?, unit: String, lowerIsBetter: Bool) -> some View {

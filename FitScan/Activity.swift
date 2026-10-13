@@ -390,6 +390,7 @@ struct WorkoutTrackerView: View {
                     Text("Noch keine Einheiten aufgezeichnet.").foregroundStyle(.secondary)
                 }
                 ForEach(log.entries.prefix(15)) { e in
+                    NavigationLink { RunDetailView(entry: e) } label: {
                     VStack(alignment: .leading, spacing: 2) {
                         HStack {
                             Label(e.kind.label, systemImage: e.kind.icon)
@@ -402,6 +403,7 @@ struct WorkoutTrackerView: View {
                         }
                         Text("\(e.source.map { "\($0) · " } ?? "")\(WorkoutSession.clock(e.seconds)) · \(e.steps) Schritte · \(String(format: "%.2f", e.distanceM / 1000)) km · \(e.kcal) kcal")
                             .font(.footnote).foregroundStyle(.secondary)
+                    }
                     }
                 }
                 .onDelete { idx in

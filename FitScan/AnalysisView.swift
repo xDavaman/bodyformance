@@ -43,6 +43,7 @@ struct AnalysisView: View {
     @EnvironmentObject var store: TrainingStore
     @EnvironmentObject var profile: UserProfile
     @EnvironmentObject var health: HealthManager
+    @EnvironmentObject var premium: PremiumStore
 
     @State private var bodyWeight: Double = 80
 
@@ -50,12 +51,16 @@ struct AnalysisView: View {
         List {
             summarySection
             nextSessionSection
-            progressSection
-            volumeSection
-            muscleSection
-            cardioSection
-            mobilitySection
-            bodyWeightSection
+            if premium.has(.fullAnalyses) {
+                progressSection
+                volumeSection
+                muscleSection
+                cardioSection
+                mobilitySection
+                bodyWeightSection
+            } else {
+                Section { LockedRow(feature: .fullAnalyses) }
+            }
         }
         .navigationTitle("Analyse")
         .onAppear { bodyWeight = profile.weightKg }

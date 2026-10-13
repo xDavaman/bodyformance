@@ -74,6 +74,7 @@ struct ShareCanvas: View {
     let data: ShareData
     let route: [RoutePoint]
     let transparent: Bool
+    var theme: ShareTheme = .classic
     private let red = Color(red: 0.89, green: 0.23, blue: 0.18)
 
     private var dateText: String {
@@ -91,7 +92,7 @@ struct ShareCanvas: View {
                 routeOnly
             } else {
                 ZStack {
-                    LinearGradient(colors: [Color(red: 0.07, green: 0.07, blue: 0.08), Color(red: 0.22, green: 0.05, blue: 0.05)],
+                    LinearGradient(colors: theme.colors,
                                    startPoint: .top, endPoint: .bottom)
                     VStack(spacing: 40) {
                         header
@@ -249,6 +250,8 @@ struct ShareStudioView: View {
     @State private var variant: ShareVariant = .day
     @State private var transparent = false
     @State private var trim = true
+    @EnvironmentObject var premium: PremiumStore
+    @State private var theme: ShareTheme = .classic
     @State private var fileURL: URL?
     @State private var preview: UIImage?
 
@@ -276,7 +279,8 @@ struct ShareStudioView: View {
     }
 
     private var canvas: ShareCanvas {
-        ShareCanvas(variant: variant, data: data, route: routePoints, transparent: transparent)
+        ShareCanvas(variant: variant, data: data, route: routePoints, transparent: transparent,
+                    theme: premium.has(.shareDesigns) ? theme : .classic)
     }
 
     var body: some View {
@@ -286,6 +290,13 @@ struct ShareStudioView: View {
                     ForEach(ShareVariant.allCases) { Label($0.rawValue, systemImage: $0.icon).tag($0) }
                 }
                 .pickerStyle(.menu)
+                Picker("Design", selection: $theme) {
+                    ForEach(ShareTheme.allCases) { Text($0.rawValue).tag($0) }
+                }
+                .pickerStyle(.menu)
+                if theme != .classic && !premium.has(.shareDesigns) {
+                    LockedRow(feature: .shareDesigns)
+                }
                 if variant == .run {
                     Toggle("Transparent (nur Strecke, zum Legen über ein Foto)", isOn: $transparent)
                     Toggle("Start und Ende kürzen (Privatsphäre)", isOn: $trim)
@@ -319,7 +330,7 @@ struct ShareStudioView: View {
             }
         }
         .navigationTitle("Teilen")
-        .task(id: "\(variant.rawValue)-\(transparent)-\(trim)-\(data.steps)-\(data.kcal)-\(lastRun?.id.uuidString ?? "")") { render() }
+        .task(id: "\(variant.rawValue)-\(theme.rawValue)-\(transparent)-\(trim)-\(data.steps)-\(data.kcal)-\(lastRun?.id.uuidString ?? "")") { render() }
     }
 
     @MainActor private func render() {

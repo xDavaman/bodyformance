@@ -57,6 +57,7 @@ struct DashboardView: View {
             let targets = profile.targets(for: dayType)
             let eaten = log.totals(day: Date())
             List {
+                TrialBanner()
                 Section { RankCard() } footer: { Text("„\(RankQuotes.daily())“") }
                 Section {
                     StepsCard(steps: max(health.stepsToday, tracker.steps), goal: profile.stepGoal, history: health.stepsHistory, live: tracker.live)
@@ -128,6 +129,9 @@ struct DashboardView: View {
                 Section("Mehr") {
                     NavigationLink { SportView() } label: { Label("Sport und Laufen", systemImage: "figure.run") }
                     NavigationLink { AnalysisView() } label: { Label("Analyse", systemImage: "chart.line.uptrend.xyaxis") }
+                    NavigationLink { ReportsView() } label: { Label("Wochen- und Monatsberichte", systemImage: "calendar.badge.clock") }
+                    NavigationLink { PlanExportView() } label: { Label("Plan als PDF", systemImage: "doc.richtext") }
+                    NavigationLink { BackupView() } label: { Label("Backup und Gerätewechsel", systemImage: "externaldrive") }
                 }
             }
             .navigationTitle("Heute")

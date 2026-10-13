@@ -126,7 +126,9 @@ Dann gilt: Werbung erscheint nur mit deiner Einwilligung (Abfrage der Einwilligu
 
 Premium-Funktionen (z. B. zweiter Scan, vollständige Makros, Entwicklung des 3D-Modells, vollständige Analysen) werden über den App Store gekauft. Die Zahlung, Abrechnung, Kündigung und Rückerstattung wickelt ausschließlich Apple ab. BFC erhält keine Zahlungsdaten, keinen Namen und keine Apple-ID. Ob Premium aktiv ist, prüft die App auf dem Gerät über Apples StoreKit; der Status wird lokal gespeichert, damit Premium auch ohne Internet funktioniert.
 
-Abonnements verlängern sich automatisch, wenn du nicht mindestens 24 Stunden vor Ablauf kündigst. Du verwaltest und kündigst sie in den Einstellungen deiner Apple-ID unter „Abonnements“. Käufe lassen sich über „Käufe wiederherstellen“ auf neuen Geräten zurückholen. Gesetzliche Widerrufs- und Gewährleistungsrechte bleiben unberührt; für digitale Inhalte gelten die Bedingungen des App Stores.
+Abonnements verlängern sich automatisch, wenn du nicht mindestens 24 Stunden vor Ablauf kündigst. Du verwaltest und kündigst sie in den Einstellungen deiner Apple-ID unter „Abonnements“. Käufe lassen sich über „Käufe wiederherstellen“ auf neuen Geräten zurückholen.
+
+Neue Nutzer können BFC sieben Tage mit allen Funktionen testen. Dafür wird nur das Startdatum der Testphase im iOS-Schlüsselbund deines Geräts gespeichert, damit eine Neuinstallation die Testphase nicht erneut startet (berechtigtes Interesse, Art. 6 Abs. 1 lit. f DSGVO, Vermeidung von Missbrauch). Das Datum enthält keinen Personenbezug und verlässt dein Gerät nicht. Es wird auch bei „Alle Daten in der App löschen“ nicht entfernt; du kannst es über die Schlüsselbund-Verwaltung von iOS beziehungsweise durch Zurücksetzen des Geräts löschen. Nach der Testphase bleiben Grundfunktionen frei, Premium-Funktionen brauchen ein Abonnement oder den Einmalkauf. Gesetzliche Widerrufs- und Gewährleistungsrechte bleiben unberührt; für digitale Inhalte gelten die Bedingungen des App Stores.
 
 ## 18. Sicherheit
 

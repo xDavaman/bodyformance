@@ -1,4 +1,5 @@
 import Combine
+import Security
 import StoreKit
 import SwiftUI
 
@@ -66,7 +67,7 @@ enum PremiumFeature: String, CaseIterable, Identifiable {
         case .planExport: return "Pläne als PDF exportieren"
         case .runHistoryMaps: return "Karten und Statistik für Läufe"
         case .shareDesigns: return "Zusätzliche Share-Designs"
-        case .cloudBackup: return "Cloud-Backup und Gerätewechsel"
+        case .cloudBackup: return "Backup und Gerätewechsel"
         case .multiProfile: return "Mehrere Profile"
         }
     }
@@ -80,9 +81,9 @@ enum PremiumFeature: String, CaseIterable, Identifiable {
         case .noAds: return "Entfernt jede Werbung."
         case .reports: return "Zusammenfassung mit Vergleich zur Vorwoche."
         case .planExport: return "Trainings- und Ernährungsplan zum Drucken oder Teilen."
-        case .runHistoryMaps: return "Echte Karte, Pace-Verlauf und Bestzeiten."
-        case .shareDesigns: return "Weitere Vorlagen für Tages-, Lauf- und Rangkarten."
-        case .cloudBackup: return "Verschlüsselte Sicherung (später, mit Firebase in Frankfurt)."
+        case .runHistoryMaps: return "Echte Karte deiner Strecke, Pace und Bestwerte."
+        case .shareDesigns: return "Vier zusätzliche Farbdesigns für Share-Karten."
+        case .cloudBackup: return "Sicherung als Datei in iCloud Drive oder Dateien, Wiederherstellen auf dem neuen iPhone. Cloud-Sync folgt später."
         case .multiProfile: return "Profile für Partner oder Familie."
         }
     }
@@ -90,15 +91,39 @@ enum PremiumFeature: String, CaseIterable, Identifiable {
     /// Ab wann es das Feature gibt (nur Anzeige).
     var planned: Bool {
         switch self {
-        case .secondScan, .fullMacros, .bodyModelEvolution, .fullAnalyses, .noAds: return false
-        default: return true
+        case .bodyModelEvolution, .multiProfile: return true
+        default: return false
         }
+    }
+}
+
+/// Beginn der Testphase, im Schlüsselbund gespeichert: überlebt Neuinstallation und „Alle Daten löschen“.
+enum TrialClock {
+    private static let service = "de.bfc.trial"
+    private static let account = "start"
+
+    static func startDate() -> Date {
+        let q: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
+                                kSecAttrAccount as String: account, kSecReturnData as String: true]
+        var out: AnyObject?
+        if SecItemCopyMatching(q as CFDictionary, &out) == errSecSuccess, let d = out as? Data,
+           let str = String(data: d, encoding: .utf8), let t = Double(str) {
+            return Date(timeIntervalSince1970: t)
+        }
+        let now = Date()
+        let add: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
+                                  kSecAttrAccount as String: account,
+                                  kSecValueData as String: Data(String(now.timeIntervalSince1970).utf8),
+                                  kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock]
+        SecItemAdd(add as CFDictionary, nil)
+        return now
     }
 }
 
 enum PremiumConfig {
     /// SCHALTER: false = alle Funktionen frei (jetzt). true = Premium-Funktionen sind gesperrt.
-    static let enforceGating = false
+    static let enforceGating = true
+    static let trialDays = 7
     /// Produkt-IDs, so in App Store Connect anlegen (Abo-Gruppe „BFC Premium“).
     static let productIDs = ["bfc.premium.monthly", "bfc.premium.yearly", "bfc.premium.lifetime"]
 }
@@ -108,6 +133,9 @@ final class PremiumStore: ObservableObject {
     @Published private(set) var isPremium: Bool
     @Published private(set) var products: [Product] = []
     @Published var message: String?
+    let trialEnd: Date = TrialClock.startDate().addingTimeInterval(Double(PremiumConfig.trialDays) * 86_400)
+    var trialActive: Bool { Date() < trialEnd }
+    var trialDaysLeft: Int { max(0, Int(ceil(trialEnd.timeIntervalSinceNow / 86_400))) }
     @AppStorage("bfc.premium.debugUnlock") var debugUnlock = false { didSet { objectWillChange.send() } }
     private let cacheKey = "bfc.premium.cached"
     private var updates: Task<Void, Never>?
@@ -131,7 +159,7 @@ final class PremiumStore: ObservableObject {
         #if DEBUG
         if debugUnlock { return true }
         #endif
-        return isPremium
+        return isPremium || trialActive
     }
 
     func load() async {
@@ -198,6 +226,17 @@ struct PaywallView: View {
     var body: some View {
         List {
             Section {
+                if premium.isPremium {
+                    Label("Premium ist aktiv", systemImage: "star.fill").foregroundStyle(.yellow)
+                } else if premium.trialActive {
+                    Label("Testphase: noch \(premium.trialDaysLeft) Tag\(premium.trialDaysLeft == 1 ? "" : "e") alles frei", systemImage: "gift")
+                    Text("Danach bleiben Grundfunktionen frei. Premium-Funktionen brauchen dann ein Abo oder den Einmalkauf.").font(.footnote).foregroundStyle(.secondary)
+                } else {
+                    Label("Testphase beendet", systemImage: "lock")
+                    Text("Schalte Premium frei, um alle Funktionen wieder zu nutzen.").font(.footnote).foregroundStyle(.secondary)
+                }
+            }
+            Section {
                 ForEach(PremiumFeature.allCases.filter { !$0.planned }) { f in
                     VStack(alignment: .leading, spacing: 2) {
                         Label(f.title, systemImage: "checkmark.seal.fill").font(.headline)
@@ -215,7 +254,7 @@ struct PaywallView: View {
             } header: { Text("Geplant") }
             Section {
                 if premium.isPremium {
-                    Label("Premium ist aktiv", systemImage: "star.fill").foregroundStyle(.yellow)
+                    EmptyView()
                 } else if premium.products.isEmpty {
                     Text("Premium ist noch nicht verfügbar. Sobald die App im App Store ist, siehst du hier die Angebote.").font(.footnote).foregroundStyle(.secondary)
                 } else {
@@ -290,6 +329,39 @@ struct PremiumAndAdsSection: View {
             }
         } header: { Text("Premium und Statistik") } footer: {
             Text("Die Statistik ist aus, bis du sie einschaltest. Sie enthält nie Gesundheitswerte, Standort, Fotos oder Namen. Details in der Datenschutzerklärung, Abschnitt 15 bis 17.")
+        }
+    }
+}
+
+// MARK: - Bausteine für Sperren und Testphase
+
+/// Zeile, die zur Paywall führt (statt der gesperrten Funktion).
+struct LockedRow: View {
+    let feature: PremiumFeature
+    var body: some View {
+        NavigationLink { PaywallView() } label: {
+            VStack(alignment: .leading, spacing: 2) {
+                Label("\(feature.title) mit Premium", systemImage: "lock.fill")
+                Text(feature.detail).font(.footnote).foregroundStyle(.secondary)
+            }
+        }
+    }
+}
+
+/// Hinweis oben im Dashboard: Resttage der Testphase oder Ende.
+struct TrialBanner: View {
+    @EnvironmentObject var premium: PremiumStore
+    var body: some View {
+        if PremiumConfig.enforceGating && !premium.isPremium {
+            Section {
+                NavigationLink { PaywallView() } label: {
+                    if premium.trialActive {
+                        Label("Testphase: noch \(premium.trialDaysLeft) Tag\(premium.trialDaysLeft == 1 ? "" : "e") alles frei", systemImage: "gift")
+                    } else {
+                        Label("Testphase beendet. Premium freischalten", systemImage: "lock.fill").foregroundStyle(.orange)
+                    }
+                }
+            }
         }
     }
 }
