@@ -99,6 +99,9 @@ struct DashboardView: View {
                     Button { nav.essenPage = .scan; nav.tab = 2 } label: {
                         Label("Produkt scannen oder suchen", systemImage: "barcode.viewfinder")
                     }
+                    NavigationLink { DietCoachView() } label: {
+                        Label("Diät-Coach: was essen, ohne Hunger", systemImage: "fork.knife.circle")
+                    }
                     NavigationLink { FoodHistoryView() } label: {
                         Label("Ernährungs-Analyse und Verlauf", systemImage: "chart.bar.doc.horizontal")
                     }
