@@ -124,14 +124,12 @@ final class RouteRecorder: NSObject, ObservableObject, CLLocationManagerDelegate
     func start() {
         points = []; distance = 0; last = nil; denied = false
         manager.requestWhenInUseAuthorization()
-        manager.allowsBackgroundLocationUpdates = true
-        manager.showsBackgroundLocationIndicator = true
+        if manager.authorizationStatus == .denied || manager.authorizationStatus == .restricted { denied = true; return }
         manager.startUpdatingLocation()
     }
 
     func stop() {
         manager.stopUpdatingLocation()
-        manager.allowsBackgroundLocationUpdates = false
     }
 
     nonisolated func locationManager(_ m: CLLocationManager, didUpdateLocations locs: [CLLocation]) {
