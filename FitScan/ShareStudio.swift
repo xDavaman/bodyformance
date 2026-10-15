@@ -262,7 +262,7 @@ struct ShareStudioView: View {
         let week = Date().addingTimeInterval(-7 * 86400)
         let recent = sessions.entries.filter { $0.date >= week }
         return ShareData(name: name, avatar: avatar.image,
-                         steps: max(health.stepsToday, tracker.steps), stepGoal: profile.stepGoal, lifetime: health.lifetimeSteps,
+                         steps: health.displaySteps(phone: tracker.steps), stepGoal: profile.stepGoal, lifetime: health.lifetimeSteps,
                          kcal: Int(eaten.kcal.rounded()), kcalTarget: profile.targets(for: log.dayType(day: Date(), fallback: profile.defaultDayType)).kcal,
                          protein: Int(eaten.protein.rounded()),
                          proteinTarget: profile.targets(for: log.dayType(day: Date(), fallback: profile.defaultDayType)).protein,

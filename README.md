@@ -27,7 +27,8 @@ Neue `.swift`-Dateien im Ordner `FitScan/FitScan/` werden automatisch ins Projek
 | Ernährung | `NutritionView`, `NutritionEngine`, `RecipeStore`, `FoodDB`, `FoodScan`, `FoodData` (generiert, siehe unten) |
 | Community | `Community.swift` (Firebase per REST, kein SDK) |
 | Profil / Scan | `ProfileView`, `UserProfile`, `ScanView`, `BodyScanView`, `ScanSchedule` (Intervall + Verlauf), `ProfileAvatar` |
-| Aktivität | `Activity`, `HealthManager`, `SportView`, `MobilityView` |
+| Aktivität | `Activity`, `HealthManager` (Schrittquelle: Garmin 1:1 über Apple Health), `StepSourceView`, `SportView`, `MobilityView` |
+| Rezeptfotos | `RecipeStore` (Fotos, ZIP-Export), `RecipePhotosView` (alle Rezepte, Mehrfach-Upload, Kamera). Fest ausgelieferte Fotos: `FitScan/RecipePhotos/recipe-<id>.jpg` |
 
 Daten werden lokal gespeichert (UserDefaults als JSON, `@AppStorage`, Profilbild als Datei in Documents).
 

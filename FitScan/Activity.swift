@@ -13,20 +13,40 @@ final class StepTracker: ObservableObject {
     @Published var live = false
     let available = CMPedometer.isStepCountingAvailable()
     private let pedometer = CMPedometer()
+    private var startDay = Date.distantPast
+    private var dayObserver: NSObjectProtocol?
+
+    init() {
+        // Um Mitternacht neu ab 0 zählen, auch wenn die App offen bleibt
+        dayObserver = NotificationCenter.default.addObserver(forName: .NSCalendarDayChanged, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor in self?.restartIfNewDay() }
+        }
+    }
+
+    private func restartIfNewDay() {
+        guard live, !Calendar.current.isDateInToday(startDay) else { return }
+        steps = 0
+        distanceM = 0
+        start()
+    }
 
     /// Zählt ab heute 0 Uhr live mit. Das iPhone liefert die Werte laufend, auch aus der Zeit, in der die App zu war.
     func start() {
         guard available else { return }
         pedometer.stopUpdates()
         let midnight = Calendar.current.startOfDay(for: Date())
+        if !Calendar.current.isDateInToday(startDay) { steps = 0; distanceM = 0 }
+        startDay = midnight
         pedometer.startUpdates(from: midnight) { [weak self] data, _ in
             guard let d = data else { return }
             let s = d.numberOfSteps.intValue
             let m = d.distance?.doubleValue ?? 0
             Task { @MainActor in
-                self?.steps = s
-                self?.distanceM = m
-                self?.live = true
+                // verspätete Werte vom Vortag nicht übernehmen
+                guard let self, Calendar.current.isDateInToday(self.startDay) else { return }
+                self.steps = s
+                self.distanceM = m
+                self.live = true
             }
         }
     }

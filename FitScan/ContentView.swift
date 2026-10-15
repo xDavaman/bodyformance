@@ -4,6 +4,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var health: HealthManager
+    @EnvironmentObject var tracker: StepTracker
     @EnvironmentObject var nav: AppNav
     @EnvironmentObject var rank: RankStore
     /// Reiter werden beim ersten Öffnen erzeugt und bleiben danach erhalten (Scroll-Stand, Eingaben)
@@ -23,7 +24,10 @@ struct ContentView: View {
             MainTabBar()
         }
         .onChange(of: nav.tab) { _, t in visited.insert(t) }
-        .task(id: consentHealth) { if consentHealth { await health.requestAuthorization() } }
+        .task(id: consentHealth) {
+            if consentHealth { await health.requestAuthorization() } else { health.stopLiveUpdates() }
+        }
+        .onChange(of: consentAnswered) { _, answered in if answered { tracker.start() } }
         .overlay { RankUpOverlay() }
         .animation(.easeInOut, value: rank.pendingRankUp?.index)
         .fullScreenCover(isPresented: Binding(get: { !consentAnswered }, set: { _ in })) { ConsentView() }
@@ -60,11 +64,13 @@ struct DashboardView: View {
                 TrialBanner()
                 Section { RankCard() } footer: { Text("„\(RankQuotes.daily())“") }
                 Section {
-                    StepsCard(steps: max(health.stepsToday, tracker.steps), goal: profile.stepGoal, history: health.stepsHistory, live: tracker.live)
+                    StepsCard(steps: health.displaySteps(phone: tracker.steps), goal: profile.stepGoal, history: health.stepsHistory,
+                              live: tracker.live && !health.usesWatchSteps)
+                    NavigationLink { StepSourceView() } label: { StepSourceRow() }
                 } header: {
                     Text("Schritte")
                 } footer: {
-                    Text("Live vom iPhone-Bewegungssensor, der Verlauf aus Apple Health. Empfohlenes Ziel für „\(profile.goal.rawValue)“ (Tempo \(profile.pace.rawValue)): \(profile.recommendedSteps) Schritte. Anpassen im Profil.")
+                    Text("Empfohlenes Ziel für „\(profile.goal.rawValue)“ (Tempo \(profile.pace.rawValue)): \(profile.recommendedSteps) Schritte. Anpassen im Profil.")
                 }
                 Section {
                     LifetimeStepsRow()
@@ -142,12 +148,12 @@ struct DashboardView: View {
     }
 
     private func syncKey() -> String {
-        "\(max(health.stepsToday, tracker.steps))-\(log.entries.count)-\(log.waterML(day: Date()))"
+        "\(health.displaySteps(phone: tracker.steps))-\(log.entries.count)-\(log.waterML(day: Date()))"
     }
 
     private func sync(targets: DayTargets) {
         let today = FoodLog.key(Date())
-        rank.syncToday(steps: max(health.stepsToday, tracker.steps), stepGoal: profile.stepGoal,
+        rank.syncToday(steps: health.displaySteps(phone: tracker.steps), stepGoal: profile.stepGoal,
                        foodEntries: log.entries.filter { $0.day == today }.count,
                        waterGoalReached: log.waterML(day: Date()) >= targets.waterML)
     }

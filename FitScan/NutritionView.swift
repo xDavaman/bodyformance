@@ -1,6 +1,7 @@
 import Combine
 import PhotosUI
 import SwiftUI
+import UIKit
 
 // Reiter „Essen“: Tagesübersicht (Kalorien, Protein, Fett, Kohlenhydrate, Salz, Wasser), Tagesplan nach Trainingstyp,
 // Mahlzeiten Frühstück / Mittag / Abend / Zwischenmahlzeit, Rezeptbibliothek und Meal Prep.
@@ -41,6 +42,9 @@ struct NutritionView: View {
                 Section("Rezepte") {
                     NavigationLink { RecipeLibraryView() } label: {
                         Label("Alle Rezepte (\(recipes.all.count))", systemImage: "book")
+                    }
+                    NavigationLink { RecipePhotosView() } label: {
+                        Label("Fotos für Essenspläne hochladen", systemImage: "photo.on.rectangle.angled")
                     }
                 }
                 Section {
@@ -279,6 +283,7 @@ struct RecipeLibraryView: View {
         List {
             Section {
                 NavigationLink { CommunityView() } label: { Label("Community-Rezepte", systemImage: "person.3") }
+                NavigationLink { RecipePhotosView() } label: { Label("Fotos für Essenspläne hochladen", systemImage: "photo.on.rectangle.angled") }
             }
             Section {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -356,6 +361,7 @@ struct RecipeDetailView: View {
     @State private var editRecipe = false
     @State private var shareSheet = false
     @State private var photoItem: PhotosPickerItem?
+    @State private var showCamera = false
 
     init(recipe: Recipe, factor: Double, slot: MealSlot, day: Date) {
         self.recipe = recipe
@@ -390,10 +396,16 @@ struct RecipeDetailView: View {
                     .listRowInsets(EdgeInsets())
                 HStack {
                     PhotosPicker(selection: $photoItem, matching: .images) {
-                        Label("Eigenes Foto wählen", systemImage: "photo")
+                        Label("Foto wählen", systemImage: "photo")
+                    }
+                    .buttonStyle(.borderless)
+                    if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                        Spacer()
+                        Button { showCamera = true } label: { Label("Aufnehmen", systemImage: "camera") }
+                            .buttonStyle(.borderless)
                     }
                     Spacer()
-                    if store.photo(for: recipe) != nil {
+                    if store.hasOwnPhoto(recipe) {
                         Button("Foto entfernen", role: .destructive) { store.removePhoto(for: recipe) }
                             .buttonStyle(.borderless)
                     }
@@ -494,6 +506,10 @@ struct RecipeDetailView: View {
             if let i = store.customIndex(for: recipe) { ShareToCommunitySheet(recipe: store.customs[i]) }
         }
         .sheet(isPresented: $editRecipe) { CustomRecipeEditor(recipe: store.customIndex(for: recipe).map { store.customs[$0] }) }
+        .fullScreenCover(isPresented: $showCamera) {
+            CameraPicker { img in store.setPhoto(img, for: recipe) }
+                .ignoresSafeArea()
+        }
         .onChange(of: photoItem) { _, item in
             guard let item else { return }
             Task {
