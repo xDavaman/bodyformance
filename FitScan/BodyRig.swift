@@ -187,27 +187,9 @@ extension BodyMotion {
 final class BodyRig {
     /// Wurzel der Szene für Körper und Hanteln (bleibt unbewegt, die Körperlage steckt im Skelett)
     let root = Entity()
-    /// Bank für Übungen im Liegen (gepolsterte Flachbank, Oberkante 0,30 m)
+    /// Bank für Übungen im Liegen (gepolsterte Hantelbank, Oberkante 0,30 m, Kopfende bei -z), siehe GymProps.bench
     let bench: Entity = {
-        let e = Entity()
-        let vinyl = SimpleMaterial(color: UIColor(white: 0.10, alpha: 1), roughness: 0.55, isMetallic: false)
-        let steel = SimpleMaterial(color: UIColor(white: 0.16, alpha: 1), roughness: 0.4, isMetallic: true)
-        let red = SimpleMaterial(color: UIColor(red: 0.80, green: 0.12, blue: 0.10, alpha: 1), roughness: 0.4, isMetallic: false)
-        let pad = ModelEntity(mesh: .generateBox(size: [0.34, 0.08, 1.25], cornerRadius: 0.035), materials: [vinyl])
-        pad.position = [0, 0.26, 0]
-        e.addChild(pad)
-        let spine = ModelEntity(mesh: .generateBox(size: [0.08, 0.20, 1.05], cornerRadius: 0.01), materials: [steel])
-        spine.position = [0, 0.16, 0]
-        e.addChild(spine)
-        for z: Float in [-0.48, 0.48] {
-            let foot = ModelEntity(mesh: .generateBox(size: [0.55, 0.05, 0.07], cornerRadius: 0.01), materials: [steel])
-            foot.position = [0, 0.025, z]
-            e.addChild(foot)
-            let cap = ModelEntity(mesh: .generateBox(size: [0.56, 0.01, 0.075]), materials: [red])
-            cap.position = [0, 0.052, z]
-            e.addChild(cap)
-        }
-        e.position = [0, 0, -0.2]
+        let e = GymProps.bench()
         e.isEnabled = false
         return e
     }()
@@ -306,8 +288,24 @@ final class BodyRig {
         }
         body = m
         if var mc = m.components[ModelComponent.self] {
-            mc.materials = Array(repeating: material, count: max(mc.materials.count, 1))
-            m.components.set(mc)
+            let original = mc.mesh
+            let jointCount = m.jointNames.count
+            if let seg = MuscleSegmenter.segmented(original, key: "FitScan_Skin") {
+                mc.mesh = seg
+                mc.materials = Array(repeating: material, count: MuscleSegmenter.order.count + 1)
+                m.components.set(mc)
+                muscleParts = true
+                // Sicherheitsnetz: falls das zerlegte Netz das Skelett verliert, zurück zum Original (dann ohne Muskelfarben)
+                if m.jointNames.count != jointCount {
+                    print("FitScan: Muskel-Zerlegung verwirft das Skelett, nutze Originalnetz")
+                    mc.mesh = original
+                    muscleParts = false
+                }
+            }
+            if !muscleParts {
+                mc.materials = Array(repeating: material, count: max(mc.materials.count, 1))
+                m.components.set(mc)
+            }
         }
         let names = m.jointNames
         var map = [Int](repeating: -1, count: MotionStore.jointNames.count)
@@ -320,6 +318,37 @@ final class BodyRig {
         ready = !map.contains(-1) && restPose.count == names.count
         if !ready { print("FitScan: Gelenkzuordnung unvollständig", names.count, map.filter { $0 < 0 }.count) }
         return ready
+    }
+
+    /// true, wenn das Körpernetz in Muskelbereiche zerlegt werden konnte (dann sind Muskelfarben möglich)
+    private(set) var muscleParts = false
+
+    /// Färbt aktive Muskeln rot und passive gelb, alles andere bleibt in der Hautfarbe.
+    func setHighlight(primary: [Muscle], secondary: [Muscle], neutral: UIColor) {
+        guard muscleParts, let m = body, var mc = m.components[ModelComponent.self] else { return }
+        func pbr(_ c: UIColor, glow: Bool) -> PhysicallyBasedMaterial {
+            var mat = PhysicallyBasedMaterial()
+            mat.baseColor = .init(tint: c)
+            mat.roughness = .init(floatLiteral: 0.55)
+            mat.metallic = .init(floatLiteral: 0)
+            if glow {
+                // leichtes Eigenleuchten, damit die Farben auch im dunkleren Raum gut zu sehen sind
+                mat.emissiveColor = .init(color: c)
+                mat.emissiveIntensity = 0.35
+            }
+            return mat
+        }
+        let skin = pbr(neutral, glow: false)
+        let active = pbr(MuscleHighlight.active, glow: true)
+        let passive = pbr(MuscleHighlight.passive, glow: true)
+        var mats: [Material] = [skin]
+        for muscle in MuscleSegmenter.order {
+            if primary.contains(muscle) { mats.append(active) }
+            else if secondary.contains(muscle) { mats.append(passive) }
+            else { mats.append(skin) }
+        }
+        mc.materials = mats
+        m.components.set(mc)
     }
 
     func setMaterial(_ material: Material) {

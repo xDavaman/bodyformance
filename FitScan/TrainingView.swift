@@ -79,8 +79,7 @@ struct ExerciseRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(exercise.name)
                 Text(detail).font(.footnote).foregroundStyle(.secondary)
-                Text(exercise.primary.map(\.rawValue).joined(separator: ", "))
-                    .font(.caption).foregroundStyle(.secondary)
+                MuscleChips(primary: exercise.primary, secondary: exercise.secondary)
                 if let badge {
                     Text(badge).font(.caption2).bold().foregroundStyle(.tint)
                 }

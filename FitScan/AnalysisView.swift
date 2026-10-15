@@ -217,13 +217,13 @@ struct AnalysisView: View {
                 }
             }
             if !store.sets.isEmpty {
-                MuscleModelView(primary: low, secondary: done, height: 260)
+                MuscleModelView(primary: low, secondary: done, height: 260, primaryLabel: "Zu wenig", secondaryLabel: "Ziel erreicht")
                     .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
             }
         } header: {
             Text("Muskeln: Sätze in den letzten 7 Tagen")
         } footer: {
-            Text("3D-Ansicht: rot = noch zu wenig trainiert, orange = Wochenziel erreicht. Hilfsmuskeln zählen halb.")
+            Text("3D-Ansicht: rot = noch zu wenig trainiert, gelb = Wochenziel erreicht. Hilfsmuskeln zählen halb.")
         }
     }
 
