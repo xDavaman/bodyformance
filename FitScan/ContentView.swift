@@ -15,11 +15,11 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
-                page(0) { DashboardView() }
-                page(1) { TrainingView() }
-                page(2) { EssenTabView() }
-                page(3) { NavigationStack { MobilityView() } }
-                page(4) { NavigationStack { ProfileView() } }
+                page(.profile) { DashboardView() }
+                page(.plan) { TrainingView() }
+                page(.recipes) { EssenTabView() }
+                page(.mobility) { NavigationStack { MobilityView() } }
+                page(.settings) { SettingsView() }
             }
             MainTabBar()
         }
@@ -33,7 +33,8 @@ struct ContentView: View {
         .fullScreenCover(isPresented: Binding(get: { !consentAnswered }, set: { _ in })) { ConsentView() }
     }
 
-    @ViewBuilder private func page<Content: View>(_ i: Int, @ViewBuilder content: () -> Content) -> some View {
+    @ViewBuilder private func page<Content: View>(_ t: AppTab, @ViewBuilder content: () -> Content) -> some View {
+        let i = t.rawValue
         if visited.contains(i) || nav.tab == i {
             content()
                 .opacity(nav.tab == i ? 1 : 0)
@@ -43,6 +44,7 @@ struct ContentView: View {
     }
 }
 
+/// Bereich „Profil“: eigenes Profil mit Live-Daten (Schritte, Essen, Apple Health, Körperwerte).
 struct DashboardView: View {
     @EnvironmentObject var health: HealthManager
     @EnvironmentObject var profile: UserProfile
@@ -62,6 +64,7 @@ struct DashboardView: View {
             let eaten = log.totals(day: Date())
             List {
                 TrialBanner()
+                Section { ProfileHeader() }
                 Section { RankCard() } footer: { Text("„\(RankQuotes.daily())“") }
                 Section {
                     StepsCard(steps: health.displaySteps(phone: tracker.steps), goal: profile.stepGoal, history: health.stepsHistory,
@@ -70,7 +73,7 @@ struct DashboardView: View {
                 } header: {
                     Text("Schritte")
                 } footer: {
-                    Text("Empfohlenes Ziel für „\(profile.goal.rawValue)“ (Tempo \(profile.pace.rawValue)): \(profile.recommendedSteps) Schritte. Anpassen im Profil.")
+                    Text("Empfohlenes Ziel für „\(profile.goal.rawValue)“ (Tempo \(profile.pace.rawValue)): \(profile.recommendedSteps) Schritte. Anpassen unter Einstellungen → Körperdaten und Ziele.")
                 }
                 Section {
                     LifetimeStepsRow()
@@ -103,7 +106,7 @@ struct DashboardView: View {
                         }
                         .font(.footnote)
                     }
-                    Button { nav.essenPage = .scan; nav.tab = 2 } label: {
+                    Button { nav.essenPage = .scan; nav.open(.recipes) } label: {
                         Label("Produkt scannen oder suchen", systemImage: "barcode.viewfinder")
                     }
                     NavigationLink { DietCoachView() } label: {
@@ -126,21 +129,24 @@ struct DashboardView: View {
                     }
                 }
                 Section("Körperfett (Schätzung)") {
-                    row("Aktuell", profile.bodyFatEstimate.map { String(format: "%.1f %%", $0) } ?? "Bitte Maße im Profil eintragen")
+                    row("Aktuell", profile.bodyFatEstimate.map { String(format: "%.1f %%", $0) } ?? "Bitte Maße unter Körperdaten eintragen")
                     row("Ziel", String(format: "%.1f %%", profile.targetBodyFat))
                     if let w = profile.weeksToGoal {
                         row("Voraussichtlich", "ca. \(w) Wochen (\(profile.pace.rawValue))")
                     }
                 }
-                Section("Mehr") {
-                    NavigationLink { SportView() } label: { Label("Sport und Laufen", systemImage: "figure.run") }
+                Section("Fortschritt") {
                     NavigationLink { AnalysisView() } label: { Label("Analyse", systemImage: "chart.line.uptrend.xyaxis") }
                     NavigationLink { ReportsView() } label: { Label("Wochen- und Monatsberichte", systemImage: "calendar.badge.clock") }
-                    NavigationLink { PlanExportView() } label: { Label("Plan als PDF", systemImage: "doc.richtext") }
-                    NavigationLink { BackupView() } label: { Label("Backup und Gerätewechsel", systemImage: "externaldrive") }
+                    NavigationLink { SportView() } label: { Label("Sport und Laufen", systemImage: "figure.run") }
                 }
             }
-            .navigationTitle("Heute")
+            .navigationTitle("Profil")
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    NavigationLink { ProfileView() } label: { Label("Körperdaten und Ziele", systemImage: "slider.horizontal.3") }
+                }
+            }
             .refreshable { await health.refresh() }
             .onChange(of: syncKey()) { _, _ in sync(targets: targets) }
             .onAppear { sync(targets: targets) }
@@ -253,5 +259,44 @@ struct LifetimeStepsRow: View {
             Text("Garmin, Fitbit & Co.: In deren App „Apple Health“ aktivieren, dann zählen die Schritte hier mit.")
                 .font(.caption2).foregroundStyle(.secondary)
         }
+    }
+}
+
+/// Kopf des Profils: Bild, Name, Ziel und die wichtigsten Körperwerte auf einen Blick.
+struct ProfileHeader: View {
+    @EnvironmentObject var profile: UserProfile
+    @EnvironmentObject var health: HealthManager
+    @AppStorage("profileName") private var name = ""
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 14) {
+                AvatarView(size: 64)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(name.isEmpty ? "Dein Profil" : name).font(.title3.bold())
+                    Text("\(profile.goal.rawValue) · \(profile.aesthetic.rawValue)").font(.subheadline).foregroundStyle(.secondary)
+                    if health.isAuthorized {
+                        Label("Live mit Apple Health", systemImage: "dot.radiowaves.left.and.right")
+                            .font(.caption).foregroundStyle(.green)
+                    }
+                }
+                Spacer(minLength: 0)
+            }
+            HStack(spacing: 0) {
+                stat(String(format: "%.1f", health.latestWeightKg ?? profile.weightKg), "kg")
+                stat("\(Int(profile.heightCm))", "cm")
+                stat(profile.bodyFatEstimate.map { String(format: "%.1f", $0) } ?? "–", "% KFA")
+                stat(String(format: "%.1f", profile.bmi), "BMI")
+            }
+        }
+        .padding(.vertical, 4)
+    }
+
+    private func stat(_ value: String, _ unit: String) -> some View {
+        VStack(spacing: 2) {
+            Text(value).font(.headline).monospacedDigit()
+            Text(unit).font(.caption2).foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
     }
 }

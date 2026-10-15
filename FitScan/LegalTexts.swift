@@ -31,13 +31,13 @@ i) Einstellungen und Einwilligungen: z. B. Zustimmung zur Verarbeitung von Apple
 j) Technische Daten: BFC erhebt keine Nutzungsstatistiken, keine Absturzberichte und keine Werbe-ID. Apple kann nach deinen eigenen Geräteeinstellungen anonyme Absturz- und Nutzungsdaten an Entwickler weitergeben; darauf hat BFC keinen Einfluss.
 """),
         ("4. Zwecke und Rechtsgrundlagen", """
-Gesundheitsdaten (3 a, b, c, d, f): Deine ausdrückliche Einwilligung, Art. 6 Abs. 1 lit. a und Art. 9 Abs. 2 lit. a DSGVO. Du erteilst sie beim ersten Start und kannst sie jederzeit unter Profil → Datenschutz widerrufen.
+Gesundheitsdaten (3 a, b, c, d, f): Deine ausdrückliche Einwilligung, Art. 6 Abs. 1 lit. a und Art. 9 Abs. 2 lit. a DSGVO. Du erteilst sie beim ersten Start und kannst sie jederzeit unter Einstellungen → Datenschutz widerrufen.
 Zweck: Berechnung deiner Kalorien- und Eiweißziele, Schrittziele und Trainingsvorschläge, Anzeige von Fortschritt und Verlauf, Rang-System, Diät-Coach, Teilen auf deinen Wunsch.
 Übrige Daten (3 e, g, h, i): Durchführung der von dir genutzten App-Funktionen (Art. 6 Abs. 1 lit. b DSGVO, soweit man die Nutzung als Vertrag ansieht, andernfalls Art. 6 Abs. 1 lit. a und f DSGVO; das berechtigte Interesse ist die Bereitstellung der App).
 Es findet kein Profiling im Sinne von Art. 22 DSGVO statt. Es gibt keine automatisierten Entscheidungen mit rechtlicher Wirkung. Die Berechnungen (z. B. Kalorienziel) sind einfache Formeln auf deinen eigenen Angaben; du entscheidest, was du damit tust.
 """),
         ("5. Speicherdauer und Löschung", """
-Alle Daten bleiben auf deinem Gerät, bis du sie löschst. Du kannst jederzeit unter Profil → Datenschutz → „Alle Daten in der App löschen“ alles entfernen oder einzelne Einträge (Training, Essen, Scans) in den jeweiligen Listen löschen. Beim Löschen der App werden die App-Daten ebenfalls entfernt. Daten in Apple Health löscht du in Apple Health selbst. Geteilte Bilder und Exporte, die du an andere gesendet hast, kann BFC nicht zurückholen.
+Alle Daten bleiben auf deinem Gerät, bis du sie löschst. Du kannst jederzeit unter Einstellungen → Datenschutz → „Alle Daten in der App löschen“ alles entfernen oder einzelne Einträge (Training, Essen, Scans) in den jeweiligen Listen löschen. Beim Löschen der App werden die App-Daten ebenfalls entfernt. Daten in Apple Health löscht du in Apple Health selbst. Geteilte Bilder und Exporte, die du an andere gesendet hast, kann BFC nicht zurückholen.
 Das Ernährungstagebuch behält die letzten 120 Tage.
 """),
         ("6. Apple Health, Apple Watch und andere Tracker", """
@@ -71,7 +71,7 @@ Die Community-Funktion ist optional und standardmäßig nicht verbunden. Falls d
 Der Diät-Coach berechnet Vorschläge aus deinen eigenen Angaben. Der Extrem-Modus erfordert eine gesonderte, ausdrückliche Bestätigung, die nur lokal gespeichert wird und nach 28 Tagen verfällt. Die Vorschläge sind allgemeine Informationen und keine medizinische Beratung (siehe Haftungsausschluss).
 """),
         ("15. Nutzungsstatistik (optional, nur mit Einwilligung)", """
-BFC kann anonyme Nutzungsstatistik erfassen, damit der Entwickler sieht, wie viele Personen die App nutzen, welche Funktionen genutzt werden und wo Abstürze auftreten. Das ist standardmäßig aus. Du schaltest es unter Profil → Datenschutz → „Anonyme Nutzungsstatistik“ ein und kannst es dort jederzeit wieder ausschalten.
+BFC kann anonyme Nutzungsstatistik erfassen, damit der Entwickler sieht, wie viele Personen die App nutzen, welche Funktionen genutzt werden und wo Abstürze auftreten. Das ist standardmäßig aus. Du schaltest es unter Einstellungen → Datenschutz → „Anonyme Nutzungsstatistik“ ein und kannst es dort jederzeit wieder ausschalten.
 Stufe 1 (aktuell): Es läuft nur die Statistik von Apple (App Store Analytics, Abstürze). Sie ist aggregiert und für den Entwickler nur sichtbar, wenn du in den iOS-Einstellungen „Analyse und Verbesserungen → Mit App-Entwicklern teilen“ erlaubst. BFC sendet dafür selbst nichts.
 Stufe 2 (geplant): Google Firebase (Analytics) mit Datenhaltung in der EU, Region Frankfurt (Deutschland). Mit Google besteht ein Auftragsverarbeitungsvertrag. Bei möglichen Zugriffen aus Drittländern gelten Standardvertragsklauseln beziehungsweise das EU-US Data Privacy Framework. Vor dem Start dieser Stufe wird diese Erklärung aktualisiert und BFC fragt dich erneut.
 Erfasst werden nur anonyme Ereignisse (z. B. „Training gestartet“, „Scan abgeschlossen“, „Paywall geöffnet“), App-Version, iOS-Version, Gerätemodell, Sprache und eine zufällige Instanz-Kennung. Nie erfasst werden Name, E-Mail, Gesundheitswerte, Gewicht, Körperfett, Ernährung, Standort, Strecken, Fotos oder Scans.
@@ -79,7 +79,7 @@ Rechtsgrundlage ist deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO, § 25 TDDDG)
 """),
         ("16. Werbung (vorbereitet, derzeit nicht aktiv)", """
 BFC ist für optionale Werbung vorbereitet, um die App zu finanzieren. Solange in der App keine Werbung erscheint, wird dafür nichts verarbeitet. Bevor Werbung aktiviert wird, wird diese Erklärung um den Werbepartner, die übertragenen Daten und die Speicherdauer ergänzt.
-Dann gilt: Werbung erscheint nur mit deiner Einwilligung (Abfrage der Einwilligung und, wo nötig, die Apple-Abfrage zur App-Verfolgung). Ohne Einwilligung gibt es nur nicht personalisierte Werbung oder keine. Auf Seiten mit Gesundheitsbezug (Scan, Körperwerte, Diät, Extrem-Modus, Analysen) wird keine Werbung gezeigt, und Gesundheitsdaten werden nie für Werbung verwendet oder an Werbepartner gegeben. Mit Premium entfällt die Werbung. Die Einwilligung kannst du unter Profil → Datenschutz jederzeit widerrufen.
+Dann gilt: Werbung erscheint nur mit deiner Einwilligung (Abfrage der Einwilligung und, wo nötig, die Apple-Abfrage zur App-Verfolgung). Ohne Einwilligung gibt es nur nicht personalisierte Werbung oder keine. Auf Seiten mit Gesundheitsbezug (Scan, Körperwerte, Diät, Extrem-Modus, Analysen) wird keine Werbung gezeigt, und Gesundheitsdaten werden nie für Werbung verwendet oder an Werbepartner gegeben. Mit Premium entfällt die Werbung. Die Einwilligung kannst du unter Einstellungen → Datenschutz jederzeit widerrufen.
 """),
         ("17. Premium, Käufe und Abonnements (vorbereitet, derzeit nicht aktiv)", """
 Während der Beta-Phase sind alle Funktionen kostenlos. Es wird nichts gekauft und kein Startdatum einer Testphase gespeichert. Die folgenden Angaben gelten ab dem Start von Premium; vorher wird die App entsprechend aktualisiert.
@@ -99,7 +99,7 @@ Du hast gegenüber dem Verantwortlichen folgende Rechte:
 • Berichtigung (Art. 16)
 • Löschung (Art. 17)
 • Einschränkung der Verarbeitung (Art. 18)
-• Datenübertragbarkeit (Art. 20): Export als JSON unter Profil → Datenschutz
+• Datenübertragbarkeit (Art. 20): Export als JSON unter Einstellungen → Datenschutz
 • Widerspruch (Art. 21) gegen Verarbeitung auf Grundlage berechtigter Interessen
 • Widerruf einer Einwilligung (Art. 7 Abs. 3) jederzeit mit Wirkung für die Zukunft, ohne dass die Rechtmäßigkeit der bisherigen Verarbeitung berührt wird
 Da die Daten fast ausschließlich lokal bei dir liegen, kannst du die meisten Rechte direkt in der App ausüben. Für alles Weitere schreibe an \(LegalInfo.contactEmail).
@@ -109,13 +109,19 @@ Beschwerderecht: Du kannst dich bei einer Datenschutz-Aufsichtsbehörde beschwer
 Die Nutzung von BFC verlangt keine Pflichtangaben an den Entwickler. Ohne Einwilligung in die Verarbeitung von Apple-Health-Daten entfallen Schritt-Verlauf, Lifetime-Schritte, die Übernahme von Uhr-Workouts und Teile der Auswertung; du kannst weiter manuell Daten eintragen. Ein Widerruf wirkt nur für die Zukunft.
 """),
         ("22. Änderungen dieser Erklärung", """
-Wenn sich die Apps oder die Rechtslage ändern, wird diese Erklärung angepasst. Die jeweils aktuelle Fassung findest du in der App unter Profil → Datenschutz und online unter der in App Store Connect angegebenen Adresse. Bei wesentlichen Änderungen (z. B. neue Datenübertragungen) fragt BFC erneut um deine Einwilligung.
+Wenn sich die Apps oder die Rechtslage ändern, wird diese Erklärung angepasst. Die jeweils aktuelle Fassung findest du in der App unter Einstellungen → Datenschutz und online unter der in App Store Connect angegebenen Adresse. Bei wesentlichen Änderungen (z. B. neue Datenübertragungen) fragt BFC erneut um deine Einwilligung.
 """),
     ]
     static let disclaimer = """
-BFC liefert allgemeine Informationen zu Training, Ernährung und Bewegung. Es ist keine medizinische, therapeutische oder Ernährungsberatung und ersetzt keinen Arzt oder keine Ärztin. Alle Angaben, Berechnungen, Pläne, Kalorien- und Trainingsvorschläge, Körperfett- und Zeitschätzungen sind unverbindliche Richtwerte ohne Gewähr auf Richtigkeit, Vollständigkeit oder Eignung für deinen Einzelfall.
+BFC ist ausschließlich eine Hilfestellung. Die App liefert allgemeine Informationen zu Training, Ernährung und Bewegung. Es ist keine medizinische, therapeutische oder Ernährungsberatung und ersetzt keinen Arzt oder keine Ärztin. Alle Angaben, Berechnungen, Pläne, Kalorien- und Trainingsvorschläge, Körperfett- und Zeitschätzungen sind unverbindliche Richtwerte ohne Gewähr auf Richtigkeit, Vollständigkeit oder Eignung für deinen Einzelfall.
 Die Nutzung der App und das Befolgen ihrer Vorschläge erfolgen auf eigene Verantwortung. Sprich vor einer Diät, vor Fasten, vor dem Extrem-Modus und vor neuem oder intensivem Training mit einem Arzt, besonders bei Vorerkrankungen, Medikamenten, Schwangerschaft, Stillzeit oder einer Essstörung. Brich bei Schwindel, Schmerzen, Herzrasen, Atemnot oder Ohnmacht sofort ab und hole ärztliche Hilfe.
 Der Entwickler haftet nicht für Schäden, die aus der Nutzung der App oder dem Befolgen ihrer Vorschläge entstehen, soweit gesetzlich zulässig. Unberührt bleibt die Haftung für Vorsatz und grobe Fahrlässigkeit, für die Verletzung von Leben, Körper oder Gesundheit sowie nach zwingenden gesetzlichen Vorschriften (z. B. Produkthaftungsgesetz). Für die Richtigkeit von Nährwertdaten aus Open Food Facts und anderen Quellen übernimmt der Entwickler keine Gewähr.
-Die Sensoren des iPhones (Schritte, GPS, LiDAR) und die Schätzungen sind nicht medizinisch genau. Der Extrem-Modus kann der Gesundheit schaden und ist nur für gesunde Erwachsene und nur kurzzeitig gedacht.
+Aus den Angaben, Plänen, Analysen und Auswertungen der App (auch aus KI-gestützten Auswertungen, 3D-Animationen und Körperscans) lassen sich keine Rechtsansprüche ableiten. Sie haben keine rechtliche Verbindlichkeit und sind weder Gutachten noch Diagnose noch Nachweis gegenüber Dritten, etwa Versicherungen, Behörden oder Arbeitgebern.
+Die Sensoren des iPhones (Schritte, GPS, LiDAR, Kamera) und die Schätzungen sind nicht medizinisch genau. Der Extrem-Modus kann der Gesundheit schaden und ist nur für gesunde Erwachsene und nur kurzzeitig gedacht.
+"""
+    static let usageNotice = """
+BFC ist nur eine Hilfestellung für Training, Ernährung und Bewegung. Die App ersetzt keine ärztliche, therapeutische oder Ernährungsberatung.
+Alle Pläne, Analysen, Schätzungen (z. B. Körperfett) und Animationen sind unverbindliche Richtwerte. Sie haben keine rechtliche Verbindlichkeit, und es lassen sich keine Ansprüche daraus ableiten.
+Du trainierst und ernährst dich auf eigene Verantwortung. Bei Schmerzen, Schwindel oder Vorerkrankungen sprich vorher mit einem Arzt.
 """
 }
