@@ -19,9 +19,12 @@ Neue `.swift`-Dateien im Ordner `FitScan/FitScan/` werden automatisch ins Projek
 
 ## Aufbau
 
+Fünf Bereiche in der unteren Leiste: **Profil** (eigenes Profil mit Live-Daten), **Trainingsplan**, **Rezepte** (Rezepte, Essensplan, Scan, Verlauf), **Mobility** (Mobility, Yoga, Pilates, Dehnen, Reha) und **Einstellungen** (Hinweis zur Nutzung, Körperdaten und Ziele, 3D-Modell und Scan, Geräte, Datenschutz, Rechtliches).
+
+
 | Bereich | Dateien |
 |---|---|
-| App/Navigation | `FitScanApp.swift` (alle Stores als `@EnvironmentObject`), `ContentView.swift` (eigene untere Tab-Leiste, Dashboard), `EssenHub.swift` (`AppNav`, Essen-Unterleiste) |
+| App/Navigation | `FitScanApp.swift` (alle Stores als `@EnvironmentObject`), `ContentView.swift` (fünf Bereiche, Profil mit Live-Daten), `EssenHub.swift` (`AppTab`, `AppNav`, untere Leiste, Rezepte-Unterleiste), `SettingsView.swift` (Einstellungen, Hinweis zur Nutzung) |
 | Training | `TrainingView`, `PlanBuilder`, `TrainingStore`, `Progression`, `Exercise*`, `WorkoutLogView` |
 | 3D-Modell | `MuscleModelView`, `BodyRig`, `BodyMotions`, `GymScene`, `FitScan_Skin.usdz`, `FitScan_Motions.bin` |
 | Ernährung | `NutritionView`, `NutritionEngine`, `RecipeStore`, `FoodDB`, `FoodScan`, `FoodData` (generiert, siehe unten) |

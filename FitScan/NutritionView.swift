@@ -96,7 +96,7 @@ struct NutritionView: View {
         } header: {
             Text("Tagesübersicht · Tempo: \(profile.pace.rawValue)")
         } footer: {
-            Text("Die Ziele passen sich an Ziel, Tempo und Tagestyp an. Eine Änderung im Profil rechnet alles neu.")
+            Text("Die Ziele passen sich an Ziel, Tempo und Tagestyp an. Eine Änderung unter Körperdaten und Ziele rechnet alles neu.")
         }
     }
 

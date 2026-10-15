@@ -138,7 +138,7 @@ struct DietCoachView: View {
             } header: {
                 Text("Tempo")
             } footer: {
-                Text("Deine Wahl ist dieselbe wie „Tempo“ im Profil und bestimmt dein Tagesziel auf „Heute“, im Essens-Tagebuch und beim Schrittziel.")
+                Text("Deine Wahl ist dieselbe wie „Tempo“ unter Körperdaten und Ziele und bestimmt dein Tagesziel im Profil, im Essens-Tagebuch und beim Schrittziel.")
             }
 
             if mode == .radical { radicalBanner }

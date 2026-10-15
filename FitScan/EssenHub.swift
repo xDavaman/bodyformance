@@ -2,16 +2,18 @@ import Charts
 import Combine
 import SwiftUI
 
-// Essen-Reiter mit drei Bereichen: Tag (Plan und Tagebuch), Scan und Suche (Produkte erfassen), Verlauf und Analyse.
-// Alles, was erfasst wird, landet sofort im Tagesbedarf auf „Heute“ und im Verlauf.
+// Bereich „Rezepte“ mit vier Seiten: Rezepte (Bibliothek), Tag (Plan und Tagebuch), Scan und Suche (Produkte erfassen),
+// Verlauf und Analyse. Alles, was erfasst wird, landet sofort im Tagesbedarf im Profil und im Verlauf.
 
 enum EssenPage: String, CaseIterable, Identifiable {
+    case recipes = "Rezepte"
     case day = "Tag"
     case scan = "Scan & Suche"
     case history = "Verlauf"
     var id: String { rawValue }
     var icon: String {
         switch self {
+        case .recipes: return "book"
         case .day: return "fork.knife"
         case .scan: return "barcode.viewfinder"
         case .history: return "chart.bar.doc.horizontal"
@@ -19,11 +21,40 @@ enum EssenPage: String, CaseIterable, Identifiable {
     }
 }
 
-/// Gemeinsamer Zustand für die Navigation zwischen den Reitern
+/// Die fünf Hauptbereiche der App (Reihenfolge = Reihenfolge in der unteren Leiste)
+enum AppTab: Int, CaseIterable, Identifiable {
+    case profile, plan, recipes, mobility, settings
+    var id: Int { rawValue }
+    var title: String {
+        switch self {
+        case .profile: return "Profil"
+        case .plan: return "Trainingsplan"
+        case .recipes: return "Rezepte"
+        case .mobility: return "Mobility"
+        case .settings: return "Einstellungen"
+        }
+    }
+    /// Kurzer Name für die untere Leiste
+    var short: String { self == .plan ? "Plan" : title }
+    var icon: String {
+        switch self {
+        case .profile: return "person.crop.circle"
+        case .plan: return "figure.strengthtraining.traditional"
+        case .recipes: return "fork.knife"
+        case .mobility: return "figure.yoga"
+        case .settings: return "gearshape"
+        }
+    }
+}
+
+/// Gemeinsamer Zustand für die Navigation zwischen den Bereichen
 final class AppNav: ObservableObject {
-    /// 0 Heute, 1 Training, 2 Essen, 3 Mobility, 4 Profil
-    @Published var tab = 0
-    @Published var essenPage: EssenPage = .day
+    /// Index des Bereichs, siehe AppTab (0 Profil, 1 Trainingsplan, 2 Rezepte, 3 Mobility, 4 Einstellungen)
+    @Published var tab = AppTab.profile.rawValue
+    @Published var essenPage: EssenPage = .recipes
+
+    func open(_ t: AppTab) { tab = t.rawValue }
+    func isOn(_ t: AppTab) -> Bool { tab == t.rawValue }
 }
 
 /// Eine Zeile mit dem aktuellen Bereich, die per Tipp aufklappt und alle Bereiche zeigt
@@ -73,30 +104,44 @@ struct EssenBar: View {
     }
 }
 
-/// Untere Hauptleiste (ersetzt die automatische Tab-Leiste, die auf iPad und Mac oben erscheint)
+/// Untere Hauptleiste (ersetzt die automatische Tab-Leiste, die auf iPad und Mac oben erscheint).
+/// Der aktive Bereich bekommt eine farbige Kapsel hinter dem Symbol.
 struct MainTabBar: View {
     @EnvironmentObject var nav: AppNav
-    private let items: [(String, String)] = [
-        ("Heute", "heart.text.square"), ("Training", "figure.strengthtraining.traditional"), ("Essen", "fork.knife"),
-        ("Mobility", "figure.flexibility"), ("Profil", "person.crop.circle")
-    ]
+    @Namespace private var pill
 
     var body: some View {
         HStack(spacing: 0) {
-            ForEach(items.indices, id: \.self) { i in
-                Button { nav.tab = i } label: {
+            ForEach(AppTab.allCases) { t in
+                let on = nav.isOn(t)
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { nav.open(t) }
+                } label: {
                     VStack(spacing: 3) {
-                        Image(systemName: items[i].1).font(.system(size: 20))
-                        Text(items[i].0).font(.caption2)
+                        ZStack {
+                            if on {
+                                Capsule().fill(Color.accentColor.opacity(0.16))
+                                    .frame(width: 54, height: 30)
+                                    .matchedGeometryEffect(id: "pill", in: pill)
+                            }
+                            Image(systemName: t.icon)
+                                .font(.system(size: 19, weight: on ? .semibold : .regular))
+                                .symbolVariant(on ? .fill : .none)
+                        }
+                        .frame(height: 30)
+                        Text(t.short).font(.caption2.weight(on ? .semibold : .regular)).lineLimit(1).minimumScaleFactor(0.8)
                     }
                     .frame(maxWidth: .infinity)
-                    .foregroundStyle(nav.tab == i ? Color.accentColor : Color.secondary)
+                    .foregroundStyle(on ? Color.accentColor : Color.secondary)
+                    .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(t.title)
+                .accessibilityAddTraits(on ? .isSelected : [])
             }
         }
-        .padding(.top, 8)
-        .padding(.bottom, 4)
+        .padding(.top, 6)
+        .padding(.bottom, 2)
         .background(Material.bar, ignoresSafeAreaEdges: .bottom)
         .overlay(alignment: .top) { Divider() }
     }
@@ -109,6 +154,7 @@ struct EssenTabView: View {
         VStack(spacing: 0) {
             EssenBar(page: $nav.essenPage)
             switch nav.essenPage {
+            case .recipes: NavigationStack { RecipeLibraryView() }
             case .day: NutritionView()
             case .scan: FoodScanTab()
             case .history: NavigationStack { FoodHistoryView() }
@@ -183,18 +229,18 @@ struct FoodScanTab: View {
         }
     }
 
-    /// Nach dem Eintragen: zurück auf „Heute“, dort stehen die Werte schon in den Balken.
+    /// Nach dem Eintragen: zurück ins Profil, dort stehen die Werte schon in den Balken.
     private func finished() {
         scanKey = UUID()
         query = ""
         manualCode = ""
         status = ""
-        nav.tab = 0
+        nav.open(.profile)
     }
 
     @ViewBuilder private var scanSection: some View {
         Section {
-            if BarcodeScannerView.supported && nav.tab == 2 && nav.essenPage == .scan {
+            if BarcodeScannerView.supported && nav.isOn(.recipes) && nav.essenPage == .scan {
                 BarcodeScannerView(active: selected == nil && !showCustom && !busy) { code in Task { await lookup(code) } }
                     .id(scanKey)
                     .frame(height: 300)
@@ -217,7 +263,7 @@ struct FoodScanTab: View {
         } header: {
             Text("Barcode scannen")
         } footer: {
-            Text("Halte die Kamera auf den Strichcode. Die Nährwerte kommen von Open Food Facts und landen nach der Mengenangabe direkt in deinem Tagesbedarf auf „Heute“. Ist das Produkt nicht auffindbar, wechsle auf „Manuell“.")
+            Text("Halte die Kamera auf den Strichcode. Die Nährwerte kommen von Open Food Facts und landen nach der Mengenangabe direkt in deinem Tagesbedarf im Profil. Ist das Produkt nicht auffindbar, wechsle auf „Manuell“.")
         }
     }
 

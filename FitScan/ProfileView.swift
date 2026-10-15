@@ -1,7 +1,8 @@
 import Combine
 import SwiftUI
 
-/// Individuelle Einstellungen: Körperdaten, Ziel, Optik, Ausstattung und Schwerpunkt-Muskeln.
+/// Körperdaten und Ziele: Körperdaten, Ziel, Optik, Ausstattung und Schwerpunkt-Muskeln.
+/// Erreichbar aus dem Profil (oben rechts) und aus den Einstellungen.
 struct ProfileView: View {
     @EnvironmentObject var profile: UserProfile
     @EnvironmentObject var schedule: ScanSchedule
@@ -98,7 +99,7 @@ struct ProfileView: View {
             } header: {
                 Text("Schritte")
             } footer: {
-                Text("Aktuelles Tagesziel: \(profile.stepGoal) Schritte. Es wird live gezählt und auf der Heute-Seite angezeigt.")
+                Text("Aktuelles Tagesziel: \(profile.stepGoal) Schritte. Es wird live gezählt und im Profil angezeigt.")
             }
 
             Section {
@@ -146,12 +147,10 @@ struct ProfileView: View {
                 LabeledContent("Protein", value: "\(profile.proteinGrams) g")
             }
 
-            PremiumAndAdsSection()
-            PrivacySection()
         }
         .sheet(isPresented: $showExtremeConfirm) {
             RadicalConfirmView { profile.extremeConfirmedAt = Date().timeIntervalSince1970; profile.pace = .extreme }
         }
-        .navigationTitle("Profil")
+        .navigationTitle("Körperdaten und Ziele")
     }
 }

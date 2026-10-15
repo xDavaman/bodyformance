@@ -28,9 +28,9 @@ struct ConsentView: View {
                     Label("Teilen passiert nur, wenn du selbst auf „Teilen“ tippst.", systemImage: "square.and.arrow.up")
                 }
                 .font(.subheadline)
-                Text("Wichtig: BFC ersetzt keinen Arzt, alle Angaben sind Richtwerte, die Nutzung erfolgt auf eigene Verantwortung. Der Entwickler haftet nicht für Schäden aus der Nutzung, soweit gesetzlich zulässig (Details unter Profil → Datenschutz → Haftungsausschluss).")
+                Text("Wichtig: BFC ersetzt keinen Arzt, alle Angaben sind Richtwerte, die Nutzung erfolgt auf eigene Verantwortung. Der Entwickler haftet nicht für Schäden aus der Nutzung, soweit gesetzlich zulässig (Details unter Einstellungen → Hinweis zur Nutzung).")
                     .font(.footnote)
-                Text("Gesundheitsdaten sind besonders geschützt. Mit „Einverstanden“ willigst du ausdrücklich ein, dass BFC sie wie beschrieben verarbeitet. Du kannst das jederzeit unter Profil → Datenschutz widerrufen. BFC ersetzt keine ärztliche Beratung. Nutzung ab 16 Jahren.")
+                Text("Gesundheitsdaten sind besonders geschützt. Mit „Einverstanden“ willigst du ausdrücklich ein, dass BFC sie wie beschrieben verarbeitet. Du kannst das jederzeit unter Einstellungen → Datenschutz widerrufen. BFC ersetzt keine ärztliche Beratung. Nutzung ab 16 Jahren.")
                     .font(.footnote).foregroundStyle(.secondary)
                 Button { health = true; answered = true } label: {
                     Text("Einverstanden").frame(maxWidth: .infinity)
@@ -47,7 +47,7 @@ struct ConsentView: View {
     }
 }
 
-/// Datenschutz-Abschnitt im Profil: Widerruf, Export, Löschen, Texte.
+/// Datenschutz-Abschnitt in den Einstellungen: Widerruf, Export, Löschen, Texte.
 struct PrivacySection: View {
     @AppStorage("bfc.consent.health") private var consentHealth = false
     @State private var exportURL: URL?

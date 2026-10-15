@@ -16,7 +16,7 @@ struct TrainingView: View {
                         LabeledContent("Schwerpunkt", value: profile.focusMuscles.map(\.rawValue).sorted().joined(separator: ", "))
                     }
                     Text(plan.note).font(.footnote).foregroundStyle(.secondary)
-                    NavigationLink("Profil und Plan anpassen") { ProfileView() }
+                    NavigationLink("Ziel und Plan anpassen") { ProfileView() }
                 } header: {
                     Text("Dein Plan")
                 } footer: {
@@ -27,6 +27,8 @@ struct TrainingView: View {
                     NavigationLink { WorkoutTrackerView() } label: {
                         Label("Training aufzeichnen (Zeit, Schritte, Tempo)", systemImage: "play.circle")
                     }
+                    NavigationLink { SportView() } label: { Label("Sport und Laufen", systemImage: "figure.run") }
+                    NavigationLink { PlanExportView() } label: { Label("Plan als PDF", systemImage: "doc.richtext") }
                 }
 
                 ForEach(Array(days.enumerated()), id: \.element.id) { index, day in
@@ -58,7 +60,7 @@ struct TrainingView: View {
                     }
                 }
             }
-            .navigationTitle("Training")
+            .navigationTitle("Trainingsplan")
         }
     }
 }
