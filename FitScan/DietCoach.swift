@@ -130,7 +130,8 @@ struct DietCoachView: View {
                 Picker("Tempo", selection: Binding(get: { mode }, set: { new in
                     if new == .radical && !radicalActive { showConfirm = true } else { profile.pace = new.pace }
                 })) {
-                    ForEach(DietMode.allCases) { Text($0.rawValue).tag($0) }
+                    // „Extrem“ gibt es nur beim Ziel Diät (sonst springt die Auswahl ohne Erklärung zurück)
+                    ForEach(DietMode.allCases.filter { $0 != .radical || profile.goal == .fatLoss }) { Text($0.rawValue).tag($0) }
                 }
                 .pickerStyle(.segmented)
                 Text(modeNote).font(.footnote).foregroundStyle(.secondary)

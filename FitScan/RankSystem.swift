@@ -224,7 +224,11 @@ final class RankStore: ObservableObject {
             streak += 1
             d = cal.date(byAdding: .day, value: -1, to: d) ?? d
         }
-        if streak >= 7 { award(.streakWeek, key: "w\(streak / 7)-\(Self.dayKey(Date()).prefix(7))") }
+        // Schlüssel am Starttag der Serie festmachen, damit ein Monatswechsel den Bonus nicht doppelt auslöst
+        if streak >= 7 {
+            let start = cal.date(byAdding: .day, value: -(streak - 1), to: Date()) ?? Date()
+            award(.streakWeek, key: "w\(streak / 7)-\(Self.dayKey(start))")
+        }
     }
 
     private func commit() {
