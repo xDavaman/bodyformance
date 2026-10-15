@@ -26,7 +26,8 @@ Neue `.swift`-Dateien im Ordner `FitScan/FitScan/` werden automatisch ins Projek
 | 3D-Modell | `MuscleModelView`, `BodyRig`, `BodyMotions`, `GymScene`, `FitScan_Skin.usdz`, `FitScan_Motions.bin` |
 | Ernährung | `NutritionView`, `NutritionEngine`, `RecipeStore`, `FoodDB`, `FoodScan`, `FoodData` (generiert, siehe unten) |
 | Community | `Community.swift` (Firebase per REST, kein SDK) |
-| Profil / Scan | `ProfileView`, `UserProfile`, `ScanView`, `BodyScanView`, `ScanSchedule` (Intervall + Verlauf), `ProfileAvatar` |
+| Profil / Scan | `ProfileView`, `UserProfile`, `ScanView`, `ScanSchedule` (Intervall + Verlauf), `ProfileAvatar` |
+| 3D-Körperscan | `BodyScanView` (Übersicht), `LiDARScanView` (Punktwolke + Netz live), `VideoScanView` (3D aus Video, Photogrammetrie), `ScanPreviewView` (Vorschau, Maße, Teilen), `BodyScanStore` (Ablage, Dateiformate, Maße, **`BodyModelBridge` = Platzhalter für das 3D-Modellprojekt**) |
 | Aktivität | `Activity`, `HealthManager`, `SportView`, `MobilityView` |
 
 Daten werden lokal gespeichert (UserDefaults als JSON, `@AppStorage`, Profilbild als Datei in Documents).
@@ -52,5 +53,5 @@ Die Rezept-Community läuft über ein eigenes Firebase-Projekt, das **nicht im R
 
 - Test auf echtem iPhone (Kamera, Barcode, Schrittzähler, Erinnerungen).
 - Community noch nicht gegen ein echtes Firebase-Projekt getestet; für den öffentlichen Start fehlen Moderation und Nutzer-Sperren (Apple-Vorgabe für nutzergenerierte Inhalte).
-- 4-Positionen-LiDAR-Scan für automatische Körperfett-Berechnung.
+- 3D-Modellprojekt an `BodyModelBridge.provider` anschließen (Protokoll `BodyModelProvider` in `BodyScanStore.swift`).
 - Neue Kabelübungen, überarbeitete Muskelfarben, eigene Übungen.
