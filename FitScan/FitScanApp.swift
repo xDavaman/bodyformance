@@ -19,6 +19,7 @@ struct FitScanApp: App {
     @StateObject private var rank = RankStore()
     @StateObject private var premium = PremiumStore()
     @Environment(\.scenePhase) private var scenePhase
+    @AppStorage("bfc.consent.answered") private var consentGiven = false
 
     var body: some Scene {
         WindowGroup {
@@ -40,9 +41,18 @@ struct FitScanApp: App {
                 .environmentObject(premium)
                 .keyboardFriendly()
                 .onChange(of: scenePhase) { _, phase in
-                    if phase == .active { steps.start() } else if !session.running { steps.stop() }
+                    if phase == .active {
+                        if consentGiven { steps.start() }
+                        if health.isAuthorized { Task { await health.refreshToday() } }
+                    } else if !session.running { steps.stop() }
                 }
-                .onAppear { KeyboardHelper.install(); steps.start(); Analytics.track(.appOpen); health.sessionLog = sessionLog }
+                .onAppear {
+                    KeyboardHelper.install()
+                    // Bewegungssensor erst nach der Einwilligung (sonst erscheint die Abfrage vor dem Datenschutz-Dialog)
+                    if consentGiven { steps.start() }
+                    Analytics.track(.appOpen)
+                    health.sessionLog = sessionLog
+                }
         }
     }
 }

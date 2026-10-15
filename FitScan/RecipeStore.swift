@@ -79,6 +79,9 @@ final class RecipeStore: ObservableObject {
 
     // MARK: Fotos
 
+    /// Verkleinerte Bilder im Speicher, damit Listen mit vielen Rezepten flüssig bleiben
+    private let photoCache = NSCache<NSString, UIImage>()
+
     private func photoURL(_ r: Recipe) -> URL? {
         guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
         let folder = dir.appendingPathComponent("RecipePhotos", isDirectory: true)
@@ -86,27 +89,85 @@ final class RecipeStore: ObservableObject {
         return folder.appendingPathComponent(r.id + ".jpg")
     }
 
+    /// Eigenes Foto, sonst ein mit der App ausgeliefertes Foto (Datei `recipe-<id>.jpg` im App-Bundle), sonst nil.
     func photo(for r: Recipe) -> UIImage? {
-        guard let url = photoURL(r), let data = try? Data(contentsOf: url) else { return nil }
-        return UIImage(data: data)
+        if let img = photoCache.object(forKey: r.id as NSString) { return img }
+        var img: UIImage?
+        if let url = photoURL(r), let data = try? Data(contentsOf: url) { img = UIImage(data: data) }
+        if img == nil { img = Self.bundledPhoto(for: r) }
+        if let img { photoCache.setObject(img, forKey: r.id as NSString) }
+        return img
     }
 
+    /// Foto, das mit der App ausgeliefert wird (für alle Nutzer gleich)
+    static func bundledPhoto(for r: Recipe) -> UIImage? {
+        for ext in ["jpg", "jpeg", "png", "heic"] {
+            if let url = Bundle.main.url(forResource: "recipe-" + r.id, withExtension: ext)
+                ?? Bundle.main.url(forResource: "recipe-" + r.id, withExtension: ext, subdirectory: "RecipePhotos"),
+               let img = UIImage(contentsOfFile: url.path) {
+                return img
+            }
+        }
+        return nil
+    }
+
+    /// true, wenn der Nutzer selbst ein Foto hinterlegt hat (das ausgelieferte zählt nicht)
+    func hasOwnPhoto(_ r: Recipe) -> Bool {
+        guard let url = photoURL(r) else { return false }
+        return FileManager.default.fileExists(atPath: url.path)
+    }
+
+    func hasPhoto(_ r: Recipe) -> Bool { hasOwnPhoto(r) || Self.bundledPhoto(for: r) != nil }
+
     func setPhoto(_ data: Data, for r: Recipe) {
-        guard let url = photoURL(r), let img = UIImage(data: data) else { return }
-        // Auf max. 1200 px verkleinern
-        let maxSide: CGFloat = 1200
+        guard let img = UIImage(data: data) else { return }
+        setPhoto(img, for: r)
+    }
+
+    func setPhoto(_ img: UIImage, for r: Recipe) {
+        guard let url = photoURL(r) else { return }
+        // Auf max. 1600 px verkleinern (scharf genug für das große Titelbild, klein genug für Backup)
+        let maxSide: CGFloat = 1600
         let scale = min(1, maxSide / max(img.size.width, img.size.height))
         let size = CGSize(width: img.size.width * scale, height: img.size.height * scale)
-        let resized = UIGraphicsImageRenderer(size: size).image { _ in img.draw(in: CGRect(origin: .zero, size: size)) }
+        let fmt = UIGraphicsImageRendererFormat()
+        fmt.scale = 1
+        let resized = UIGraphicsImageRenderer(size: size, format: fmt).image { _ in img.draw(in: CGRect(origin: .zero, size: size)) }
         if let jpg = resized.jpegData(compressionQuality: 0.85) {
-            try? jpg.write(to: url)
+            try? jpg.write(to: url, options: .atomic)
+            photoCache.removeObject(forKey: r.id as NSString)
             photoVersion += 1
         }
     }
 
     func removePhoto(for r: Recipe) {
         if let url = photoURL(r) { try? FileManager.default.removeItem(at: url) }
+        photoCache.removeObject(forKey: r.id as NSString)
         photoVersion += 1
+    }
+
+    /// Packt alle eigenen Fotos als `recipe-<id>.jpg` in eine ZIP-Datei – zum Teilen oder um sie fest in die App
+    /// aufzunehmen (entpacken nach `FitScan/RecipePhotos/`, dann sieht jeder Nutzer die Bilder).
+    func exportPhotosZip() -> URL? {
+        let fm = FileManager.default
+        let tmp = fm.temporaryDirectory.appendingPathComponent("BFC-Rezeptfotos", isDirectory: true)
+        try? fm.removeItem(at: tmp)
+        try? fm.createDirectory(at: tmp, withIntermediateDirectories: true)
+        var copied = 0
+        for r in all where hasOwnPhoto(r) {
+            if let src = photoURL(r), (try? fm.copyItem(at: src, to: tmp.appendingPathComponent("recipe-\(r.id).jpg"))) != nil {
+                copied += 1
+            }
+        }
+        guard copied > 0 else { return nil }
+        var out: URL?
+        var err: NSError?
+        NSFileCoordinator().coordinate(readingItemAt: tmp, options: .forUploading, error: &err) { zip in
+            let dst = fm.temporaryDirectory.appendingPathComponent("BFC-Rezeptfotos.zip")
+            try? fm.removeItem(at: dst)
+            if (try? fm.copyItem(at: zip, to: dst)) != nil { out = dst }
+        }
+        return out
     }
 }
 
