@@ -677,7 +677,7 @@ final class GymRoom {
         let st = Entity()
         // in der vorderen rechten Ecke, zur Raummitte gedreht (außerhalb der Kamerabahn)
         st.position = [3.45, 0, 2.95]
-        st.orientation = simd_quatf(angle: atan2(-3.45, -2.95), axis: [0, 1, 0])
+        st.orientation = simd_quatf(angle: Float(atan2(-3.45, -2.95)), axis: [0, 1, 0])
         root.addChild(st)
         // Turm mit Gewichtsblock
         box([0.55, 2.35, 0.14], [0, 1.175, 0.0], frame, corner: 0.01, parent: st)
