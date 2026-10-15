@@ -29,7 +29,8 @@ struct ScanView: View {
                 }
 
                 Section("3D-Scan") {
-                    Text("Den 3D-Körperscan und das Scan-Intervall findest du im Profil unter \"Scan\". Daraus automatisch Umfänge und Körperfett zu berechnen kommt als Nächstes, bis dahin gelten die Maße oben.")
+                    NavigationLink { BodyScanView() } label: { Label("Körper scannen (LiDAR oder Video)", systemImage: "figure.stand") }
+                    Text("Nach einem Scan kannst du Größe, Taille und Hals in der Scan-Vorschau direkt hierher übernehmen.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
