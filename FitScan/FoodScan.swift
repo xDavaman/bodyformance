@@ -322,7 +322,8 @@ struct FoodAddSheet: View {
             .sheet(isPresented: $showCustom) {
                 CustomFoodSheet(name: query, barcode: customCode) { item in
                     store.remember(item)
-                    selected = item
+                    // erst öffnen, wenn das Anlegen-Blatt ganz zu ist – sonst verwirft SwiftUI das zweite Blatt
+                    Task { try? await Task.sleep(for: .milliseconds(450)); selected = item }
                 }
             }
             .onChange(of: photoItem) { _, item in
@@ -351,7 +352,7 @@ struct FoodAddSheet: View {
                 if BarcodeScannerView.supported {
                     BarcodeScannerView { code in
                         showScanner = false
-                        Task { await lookup(code) }
+                        Task { try? await Task.sleep(for: .milliseconds(450)); await lookup(code) }
                     }
                     .ignoresSafeArea()
                 } else {
@@ -408,7 +409,11 @@ struct FoodAmountSheet: View {
         _gramsText = State(initialValue: String(Int(item.defaultGrams.rounded())))
     }
 
-    private var grams: Double { Double(gramsText.replacingOccurrences(of: ",", with: ".")) ?? 0 }
+    /// Menge in Gramm; unsinnige Eingaben (zu groß, „nan“) werden begrenzt, damit Int(…) nicht abstürzt
+    private var grams: Double {
+        let v = Double(gramsText.replacingOccurrences(of: ",", with: ".")) ?? 0
+        return v.isFinite ? min(max(v, 0), 10_000) : 0
+    }
     private var m: Macros { item.macros(grams: grams) }
 
     var body: some View {

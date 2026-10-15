@@ -83,6 +83,7 @@ struct MobilityTimerSection: View {
                 store.addMobility(exercise)
                 logged = true
             }
+            .disabled(logged)
             if logged {
                 Label("Eingetragen. Fließt in deine Analyse ein.", systemImage: "checkmark.circle")
                     .font(.footnote).foregroundStyle(.green)

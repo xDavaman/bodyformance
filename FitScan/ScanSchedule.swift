@@ -92,6 +92,8 @@ final class ScanSchedule: ObservableObject {
         let center = UNUserNotificationCenter.current()
         center.removePendingNotificationRequests(withIdentifiers: [noteID])
         guard remindersOn, let due = nextDue else { return }
+        // Erinnerung ist standardmäßig an: Erlaubnis einholen, sobald es den ersten Termin gibt (fragt nur einmal)
+        center.requestAuthorization(options: [.alert, .sound]) { _, _ in }
         var comps = Calendar.current.dateComponents([.year, .month, .day], from: due)
         comps.hour = 9
         guard let fire = Calendar.current.date(from: comps), fire > Date() else { return }

@@ -334,7 +334,7 @@ struct CustomRecipeEditor: View {
                         HStack {
                             VStack(alignment: .leading) {
                                 Text(item.name)
-                                Text("\(Int(item.kcal)) kcal / 100 g").font(.caption).foregroundStyle(.secondary)
+                                Text("\(Int(item.kcal.isFinite ? min(max(item.kcal, 0), 9999) : 0)) kcal / 100 g").font(.caption).foregroundStyle(.secondary)
                             }
                             Spacer()
                             TextField("g", value: $item.grams, format: .number)

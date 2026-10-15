@@ -1,4 +1,5 @@
 import SwiftUI
+import UserNotifications
 import UIKit
 
 /// Rechtliche Angaben – HIER vor dem Release eintragen (siehe Dokument „Datenschutz, Recht und Monetarisierung“).
@@ -81,6 +82,8 @@ struct PrivacySection: View {
         var out: [String: Any] = [:]
         for (k, v) in UserDefaults.standard.dictionaryRepresentation() {
             if k.hasPrefix("Apple") || k.hasPrefix("NS") || k.hasPrefix("com.apple") || k.hasPrefix("AK") { continue }
+            // Anmelde-Schlüssel der Community gehören nicht in einen Export
+            if k.hasPrefix("community.") && k.lowercased().contains("token") { continue }
             switch v {
             case let d as Data:
                 if let obj = try? JSONSerialization.jsonObject(with: d) { out[k] = obj } else { out[k] = d.base64EncodedString() }
@@ -105,6 +108,11 @@ struct PrivacySection: View {
                 for u in items { try? fm.removeItem(at: u) }
             }
         }
+        // Exporte, Teilen-Bilder und Scans im Zwischenspeicher enthalten ebenfalls Gesundheitsdaten
+        if let items = try? fm.contentsOfDirectory(at: fm.temporaryDirectory, includingPropertiesForKeys: nil) {
+            for u in items { try? fm.removeItem(at: u) }
+        }
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }
 }
 

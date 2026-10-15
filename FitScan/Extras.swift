@@ -267,10 +267,17 @@ struct BackupView: View {
 
     private static let skipPrefixes = ["Apple", "NS", "com.apple", "AK", "bfc.trial", "bfc.premium"]
 
+    /// Dateien in Documents, die mit ins Backup gehören (Training: Sätze, Cardio, Mobility, Körpergewicht)
+    private static let backupFiles = ["fitscan-data.json"]
+
     static func makeBackup() -> URL? {
         var dict: [String: Any] = ["bfc.backup.version": 1]
         for (k, v) in UserDefaults.standard.dictionaryRepresentation() where !skipPrefixes.contains(where: { k.hasPrefix($0) }) {
             dict[k] = v
+        }
+        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        for name in backupFiles {
+            if let d = try? Data(contentsOf: docs.appendingPathComponent(name)) { dict["file." + name] = d }
         }
         guard let data = try? PropertyListSerialization.data(fromPropertyList: dict, format: .binary, options: 0) else { return nil }
         let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"
@@ -283,7 +290,13 @@ struct BackupView: View {
         guard let data = try? Data(contentsOf: url),
               let obj = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any],
               obj["bfc.backup.version"] != nil else { return false }
+        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         for (k, v) in obj where k != "bfc.backup.version" && !skipPrefixes.contains(where: { k.hasPrefix($0) }) {
+            if k.hasPrefix("file.") {
+                let name = String(k.dropFirst(5))
+                if backupFiles.contains(name), let d = v as? Data { try? d.write(to: docs.appendingPathComponent(name), options: .atomic) }
+                continue
+            }
             UserDefaults.standard.set(v, forKey: k)
         }
         return true

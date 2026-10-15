@@ -173,7 +173,8 @@ struct FoodScanTab: View {
             .sheet(isPresented: $showCustom) {
                 CustomFoodSheet(name: query, barcode: customCode) { item in
                     store.remember(item)
-                    selected = item
+                    // erst öffnen, wenn das Anlegen-Blatt ganz zu ist – sonst verwirft SwiftUI das zweite Blatt
+                    Task { try? await Task.sleep(for: .milliseconds(450)); selected = item }
                 }
             }
             .sheet(isPresented: $quickEntry) {
@@ -228,8 +229,10 @@ struct FoodScanTab: View {
                 if !query.isEmpty { Button { query = "" } label: { Image(systemName: "xmark.circle.fill") }.buttonStyle(.borderless).foregroundStyle(.secondary) }
             }
             if query.isEmpty {
-                ForEach(store.recents.prefix(6)) { foodRow($0) }
-                ForEach(FoodDB.basics.prefix(8)) { foodRow($0) }
+                let recent = Array(store.recents.prefix(6))
+                ForEach(recent) { foodRow($0) }
+                // Grundnahrungsmittel ohne die schon oben gezeigten (doppelte IDs verwirren die Liste)
+                ForEach(FoodDB.basics.filter { b in !recent.contains { $0.id == b.id } }.prefix(8)) { foodRow($0) }
             } else {
                 let found = store.search(query)
                 ForEach(found) { foodRow($0) }
