@@ -135,7 +135,7 @@ struct ProfileView: View {
             }
 
             Section {
-                MuscleModelView(primary: Array(profile.focusMuscles), height: 260)
+                MuscleModelView(primary: Array(profile.focusMuscles), height: 260, primaryLabel: "Schwerpunkt")
                     .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
             } header: {
                 Text("Dein Schwerpunkt im 3D-Modell")

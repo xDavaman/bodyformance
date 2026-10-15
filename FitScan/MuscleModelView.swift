@@ -7,97 +7,6 @@ import Combine
 // Benötigt FitScan_Skin.usdz und FitScan_Motions.bin im App-Target.
 // Ersetzt die alte SceneKit-Figur; Name und Parameter von MuscleModelView bleiben gleich.
 
-/// Zuordnung der Teilnetze (feine Einzelmuskeln) zu deinen App-Muskelgruppen.
-enum BodyParts {
-    static let muscleOfPart: [String: Muscle] = [
-        "muscle_chest_upper": .chest,
-        "muscle_chest_lower": .chest,
-        "muscle_delt_front": .shoulders,
-        "muscle_delt_side": .shoulders,
-        "muscle_delt_rear": .shoulders,
-        "muscle_traps_upper": .traps,
-        "muscle_traps_mid": .traps,
-        "muscle_traps_lower": .traps,
-        "muscle_scapula": .traps,
-        "muscle_rhomboid": .traps,
-        "muscle_lats": .lats,
-        "muscle_erector_l": .lowerBack,
-        "muscle_abs_0": .abs,
-        "muscle_abs_1": .abs,
-        "muscle_abs_2": .abs,
-        "muscle_abs_3": .abs,
-        "muscle_obliques": .abs,
-        "muscle_serratus": .abs,
-        "muscle_biceps_long": .biceps,
-        "muscle_biceps_short": .biceps,
-        "muscle_triceps_long": .triceps,
-        "muscle_triceps_lat": .triceps,
-        "muscle_forearm_flexor": .forearms,
-        "muscle_forearm_extensor": .forearms,
-        "muscle_glute_max": .glutes,
-        "muscle_glute_med": .glutes,
-        "muscle_hip_flexor": .hipFlexors,
-        "muscle_rectus_fem": .quads,
-        "muscle_vastus_lat": .quads,
-        "muscle_vastus_med": .quads,
-        "muscle_hamstring_out": .hamstrings,
-        "muscle_hamstring_in": .hamstrings,
-        "muscle_adductors": .adductors,
-        "muscle_gastro_med": .calves,
-        "muscle_gastro_lat": .calves,
-        "muscle_soleus": .calves,
-        "muscle_tibialis": .calves,
-        "muscle_neck": .neck
-    ]
-}
-
-/// Atlas-Farben (jede Einzelmuskelgruppe eigene Farbe). Wird gezeigt, wenn keine Muskeln hervorgehoben werden.
-enum AtlasColors {
-    static let rgb: [String: (CGFloat, CGFloat, CGFloat)] = [
-        "muscle_chest_upper": (0.700, 0.196, 0.280),
-        "muscle_chest_lower": (0.860, 0.241, 0.344),
-        "muscle_delt_front": (0.820, 0.470, 0.164),
-        "muscle_delt_side": (0.980, 0.562, 0.196),
-        "muscle_delt_rear": (0.880, 0.505, 0.176),
-        "muscle_traps_upper": (0.750, 0.663, 0.225),
-        "muscle_traps_mid": (0.910, 0.804, 0.273),
-        "muscle_traps_lower": (0.810, 0.716, 0.243),
-        "muscle_scapula": (0.439, 0.620, 0.310),
-        "muscle_rhomboid": (0.552, 0.780, 0.390),
-        "muscle_lats": (0.261, 0.580, 0.421),
-        "muscle_erector_l": (0.261, 0.553, 0.580),
-        "muscle_abs_0": (0.312, 0.624, 0.780),
-        "muscle_abs_1": (0.376, 0.752, 0.940),
-        "muscle_abs_2": (0.336, 0.672, 0.840),
-        "muscle_abs_3": (0.392, 0.784, 0.980),
-        "muscle_obliques": (0.315, 0.475, 0.700),
-        "muscle_serratus": (0.387, 0.584, 0.860),
-        "muscle_biceps_long": (0.800, 0.250, 0.200),
-        "muscle_biceps_short": (0.960, 0.300, 0.240),
-        "muscle_triceps_long": (0.502, 0.374, 0.680),
-        "muscle_triceps_lat": (0.620, 0.462, 0.840),
-        "muscle_forearm_flexor": (0.680, 0.555, 0.306),
-        "muscle_forearm_extensor": (0.840, 0.686, 0.378),
-        "muscle_glute_max": (0.680, 0.306, 0.555),
-        "muscle_glute_med": (0.840, 0.378, 0.686),
-        "muscle_hip_flexor": (0.385, 0.700, 0.647),
-        "muscle_rectus_fem": (0.312, 0.390, 0.780),
-        "muscle_vastus_lat": (0.376, 0.470, 0.940),
-        "muscle_vastus_med": (0.336, 0.420, 0.840),
-        "muscle_hamstring_out": (0.596, 0.325, 0.650),
-        "muscle_adductors": (0.535, 0.620, 0.279),
-        "muscle_gastro_med": (0.248, 0.620, 0.372),
-        "muscle_gastro_lat": (0.312, 0.780, 0.468),
-        "muscle_soleus": (0.272, 0.680, 0.408),
-        "muscle_tibialis": (0.328, 0.820, 0.492),
-        "muscle_neck": (0.700, 0.578, 0.490)
-    ]
-    static func color(for part: String) -> UIColor? {
-        guard let c = rgb[part] else { return nil }
-        return UIColor(red: c.0, green: c.1, blue: c.2, alpha: 1)
-    }
-}
-
 struct MuscleModelView: View {
     let primary: [Muscle]
     var secondary: [Muscle] = []
@@ -105,9 +14,15 @@ struct MuscleModelView: View {
     /// Bewegung des Körpers; nil = ruhige Standhaltung (Atmung)
     var motion: BodyMotion? = nil
     var gear: PropGear = .auto
+    /// Beschriftung der Legende (rot / gelb)
+    var primaryLabel = "Aktiv"
+    var secondaryLabel = "Passiv"
     @State private var showBack: Bool
 
-    init(primary: [Muscle], secondary: [Muscle] = [], height: CGFloat = 300, motion: BodyMotion? = nil, gear: PropGear = .auto) {
+    init(primary: [Muscle], secondary: [Muscle] = [], height: CGFloat = 300, motion: BodyMotion? = nil, gear: PropGear = .auto,
+         primaryLabel: String = "Aktiv", secondaryLabel: String = "Passiv") {
+        self.primaryLabel = primaryLabel
+        self.secondaryLabel = secondaryLabel
         self.motion = motion
         self.gear = gear
         self.primary = primary
@@ -127,15 +42,39 @@ struct MuscleModelView: View {
                 Text("Hinten").tag(true)
             }
             .pickerStyle(.segmented)
-            Text(primary.map(\.rawValue).joined(separator: ", "))
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+            MuscleLegend(primary: primary, secondary: secondary, primaryLabel: primaryLabel, secondaryLabel: secondaryLabel)
+        }
+    }
+}
+
+/// Legende unter dem 3D-Körper: aktiv (rot) und passiv (gelb) beanspruchte Muskelgruppen.
+struct MuscleLegend: View {
+    let primary: [Muscle]
+    let secondary: [Muscle]
+    var primaryLabel = "Aktiv"
+    var secondaryLabel = "Passiv"
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            if !primary.isEmpty { row(Color(uiColor: MuscleHighlight.active), primaryLabel, primary) }
+            let passive = secondary.filter { !primary.contains($0) }
+            if !passive.isEmpty { row(Color(uiColor: MuscleHighlight.passive), secondaryLabel, passive) }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func row(_ color: Color, _ title: String, _ muscles: [Muscle]) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 6) {
+            Circle().fill(color).frame(width: 10, height: 10)
+            Text(title).font(.footnote.bold())
+            Text(muscles.map(\.rawValue).joined(separator: ", "))
+                .font(.footnote).foregroundStyle(.secondary)
         }
     }
 }
 
 /// RealityKit-Szene: durchgehender Körper mit Skelett, Bewegung aus FitScan_Motions.bin. Mit dem Finger drehen.
-/// Muskelfarben sind vorerst abgeschaltet (Zuordnung wird neu erarbeitet).
+/// Aktive Muskeln (primary) leuchten rot, passive (secondary) gelb – siehe MuscleSegmentation.swift.
 /// ARView, das nach dem Einblenden mehrfach ein Neu-Layout/Neuzeichnen anstößt.
 /// Behebt, dass die 3D-Fläche erst nach einem Scroll sichtbar wurde.
 final class KickARView: ARView {
@@ -182,6 +121,7 @@ struct MuscleRealityScene: UIViewRepresentable {
         var camera: PerspectiveCamera?
         var started = false
         var layout = GymLayout()
+        var highlightKey = ""
 
         @objc func pan(_ g: UIPanGestureRecognizer) {
             switch g.state {
@@ -252,6 +192,11 @@ struct MuscleRealityScene: UIViewRepresentable {
 
     func updateUIView(_ view: ARView, context: Context) {
         let c = context.coordinator
+        let key = primary.map(\.rawValue).joined(separator: ",") + "|" + secondary.map(\.rawValue).joined(separator: ",")
+        if key != c.highlightKey {
+            c.highlightKey = key
+            c.rig.setHighlight(primary: primary, secondary: secondary, neutral: MuscleRealityScene.neutralBody)
+        }
         if c.motion != motion || c.gear != gear || !c.started {
             c.started = true
             c.motion = motion
@@ -275,4 +220,28 @@ struct MuscleRealityScene: UIViewRepresentable {
 #Preview {
     MuscleModelView(primary: [.chest, .triceps], secondary: [.shoulders])
         .padding()
+}
+
+/// Kompakte Muskelanzeige für Listen: rote Punkte = aktiv, gelbe = passiv.
+struct MuscleChips: View {
+    let primary: [Muscle]
+    let secondary: [Muscle]
+
+    var body: some View {
+        let passive = secondary.filter { !primary.contains($0) }
+        HStack(spacing: 8) {
+            chip(Color(uiColor: MuscleHighlight.active), primary)
+            if !passive.isEmpty { chip(Color(uiColor: MuscleHighlight.passive), passive) }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Aktiv: \(primary.map(\.rawValue).joined(separator: ", ")). Passiv: \(passive.map(\.rawValue).joined(separator: ", "))")
+    }
+
+    private func chip(_ color: Color, _ muscles: [Muscle]) -> some View {
+        HStack(spacing: 4) {
+            Circle().fill(color).frame(width: 7, height: 7)
+            Text(muscles.map(\.rawValue).joined(separator: ", ")).lineLimit(1)
+        }
+        .font(.caption).foregroundStyle(.secondary)
+    }
 }
