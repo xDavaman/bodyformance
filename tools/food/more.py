@@ -1,3 +1,4 @@
+# flake8: noqa  (Bruchstück, das gen.py per exec einliest; ING und r kommen von dort)
 # Erweiterung: Keto / Low Carb / kalorienarm / High Protein / zuckerarm
 ING.update({
  'speck':('Bacon / Frühstücksspeck',330,20,27,0.5,3.0,1.60),

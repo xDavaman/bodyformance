@@ -3,7 +3,9 @@ import RealityKit
 import UIKit
 import simd
 
-enum MotionProps { case none, dumbbell, pullbar, barbell }
+/// Requisiten einer Bewegung. roller/ball/post/step: Hilfsmittel, deren Lage je Bild in FitScan_Motions.bin steht
+/// (Faszienrolle, kleiner Ball unter dem Fuß, Türrahmen bzw. Stange, Treppenstufe).
+enum MotionProps { case none, dumbbell, pullbar, barbell, roller, ball, post, step }
 
 /// Wie die Hand-Requisiten dargestellt werden: auto = wie bisher (Kurzhanteln, Kabelturm bei Curl/Seitheben),
 /// dumbbell = immer Kurzhanteln, band = Widerstandsband unter den Füßen, cable = Kabelturm
@@ -34,6 +36,35 @@ struct MotionClip {
     let propCount: Int
     let propRot: [SIMD4<Float>]  // frames * propCount, Welt-Pose der Hanteln
     let propPos: [SIMD3<Float>]
+    /// Anstrengung je Bild (0 … 1): wie weit die Haltung von der Ausgangshaltung entfernt ist.
+    /// Steuert das Aufleuchten der aktiven Muskeln.
+    let effort: [Float]
+
+    /// Anstrengung zu einem Zeitpunkt (gleiche Zeitbasis wie die Gelenke)
+    func effort(at f: Float) -> Float {
+        guard frames > 1, effort.count == frames else { return 0.5 }
+        let i0 = min(Int(f), frames - 1), i1 = (i0 + 1) % frames
+        let a = f - Float(i0)
+        return effort[i0] + (effort[i1] - effort[i0]) * a
+    }
+
+    /// Summe der Gelenkwinkel gegenüber Bild 0, auf 0 … 1 gebracht
+    static func effortCurve(frames nf: Int, joints nb: Int, rot: [SIMD4<Float>]) -> [Float] {
+        guard nf > 1 else { return [Float](repeating: 0.5, count: max(nf, 1)) }
+        var e = [Float](repeating: 0, count: nf)
+        for f in 0..<nf {
+            var sum: Float = 0
+            for j in 0..<nb {
+                let a = rot[j], b = rot[f * nb + j]
+                let d = min(1, abs(simd_dot(a, b)))
+                sum += 2 * acos(d)
+            }
+            e[f] = sum
+        }
+        let lo = e.min() ?? 0, hi = e.max() ?? 1
+        let span = max(hi - lo, 1e-3)
+        return e.map { ($0 - lo) / span }
+    }
 }
 
 enum MotionStore {
@@ -77,7 +108,8 @@ enum MotionStore {
                     prot.append(SIMD4<Float>(i16(o + 6), i16(o + 8), i16(o + 10), i16(o + 12)) / 32767)
                     o += 14
                 }
-                out[name] = MotionClip(frames: nf, period: period, rot: rot, pos: pos, propCount: npr, propRot: prot, propPos: ppos)
+                out[name] = MotionClip(frames: nf, period: period, rot: rot, pos: pos, propCount: npr, propRot: prot, propPos: ppos,
+                                       effort: MotionClip.effortCurve(frames: nf, joints: nb, rot: rot))
             }
         }
         return out
@@ -87,7 +119,8 @@ enum MotionStore {
 extension BodyMotion {
     /// Bewegung und Darstellung der Hilfsmittel passend zur Übung (Langhantel, Kurzhantel, Band, Kabelturm).
     static func scene(for ex: Exercise) -> (BodyMotion, PropGear) {
-        var m = ex.motionKey.flatMap { BodyMotion(rawValue: $0) } ?? forExercise(name: ex.name, primary: ex.primary)
+        var m = variant(of: ex.name) ?? ex.motionKey.flatMap { BodyMotion(rawValue: $0) }
+            ?? forExercise(name: ex.name, primary: ex.primary)
         var gear = PropGear.auto
         switch ex.equipment {
         case .barbell:
@@ -114,6 +147,47 @@ extension BodyMotion {
         }
         return (m, gear)
     }
+
+    /// Eigene Animation je Variante (Mobility, Yoga, Pilates, Dehnung, Faszienrolle, Reha). Die Variante steht im Namen
+    /// hinter dem Hilfsmittel, z. B. „Hüftdehnung (Körpergewicht, Frosch)“ → Familie „Hüftdehnung“, Variante „Frosch“.
+    static func variant(of name: String) -> BodyMotion? {
+        guard let open = name.range(of: " ("), name.hasSuffix(")") else { return nil }
+        let family = String(name[..<open.lowerBound])
+        guard let table = variants[family] else { return nil }
+        let inner = name[open.upperBound..<name.index(before: name.endIndex)]
+        let v = inner.range(of: ", ").map { String(inner[$0.upperBound...]) } ?? ""
+        return table[v]
+    }
+
+    static let variants: [String: [String: BodyMotion]] = [
+        "Yoga": ["": .sunA, "Dreieck": .triangle, "Halber Mond": .halfMoon, "Krieger III": .warrior3, "Pflug": .plow,
+                 "Sonnengruß A": .sunA, "Sonnengruß B": .sunB, "Taube": .pigeon],
+        "Pilates": ["": .hundred, "Seitlicher Beinkreis": .sideLegCircle, "Swan": .swan],
+        "Nackendehnung": ["schräg vorn": .neckDiag, "vorn": .neckFwd, "mit Hand": .neckHand, "Kopfdrehung": .neckRotate],
+        "Schulterdehnung": ["Arm hinter dem Rücken": .armBehind, "Arm über Kopf": .tricepStretch, "Handtuch": .towelStretch,
+                            "Schlafposition": .sleeper, "Tür-Dehnung": .doorChest, "Wand": .wallShoulder],
+        "Brustdehnung": ["im Türrahmen": .doorChest, "Hände hinter dem Rücken": .handsBehind, "auf dem Boden": .floorChest,
+                         "an der Stange": .barChest, "Faszienrolle quer": .rollerChest],
+        "Trizepsdehnung": ["mit Handtuch": .towelStretch],
+        "Rückendehnung": ["Kind-Position": .childPose, "Nadelöhr": .threadNeedle, "Latissimus am Türrahmen": .latDoor],
+        "Hüftdehnung": ["Taube": .pigeon, "Schmetterling": .butterfly, "Frosch": .frog, "90/90": .ninety,
+                        "Figur-Vier": .figureFour, "Piriformis": .figureFour, "Couch-Stretch": .couchStretch],
+        "Oberschenkeldehnung": ["Quadrizeps liegend": .quadLying, "Abduktoren (ITB)": .itbStretch,
+                                "Kniesehne im Ausfallschritt": .halfSplit],
+        "Wadendehnung": ["an der Wand, gebeugt": .soleusWall, "auf der Treppenstufe": .calfStep, "mit Band": .calfBand],
+        "Sprunggelenk-Mobilisation": ["Kreisen": .ankleCircle, "Fußwippe": .ankleRock, "Tiefe Hocke halten": .deepSquat],
+        "Handgelenk-Mobilisation": ["Kreisen": .wristCircle, "Beuger dehnen": .wristFlexor, "Strecker dehnen": .wristExtensor,
+                                    "Gebet": .prayer],
+        "Faszienrolle": ["": .rollQuad, "Oberschenkel vorne": .rollQuad, "Oberschenkel hinten": .rollHam, "Waden": .rollCalf,
+                         "Gesäß": .rollGlute, "Außenseite (ITB)": .rollItb, "oberer Rücken": .rollUpperBack,
+                         "Latissimus": .rollLat, "Nacken": .rollNeck, "Fußsohle": .rollFoot, "Brust": .rollerChest],
+        "Schulter-Aktivierung": ["Band Pull-Apart": .pullApart, "Schulterkreisen": .shoulderCircle, "Y-T-W": .ytw,
+                                 "Außenrotation liegend": .extRotation, "Scapula Push-up": .scapPushup,
+                                 "Bear Hold": .bearHold, "Face Pull leicht": .facePull],
+        "Rehab & Prävention": ["Bird Dog": .birdDog, "Clam Shell": .clamShell, "Dead Bug": .deadBug,
+                               "McGill Curl-up": .mcgill, "Seitstütz": .sidePlank, "Monster Walk": .monsterWalk,
+                               "Einbeinstand": .singleLeg, "Fersengang": .heelWalk, "Zehengang": .toeWalk],
+    ]
 
     /// Bewegung passend zum Übungsnamen, sonst anhand der trainierten Muskeln.
     static func forExercise(name: String, primary: [Muscle]) -> BodyMotion {
@@ -239,6 +313,11 @@ final class BodyRig {
     private var restPose: [Transform] = []
     private(set) var ready = false
     private var iSpine2 = 0, iHead = 0, iRoot = 0
+    /// Hilfsmittel (Faszienrolle, Ball, Türrahmen/Stange, Stufe), bis zu zwei je Art
+    private var aids: [MotionProps: [ModelEntity]] = [:]
+    /// Weiches Überblenden beim Wechsel der Übung: Gelenkstellung vor dem Wechsel und Dauer
+    private var fadeFrom: [Transform]?
+    private let fadeDuration: Float = 0.45
 
     init() {
         let dark = SimpleMaterial(color: UIColor(white: 0.18, alpha: 1), roughness: 0.5, isMetallic: true)
@@ -266,6 +345,22 @@ final class BodyRig {
             g.isEnabled = false
             root.addChild(g)
             bandGrips.append(g)
+        }
+        let foam = SimpleMaterial(color: UIColor(red: 0.20, green: 0.45, blue: 0.85, alpha: 1), roughness: 0.8, isMetallic: false)
+        let wood = SimpleMaterial(color: UIColor(red: 0.62, green: 0.48, blue: 0.32, alpha: 1), roughness: 0.7, isMetallic: false)
+        let aidMeshes: [(MotionProps, MeshResource, Material)] = [
+            (.roller, .generateCylinder(height: 0.90, radius: 0.075), foam),
+            (.ball, .generateSphere(radius: 0.035), SimpleMaterial(color: UIColor(red: 0.85, green: 0.25, blue: 0.2, alpha: 1), roughness: 0.6, isMetallic: false)),
+            (.post, .generateBox(size: [0.07, 2.0, 0.09], cornerRadius: 0.01), wood),
+            (.step, .generateBox(size: [0.15, 0.80, 0.32], cornerRadius: 0.01), wood),
+        ]
+        for (kind, mesh, mat) in aidMeshes {
+            aids[kind] = (0..<2).map { _ in
+                let e = ModelEntity(mesh: mesh, materials: [mat])
+                e.isEnabled = false
+                root.addChild(e)
+                return e
+            }
         }
         iRoot = MotionStore.jointNames.firstIndex(of: "root") ?? 0
         iSpine2 = MotionStore.jointNames.firstIndex(of: "spine2") ?? 0
@@ -325,22 +420,42 @@ final class BodyRig {
 
     /// Färbt aktive Muskeln rot und passive gelb, alles andere bleibt in der Hautfarbe.
     func setHighlight(primary: [Muscle], secondary: [Muscle], neutral: UIColor) {
+        highlight = (primary, secondary, neutral)
+        glowLevel = -1
+        setGlow(level: 4)
+    }
+
+    private var highlight: (primary: [Muscle], secondary: [Muscle], neutral: UIColor)?
+    private var glowLevel = -1
+    private static let glowLevels = 8
+
+    /// Aktive Muskeln leuchten mit der Anstrengung der Bewegung stärker (Stufen, damit nicht jedes Bild neue
+    /// Materialien entstehen).
+    private func setGlow(level: Int) {
+        guard level != glowLevel, let h = highlight else { return }
+        glowLevel = level
+        let e = Float(level) / Float(Self.glowLevels - 1)
+        applyHighlight(primary: h.primary, secondary: h.secondary, neutral: h.neutral,
+                       activeGlow: 0.15 + 0.75 * e, passiveGlow: 0.12 + 0.25 * e)
+    }
+
+    private func applyHighlight(primary: [Muscle], secondary: [Muscle], neutral: UIColor, activeGlow: Float, passiveGlow: Float) {
         guard muscleParts, let m = body, var mc = m.components[ModelComponent.self] else { return }
-        func pbr(_ c: UIColor, glow: Bool) -> PhysicallyBasedMaterial {
+        func pbr(_ c: UIColor, glow: Float?) -> PhysicallyBasedMaterial {
             var mat = PhysicallyBasedMaterial()
             mat.baseColor = .init(tint: c)
             mat.roughness = .init(floatLiteral: 0.55)
             mat.metallic = .init(floatLiteral: 0)
-            if glow {
-                // leichtes Eigenleuchten, damit die Farben auch im dunkleren Raum gut zu sehen sind
+            if let glow {
+                // Eigenleuchten, damit die Farben auch im dunkleren Raum gut zu sehen sind
                 mat.emissiveColor = .init(color: c)
-                mat.emissiveIntensity = 0.35
+                mat.emissiveIntensity = glow
             }
             return mat
         }
-        let skin = pbr(neutral, glow: false)
-        let active = pbr(MuscleHighlight.active, glow: true)
-        let passive = pbr(MuscleHighlight.passive, glow: true)
+        let skin = pbr(neutral, glow: nil)
+        let active = pbr(MuscleHighlight.active, glow: activeGlow)
+        let passive = pbr(MuscleHighlight.passive, glow: passiveGlow)
         var mats: [Material] = [skin]
         for muscle in MuscleSegmenter.order {
             if primary.contains(muscle) { mats.append(active) }
@@ -349,6 +464,12 @@ final class BodyRig {
         }
         mc.materials = mats
         m.components.set(mc)
+    }
+
+    /// Vor einem Übungswechsel aufrufen: die neue Bewegung blendet dann weich aus der aktuellen Haltung über.
+    func beginTransition() {
+        guard ready, let b = body else { return }
+        fadeFrom = b.jointTransforms
     }
 
     func setMaterial(_ material: Material) {
@@ -369,6 +490,9 @@ final class BodyRig {
         for db in dumbbells { db.isEnabled = mo.props == .dumbbell && !cableOn && !bandOn }
         barbell.isEnabled = mo.props == .barbell
         for k in 0..<2 { bands[k].isEnabled = bandOn; bandGrips[k].isEnabled = bandOn }
+        for (kind, list) in aids {
+            for (k, e) in list.enumerated() { e.isEnabled = kind == mo.props && k < (clip?.propCount ?? 0) }
+        }
         if let wz = mo.wallZ {
             wall.isEnabled = true
             wall.position = [0, 1.25, wz + (wz > 0 ? 0.015 : -0.015)]
@@ -394,7 +518,30 @@ final class BodyRig {
             if j == iRoot && !mo.lying && !mo.free { p.x += 0.006 * sin(time * 0.55) }
             tr[jointMap[j]] = Transform(scale: [1, 1, 1], rotation: q, translation: p)
         }
+        if let from = fadeFrom, from.count == tr.count {
+            let u = min(1, max(0, rawTime / fadeDuration))
+            let w = u * u * (3 - 2 * u)
+            if w >= 1 {
+                fadeFrom = nil
+            } else {
+                for k in 0..<tr.count {
+                    tr[k].translation = from[k].translation + (tr[k].translation - from[k].translation) * w
+                    tr[k].rotation = simd_slerp(from[k].rotation, tr[k].rotation, w)
+                }
+            }
+        }
         body.jointTransforms = tr
+        if highlight != nil {
+            let e = clip.effort(at: fp)
+            setGlow(level: Int((e * Float(Self.glowLevels - 1)).rounded()))
+        }
+        if let list = aids[mo.props], clip.propCount > 0 {
+            for k in 0..<min(list.count, clip.propCount) {
+                let b0 = i0 * clip.propCount + k, b1 = i1 * clip.propCount + k
+                list[k].position = clip.propPos[b0] + (clip.propPos[b1] - clip.propPos[b0]) * a
+                list[k].orientation = simd_slerp(simd_quatf(vector: clip.propRot[b0]), simd_quatf(vector: clip.propRot[b1]), a)
+            }
+        }
         if mo.props == .barbell, clip.propCount > 0 {
             let b0 = i0 * clip.propCount, b1 = i1 * clip.propCount
             barbell.position = clip.propPos[b0] + (clip.propPos[b1] - clip.propPos[b0]) * a
