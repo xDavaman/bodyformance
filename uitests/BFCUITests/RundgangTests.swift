@@ -125,7 +125,11 @@ final class RundgangTests: XCTestCase {
     private func exercise(_ name: String) {
         openTab(1, "Trainingsplan")
         let library = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Alle Übungen'")).firstMatch
-        guard scrollTo(library), tap(library, "Übungsbibliothek öffnen") else { return }
+        guard scrollTo(library), tap(library, "Übungsbibliothek öffnen") else {
+            note("Übungsbibliothek nicht erreicht (für \(name))")
+            shot("Übungsbibliothek fehlt")
+            return
+        }
         let search = app.searchFields.firstMatch
         if !search.waitForExistence(timeout: 2) { app.swipeDown() }
         if tap(search, "Suche") {
@@ -184,6 +188,12 @@ final class RundgangTests: XCTestCase {
     private func push(_ element: XCUIElement, _ what: String) -> Bool {
         let backButton = app.navigationBars.buttons["BackButton"]
         let before = backButton.exists && backButton.isHittable ? backButton.label : nil
+        // Zeilen ganz unten liegen halb unter Suchfeld und Tab-Leiste: erst ein Stück nach oben schieben
+        if element.exists && element.frame.maxY > app.frame.height * 0.7 {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.6))
+                .press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3)))
+            wait(0.8)
+        }
         guard tap(element, what) else { return false }
         if opened(backButton, after: before) { return true }
         note("öffnet nicht beim ersten Tippen: \(what) (\(element.label))")
