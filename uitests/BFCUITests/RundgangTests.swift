@@ -31,10 +31,10 @@ final class RundgangTests: XCTestCase {
         // Trainingsplan mit KI-Coach und Fitnessstudio
         openTab(1, "Trainingsplan")
         shot("Trainingsplan")
-        if tap(app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'KI-Coach'")).firstMatch, "KI-Coach öffnen") {
+        if tap(visible(app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'KI-Coach'"))), "KI-Coach öffnen") {
             wait(1.5)
             shot("KI-Coach")
-            if tap(app.buttons.matching(NSPredicate(format: "label CONTAINS 'Muskelaufbau'")).firstMatch, "Ziel Muskelaufbau wählen") {
+            if tap(visible(app.buttons.matching(NSPredicate(format: "label CONTAINS 'Muskelaufbau'"))), "Ziel Muskelaufbau wählen") {
                 wait(1)
                 shot("KI-Coach Ziel wählen")
                 let take = app.buttons["Übernehmen"].firstMatch
@@ -47,7 +47,7 @@ final class RundgangTests: XCTestCase {
             }
             back()
         }
-        if tap(app.buttons["Fitnessstudio erkunden"].firstMatch, "Fitnessstudio öffnen") {
+        if tap(visible(app.buttons.matching(NSPredicate(format: "label == 'Fitnessstudio erkunden'"))), "Fitnessstudio öffnen") {
             wait(5)
             shot("Fitnessstudio")
             app.swipeUp()
@@ -65,7 +65,7 @@ final class RundgangTests: XCTestCase {
         openTab(2, "Rezepte")
         wait(1)
         shot("Rezepte")
-        if tap(app.buttons.matching(NSPredicate(format: "label CONTAINS 'kcal ·'")).firstMatch, "erstes Rezept öffnen") {
+        if tap(visible(app.buttons.matching(NSPredicate(format: "label CONTAINS 'kcal ·'"))), "erstes Rezept öffnen") {
             wait(1.5)
             shot("Rezept")
             let cook = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Kochen starten'")).firstMatch
@@ -123,7 +123,7 @@ final class RundgangTests: XCTestCase {
         if tap(search, "Suche") {
             search.typeText(name)
         }
-        let row = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
+        let row = visible(app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)))
         if tap(row, "Übung \(name) öffnen") {
             wait(3)
             shot("\(name) 3D")
@@ -178,12 +178,27 @@ final class RundgangTests: XCTestCase {
         return element.exists
     }
 
+    /// Zurück nur über den echten Zurück-Knopf (sonst würde z. B. „Eigenes Rezept“ links oben getippt)
     private func back() {
-        let button = app.navigationBars.buttons.element(boundBy: 0)
+        let button = app.navigationBars.buttons["BackButton"]
         if button.exists && button.isHittable {
             button.tap()
-            wait(0.8)
+        } else {
+            // Wischen vom linken Rand, wie mit dem Daumen
+            let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.01, dy: 0.5))
+            start.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5)))
         }
+        wait(0.8)
+    }
+
+    /// Erstes sichtbares Element: ausgeblendete Bereiche und frühere Seiten im Stapel enthalten oft gleich benannte Knöpfe
+    private func visible(_ query: XCUIElementQuery) -> XCUIElement {
+        _ = query.firstMatch.waitForExistence(timeout: 4)
+        for i in 0..<min(query.count, 40) {
+            let e = query.element(boundBy: i)
+            if e.isHittable { return e }
+        }
+        return query.firstMatch
     }
 
     /// Prüft, ob die App noch läuft; nach einem Absturz wird sie neu gestartet, damit der Rundgang weitergeht.

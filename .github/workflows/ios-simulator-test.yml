@@ -86,7 +86,7 @@ jobs:
           fi
           # Video verkleinern, damit es auf GitHub angesehen werden kann
           if [ -f out/rundgang.mp4 ]; then
-            avconvert --source out/rundgang.mp4 --output out/rundgang-klein.mp4 --preset Preset960x540 --replace || true
+            avconvert --source out/rundgang.mp4 --output out/rundgang-klein.mp4 --preset Preset960x540 --replace > out/avconvert.txt 2>&1 || true
             [ -s out/rundgang-klein.mp4 ] && mv out/rundgang-klein.mp4 out/rundgang.mp4
           fi
           ls -la out out/bilder
@@ -120,6 +120,7 @@ jobs:
             echo "## Dateien"
             echo '```'
             ls -la out out/bilder | head -80
+            cat out/avconvert.txt 2>/dev/null | tail -5
             echo '```'
           } > out/ERGEBNIS.md
           cat out/ERGEBNIS.md
@@ -140,7 +141,7 @@ jobs:
             sips -s format jpeg -s formatOptions 70 -Z 1000 "$f" --out "pub/bilder/$n.jpg" >/dev/null
             printf '\n**%s**\n\n<img src="bilder/%s" width="300">\n' "$n" "$(echo "$n.jpg" | sed 's/ /%20/g')" >> pub/README.md
           done
-          if [ -f out/rundgang.mp4 ] && [ $(stat -f%z out/rundgang.mp4) -lt 45000000 ]; then cp out/rundgang.mp4 pub/; echo -e "\n[Video vom Rundgang](rundgang.mp4)" >> pub/README.md; fi
+          if [ -f out/rundgang.mp4 ] && [ $(stat -f%z out/rundgang.mp4) -lt 95000000 ]; then cp out/rundgang.mp4 pub/; echo -e "\n[Video vom Rundgang](rundgang.mp4)" >> pub/README.md; fi
           cd pub
           git init -q -b "$BRANCH"
           git -c user.name="github-actions" -c user.email="github-actions@users.noreply.github.com" add -A
