@@ -48,6 +48,9 @@ final class UserProfile: ObservableObject {
     @AppStorage("weightKg") var weightKg: Double = 80
     @AppStorage("waistCm") var waistCm: Double = 85
     @AppStorage("neckCm") var neckCm: Double = 38
+    /// Hüftumfang (für die Körperfett-Schätzung bei Frauen; 0 = nicht eingetragen)
+    @AppStorage("hipCm") var hipCm: Double = 0
+    @AppStorage("sex") var sexRaw: String = Sex.male.rawValue
     @AppStorage("trainingDays") var trainingDays: Int = 4
     @AppStorage("goal") var goalRaw: String = Goal.maintain.rawValue
     @AppStorage("aesthetic") var aestheticRaw: String = Aesthetic.defined.rawValue
@@ -60,6 +63,10 @@ final class UserProfile: ObservableObject {
     @AppStorage("pace") var paceRaw: String = Pace.normal.rawValue
     @AppStorage("stepGoalCustom") var stepGoalCustom: Int = 0
 
+    var sex: Sex {
+        get { Sex(rawValue: sexRaw) ?? .male }
+        set { sexRaw = newValue.rawValue; objectWillChange.send() }
+    }
     var goal: Goal {
         get { Goal(rawValue: goalRaw) ?? .maintain }
         set { goalRaw = newValue.rawValue; objectWillChange.send() }
@@ -131,12 +138,15 @@ final class UserProfile: ObservableObject {
         return GoalPlan(sets: sets, reps: reps, rest: rest, note: base.note + " " + aesthetic.note + " " + pace.note(for: goal))
     }
 
-    /// US-Navy-Formel (Männer) als Zwischenlösung, bis der Kamerascan fertig ist.
-    var bodyFatEstimate: Double? {
-        guard waistCm > neckCm, heightCm > 0 else { return nil }
-        let bf = 495 / (1.0324 - 0.19077 * log10(waistCm - neckCm) + 0.15456 * log10(heightCm)) - 450
-        return max(3, min(60, bf))
+    /// Körperfett-Schätzung aus Umfängen, Größe zu Taille sowie BMI und Alter (siehe BodyFat)
+    var bodyFatResult: BodyFat.Result? {
+        BodyFat.estimate(BodyStats(heightCm: heightCm, weightKg: weightKg, age: age, sex: sex,
+                                   waistCm: waistCm, neckCm: neckCm, hipCm: hipCm))
     }
+    var bodyFatEstimate: Double? { bodyFatResult?.value }
+
+    /// Konstante der Mifflin-St-Jeor-Formel: +5 bei Männern, −161 bei Frauen
+    var bmrSexOffset: Double { sex == .female ? -161 : 5 }
 
     var bmi: Double { heightCm > 0 ? weightKg / pow(heightCm / 100, 2) : 0 }
 
@@ -148,9 +158,9 @@ final class UserProfile: ObservableObject {
         leanMassKg.map { $0 / (1 - targetBodyFat / 100) }
     }
 
-    /// Mifflin-St-Jeor (Männer) mit Aktivitätsfaktor aus Trainingstagen.
+    /// Mifflin-St-Jeor mit Aktivitätsfaktor aus Trainingstagen.
     var targetCalories: Int {
-        let bmr = 10 * weightKg + 6.25 * heightCm - 5 * Double(age) + 5
+        let bmr = 10 * weightKg + 6.25 * heightCm - 5 * Double(age) + bmrSexOffset
         let activity = 1.3 + 0.05 * Double(trainingDays) + (sport == .none ? 0 : 0.05)
         var kcal = bmr * activity
         switch goal {

@@ -13,6 +13,9 @@ struct ProfileView: View {
             Section { AvatarEditor() }
 
             Section("Körper") {
+                Picker("Geschlecht", selection: Binding(get: { profile.sex }, set: { profile.sex = $0 })) {
+                    ForEach(Sex.allCases) { Text($0.rawValue).tag($0) }
+                }
                 Stepper(value: $profile.age, in: 14...90) { Text("Alter: \(profile.age)") }
                 Stepper(value: $profile.heightCm, in: 120...230, step: 1) { Text("Größe: \(Int(profile.heightCm)) cm") }
                 Stepper(value: $profile.weightKg, in: 35...250, step: 0.5) { Text("Gewicht: \(formatKg(profile.weightKg)) kg") }
@@ -20,6 +23,7 @@ struct ProfileView: View {
                     LabeledContent("Körperfett (Schätzung)", value: String(format: "%.1f %%", bf))
                 }
                 NavigationLink("Körperfett genauer bestimmen (Maße)") { ScanView() }
+                NavigationLink("3D-Figur an deinen Körper anpassen") { BodyShapeView() }
                 LabeledContent("BMI", value: String(format: "%.1f", profile.bmi))
             }
 
