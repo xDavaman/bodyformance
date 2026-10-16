@@ -309,6 +309,17 @@ final class BodyRig {
     private var bandGrips: [ModelEntity] = []
     var cableMode: Bool { gym.layout.cableHeight != nil }
     private(set) var body: ModelEntity?
+    /// Netz nach der Muskel-Zerlegung, Ausgangspunkt für die eigene Form (BodyShape.swift)
+    private var baseMesh: MeshResource?
+    private var baseScale = SIMD3<Float>(repeating: 1)
+    /// geladene Datei (Ursprung am Boden); wird für die Körpergröße skaliert, Hilfsmittel wandern mit
+    private var modelRoot: Entity?
+    private var sizeScale: Float = 1
+    /// Punkt, um den die Größe skaliert wird: Boden, Bankoberkante, Klimmzugstange oder Wand bleiben an ihrem Platz
+    private var pivot = SIMD3<Float>(repeating: 0)
+
+    private func sized(_ p: SIMD3<Float>) -> SIMD3<Float> { pivot + (p - pivot) * sizeScale }
+    private var shapeKey = ""
     private var jointMap: [Int] = []
     private var restPose: [Transform] = []
     private(set) var ready = false
@@ -377,6 +388,7 @@ final class BodyRig {
     @discardableResult
     func attachBody(_ model: Entity, material: Material) -> Bool {
         root.addChild(model)
+        modelRoot = model
         guard let m = Self.findSkinned(model) else {
             print("FitScan: kein Skelett im Körpermodell gefunden")
             return false
@@ -412,7 +424,29 @@ final class BodyRig {
         restPose = m.jointTransforms
         ready = !map.contains(-1) && restPose.count == names.count
         if !ready { print("FitScan: Gelenkzuordnung unvollständig", names.count, map.filter { $0 < 0 }.count) }
+        baseMesh = m.components[ModelComponent.self]?.mesh
+        baseScale = model.scale
         return ready
+    }
+
+    /// Formt die Figur nach dem eigenen Körper (Größe und Körperregionen). Ohne Wirkung, wenn sich nichts ändert.
+    func applyShape(_ shape: BodyShape) {
+        guard let m = body, let base = baseMesh, var mc = m.components[ModelComponent.self] else { return }
+        modelRoot?.scale = baseScale * shape.heightScale
+        sizeScale = shape.heightScale
+        modelRoot?.position = pivot * (1 - sizeScale)
+        guard shape.meshKey != shapeKey else { return }
+        shapeKey = shape.meshKey
+        let jointCount = m.jointNames.count
+        let mesh = shape.isNeutral ? base : (BodyShaper.shaped(base, shape: shape) ?? base)
+        mc.mesh = mesh
+        m.components.set(mc)
+        // Sicherheitsnetz wie bei der Muskel-Zerlegung: Skelett muss erhalten bleiben
+        if m.jointNames.count != jointCount {
+            print("FitScan: verformtes Netz verliert das Skelett, nutze Grundform")
+            mc.mesh = base
+            m.components.set(mc)
+        }
     }
 
     /// true, wenn das Körpernetz in Muskelbereiche zerlegt werden konnte (dann sind Muskelfarben möglich)
@@ -485,6 +519,8 @@ final class BodyRig {
         let time = rawTime + 0.10 * sin(rawTime * 0.37) + 0.05 * sin(rawTime * 1.13)
         bench.isEnabled = mo.bench
         pullBar.isEnabled = mo.props == .pullbar
+        pivot = mo.props == .pullbar ? pullBar.position : (mo.bench ? [0, 0.30, 0] : [0, 0, mo.wallZ ?? 0])
+        modelRoot?.position = pivot * (1 - sizeScale)
         let bandOn = gear == .band && mo.props == .dumbbell && !mo.free
         let cableOn = cableMode && mo.props == .dumbbell && !bandOn
         for db in dumbbells { db.isEnabled = mo.props == .dumbbell && !cableOn && !bandOn }
@@ -538,19 +574,19 @@ final class BodyRig {
         if let list = aids[mo.props], clip.propCount > 0 {
             for k in 0..<min(list.count, clip.propCount) {
                 let b0 = i0 * clip.propCount + k, b1 = i1 * clip.propCount + k
-                list[k].position = clip.propPos[b0] + (clip.propPos[b1] - clip.propPos[b0]) * a
+                list[k].position = sized(clip.propPos[b0] + (clip.propPos[b1] - clip.propPos[b0]) * a)
                 list[k].orientation = simd_slerp(simd_quatf(vector: clip.propRot[b0]), simd_quatf(vector: clip.propRot[b1]), a)
             }
         }
         if mo.props == .barbell, clip.propCount > 0 {
             let b0 = i0 * clip.propCount, b1 = i1 * clip.propCount
-            barbell.position = clip.propPos[b0] + (clip.propPos[b1] - clip.propPos[b0]) * a
+            barbell.position = sized(clip.propPos[b0] + (clip.propPos[b1] - clip.propPos[b0]) * a)
             barbell.orientation = simd_slerp(simd_quatf(vector: clip.propRot[b0]), simd_quatf(vector: clip.propRot[b1]), a)
         }
         if mo.props == .dumbbell {
             for k in 0..<min(dumbbells.count, clip.propCount) {
                 let b0 = i0 * clip.propCount + k, b1 = i1 * clip.propCount + k
-                dumbbells[k].position = clip.propPos[b0] + (clip.propPos[b1] - clip.propPos[b0]) * a
+                dumbbells[k].position = sized(clip.propPos[b0] + (clip.propPos[b1] - clip.propPos[b0]) * a)
                 dumbbells[k].orientation = simd_slerp(simd_quatf(vector: clip.propRot[b0]), simd_quatf(vector: clip.propRot[b1]), a)
             }
             if cableOn { gym.updateCables(dumbbells.map { ($0.position, $0.orientation) }) }

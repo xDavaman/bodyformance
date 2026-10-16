@@ -102,6 +102,8 @@ struct MuscleRealityScene: UIViewRepresentable {
     let showBack: Bool
     var motion: BodyMotion = .idle
     var gear: PropGear = .auto
+    /// Eigene Form; nil = gespeicherte Form (BodyShape.current) beim Erstellen
+    var shape: BodyShape? = nil
 
     static let neutralBody = UIColor(white: 0.80, alpha: 1)
 
@@ -172,6 +174,7 @@ struct MuscleRealityScene: UIViewRepresentable {
         do {
             let model = try Entity.load(named: "FitScan_Skin")
             c.rig.attachBody(model, material: Coordinator.material(MuscleRealityScene.neutralBody))
+            c.rig.applyShape(shape ?? BodyShape.current)
         } catch {
             print("FitScan: USDZ-Laden fehlgeschlagen: \(error)")
         }
@@ -192,6 +195,7 @@ struct MuscleRealityScene: UIViewRepresentable {
 
     func updateUIView(_ view: ARView, context: Context) {
         let c = context.coordinator
+        if let shape { c.rig.applyShape(shape) }
         let key = primary.map(\.rawValue).joined(separator: ",") + "|" + secondary.map(\.rawValue).joined(separator: ",")
         if key != c.highlightKey {
             c.highlightKey = key
