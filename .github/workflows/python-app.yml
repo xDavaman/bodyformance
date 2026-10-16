@@ -6,8 +6,10 @@ name: Python application
 on:
   push:
     branches: [ "main" ]
+    paths: [ "**.py", "tests/**", "tools/**", ".github/workflows/python-app.yml" ]
   pull_request:
     branches: [ "main" ]
+    paths: [ "**.py", "tests/**", "tools/**", ".github/workflows/python-app.yml" ]
 
 permissions:
   contents: read
