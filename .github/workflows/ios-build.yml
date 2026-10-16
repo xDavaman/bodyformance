@@ -27,6 +27,10 @@ jobs:
           XC=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
           if [ -n "$XC" ]; then sudo xcode-select -s "$XC"; fi
           xcodebuild -version
+      - name: Projektformat für dieses Xcode
+        # Das Projekt ist mit einem neueren Xcode gespeichert (Format 110); die Mac-Runner haben höchstens Xcode 26.
+        # Inhaltlich passt Format 77 (preferredProjectObjectVersion), deshalb nur für den Build umstellen.
+        run: sed -i '' 's/objectVersion = 110;/objectVersion = 77;/' FitScan.xcodeproj/project.pbxproj
       - name: Bauen (Simulator, ohne Signatur)
         run: |
           set -o pipefail
