@@ -9,7 +9,8 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  # write: Bilder werden zusätzlich auf den Zweig simulator-bilder/<pr-oder-main> gelegt, damit man sie direkt auf GitHub ansehen kann
+  contents: write
 
 concurrency:
   group: ios-simulator-${{ github.ref }}
@@ -78,6 +79,52 @@ jobs:
           mkdir -p out/abstuerze
           cp ~/Library/Logs/DiagnosticReports/FitScan* out/abstuerze/ 2>/dev/null || true
           ls out/bilder out/abstuerze
+      - name: Zusammenfassung
+        if: always()
+        run: |
+          {
+            echo "# Simulator-Rundgang"
+            echo
+            echo "Commit: ${GITHUB_SHA::7} · Ergebnis: ${{ steps.rundgang.outcome }}"
+            echo
+            echo "## Fehler und Hinweise"
+            echo '```'
+            grep -E "RUNDGANG|error:|XCTAssert|failed \(|Test Case .* (passed|failed)" out/test.log | sed 's/^.*RundgangTests.swift/RundgangTests.swift/' | head -80
+            echo '```'
+            if ls out/abstuerze/* >/dev/null 2>&1; then
+              echo "## Absturzberichte"
+              for f in out/abstuerze/*; do echo "### $(basename "$f")"; echo '```'; head -c 6000 "$f"; echo; echo '```'; done
+            fi
+            echo "## App-Protokoll (Fehler und Warnungen)"
+            echo '```'
+            grep -iE "error|fault|warning|crash|fatal|exception" out/app-protokoll.txt | cut -c1-300 | sort | uniq -c | sort -rn | head -60
+            echo '```'
+          } > out/ERGEBNIS.md
+          cat out/ERGEBNIS.md
+          grep -E "RUNDGANG|error:" out/test.log | head -20 | while read -r line; do echo "::warning::${line}"; done
+      - name: Bilder auf Zweig legen
+        if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          REF="${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.ref_name }}"
+          BRANCH="simulator-bilder/$REF"
+          mkdir -p pub/bilder
+          cp out/ERGEBNIS.md pub/README.md
+          echo "## Bildschirmfotos" >> pub/README.md
+          for f in out/bilder/*.png; do
+            [ -e "$f" ] || continue
+            n=$(basename "$f" .png)
+            sips -s format jpeg -s formatOptions 70 -Z 1000 "$f" --out "pub/bilder/$n.jpg" >/dev/null
+            printf '\n**%s**\n\n<img src="bilder/%s" width="300">\n' "$n" "$(echo "$n.jpg" | sed 's/ /%20/g')" >> pub/README.md
+          done
+          if [ -f out/rundgang.mp4 ] && [ $(stat -f%z out/rundgang.mp4) -lt 45000000 ]; then cp out/rundgang.mp4 pub/; echo -e "\n[Video vom Rundgang](rundgang.mp4)" >> pub/README.md; fi
+          cd pub
+          git init -q -b "$BRANCH"
+          git -c user.name="github-actions" -c user.email="github-actions@users.noreply.github.com" add -A
+          git -c user.name="github-actions" -c user.email="github-actions@users.noreply.github.com" commit -qm "Simulator-Rundgang ${GITHUB_SHA::7}"
+          git push -qf "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" "HEAD:refs/heads/$BRANCH"
+          echo "Bilder: https://github.com/${{ github.repository }}/tree/$BRANCH"
       - name: Ergebnis hochladen
         if: always()
         uses: actions/upload-artifact@v4
@@ -89,9 +136,10 @@ jobs:
             out/rundgang.mp4
             out/app-protokoll.txt
             out/test.log
+            out/ERGEBNIS.md
           retention-days: 14
       - name: Testergebnis
         if: steps.rundgang.outcome == 'failure'
         run: |
-          grep -E "error:|RUNDGANG" out/test.log | head -60
+          cat out/ERGEBNIS.md
           exit 1
