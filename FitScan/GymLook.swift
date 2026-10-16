@@ -168,9 +168,9 @@ enum GymLook {
                     if t < 0.12 {
                         base = UIColor(red: .random(in: 0.34...0.42), green: .random(in: 0.16...0.20), blue: .random(in: 0.11...0.14), alpha: 1)
                     } else if t < 0.30 {
-                        base = UIColor(red: .random(in: 0.64...0.72), green: .random(in: 0.33...0.40), blue: .random(in: 0.22...0.27), alpha: 1)
+                        base = UIColor(red: .random(in: 0.58...0.64), green: .random(in: 0.33...0.38), blue: .random(in: 0.24...0.28), alpha: 1)
                     } else {
-                        base = UIColor(red: .random(in: 0.50...0.60), green: .random(in: 0.23...0.29), blue: .random(in: 0.16...0.20), alpha: 1)
+                        base = UIColor(red: .random(in: 0.46...0.54), green: .random(in: 0.24...0.29), blue: .random(in: 0.18...0.21), alpha: 1)
                     }
                     base.setFill()
                     c.fill(rect)
@@ -806,18 +806,21 @@ extension GymRoom {
                       UIColor(red: 0.22, green: 0.45, blue: 0.20, alpha: 1),
                       UIColor(red: 0.28, green: 0.52, blue: 0.24, alpha: 1)]
         let leaf = greens.map { SimpleMaterial(color: $0, roughness: 0.6, isMetallic: false) }
-        let n = 22
+        let n = 48
+        let leafMesh = MeshResource.generateSphere(radius: 0.13)
         for i in 0..<n {
-            // Blätter auf einer Spirale (Goldener Winkel), oben schmaler
+            // Große, flache Blätter auf einer Spirale (Goldener Winkel), oben schmaler
             let t = Float(i) / Float(n - 1)
             let a = Float(i) * 2.39996
-            let r = 0.30 * (1 - t * 0.6) * (0.7 + 0.3 * sin(Float(i) * 1.3))
-            let y = 0.42 + height * (0.40 + 0.55 * t)
-            let size = 0.13 + 0.05 * sin(Float(i) * 2.1)
-            let e = ModelEntity(mesh: .generateSphere(radius: size), materials: [leaf[i % 3]])
+            let r = 0.32 * (1 - t * 0.55) * (0.75 + 0.25 * sin(Float(i) * 1.3))
+            let y = 0.42 + height * (0.35 + 0.62 * t)
+            let size = 0.8 + 0.3 * sin(Float(i) * 2.1)
+            let e = ModelEntity(mesh: leafMesh, materials: [leaf[i % 3]])
             e.position = [r * cos(a), y, r * sin(a)]
-            e.scale = [1.0, 0.45, 0.75]
-            e.orientation = simd_quatf(angle: a, axis: [0, 1, 0]) * simd_quatf(angle: -0.35, axis: [1, 0, 0])
+            e.scale = [size, size * 0.2, size * 0.62]
+            // Blatt zeigt nach außen und hängt leicht nach unten
+            e.orientation = simd_quatf(angle: -a, axis: [0, 1, 0]) * simd_quatf(angle: -0.1 - 0.4 * (1 - t), axis: [0, 0, 1])
+            e.position += SIMD3<Float>(cos(a), 0, sin(a)) * 0.08 * size
             plant.addChild(e)
         }
     }
