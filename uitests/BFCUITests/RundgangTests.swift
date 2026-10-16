@@ -31,10 +31,10 @@ final class RundgangTests: XCTestCase {
         // Trainingsplan mit KI-Coach und Fitnessstudio
         openTab(1, "Trainingsplan")
         shot("Trainingsplan")
-        if tap(app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'KI-Coach'")).firstMatch, "KI-Coach öffnen") {
+        if tap(visible(app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'KI-Coach'"))), "KI-Coach öffnen") {
             wait(1.5)
             shot("KI-Coach")
-            if tap(app.buttons.matching(NSPredicate(format: "label CONTAINS 'Muskelaufbau'")).firstMatch, "Ziel Muskelaufbau wählen") {
+            if tap(visible(app.buttons.matching(NSPredicate(format: "label CONTAINS 'Muskelaufbau'"))), "Ziel Muskelaufbau wählen") {
                 wait(1)
                 shot("KI-Coach Ziel wählen")
                 let take = app.buttons["Übernehmen"].firstMatch
@@ -47,7 +47,7 @@ final class RundgangTests: XCTestCase {
             }
             back()
         }
-        if tap(app.buttons["Fitnessstudio erkunden"].firstMatch, "Fitnessstudio öffnen") {
+        if tap(visible(app.buttons.matching(NSPredicate(format: "label == 'Fitnessstudio erkunden'"))), "Fitnessstudio öffnen") {
             wait(5)
             shot("Fitnessstudio")
             app.swipeUp()
@@ -65,7 +65,7 @@ final class RundgangTests: XCTestCase {
         openTab(2, "Rezepte")
         wait(1)
         shot("Rezepte")
-        if tap(app.buttons.matching(NSPredicate(format: "label CONTAINS 'kcal ·'")).firstMatch, "erstes Rezept öffnen") {
+        if push(visible(app.buttons.matching(NSPredicate(format: "label CONTAINS 'kcal ·'"))), "erstes Rezept öffnen") {
             wait(1.5)
             shot("Rezept")
             let cook = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Kochen starten'")).firstMatch
@@ -123,8 +123,8 @@ final class RundgangTests: XCTestCase {
         if tap(search, "Suche") {
             search.typeText(name)
         }
-        let row = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
-        if tap(row, "Übung \(name) öffnen") {
+        let row = visible(app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)))
+        if push(row, "Übung \(name) öffnen") {
             wait(3)
             shot("\(name) 3D")
             wait(1.2)
@@ -133,6 +133,9 @@ final class RundgangTests: XCTestCase {
             if scrollTo(gym, swipes: 4), tap(gym, "Station im Fitnessstudio") {
                 wait(4)
                 shot("\(name) im Fitnessstudio")
+                // Die Station öffnet ein Blatt über dem Studio, das erst geschlossen werden muss
+                let done = app.buttons["Fertig"].firstMatch
+                if done.exists && done.isHittable { done.tap(); wait(0.8) }
                 back()
             }
             back()
@@ -156,7 +159,9 @@ final class RundgangTests: XCTestCase {
 
     @discardableResult
     private func tap(_ element: XCUIElement, _ what: String, timeout: TimeInterval = 4) -> Bool {
-        guard element.waitForExistence(timeout: timeout) else {
+        // Listen laden Zeilen erst beim Scrollen; was nicht sichtbar ist, erst suchen
+        if !element.waitForExistence(timeout: timeout) { _ = scrollTo(element) }
+        guard element.exists else {
             note("nicht gefunden: \(what)")
             return false
         }
@@ -165,6 +170,38 @@ final class RundgangTests: XCTestCase {
         allowSystemAlerts()
         check(what)
         return app.state == .runningForeground
+    }
+
+    /// Tippt eine Listenzeile und prüft, ob sich die nächste Seite öffnet; sonst zweiter Versuch und Aufzeichnung der Oberfläche
+    private func push(_ element: XCUIElement, _ what: String) -> Bool {
+        let backButton = app.navigationBars.buttons["BackButton"]
+        let before = backButton.exists && backButton.isHittable ? backButton.label : nil
+        guard tap(element, what) else { return false }
+        if opened(backButton, after: before) { return true }
+        note("öffnet nicht beim ersten Tippen: \(what) (\(element.label))")
+        dump("vor zweitem Versuch \(what)")
+        if element.exists {
+            element.coordinate(withNormalizedOffset: CGVector(dx: 0.4, dy: 0.5)).tap()
+            if opened(backButton, after: before) { return true }
+        }
+        note("öffnet nicht: \(what)")
+        dump("nach zweitem Versuch \(what)")
+        return false
+    }
+
+    private func opened(_ backButton: XCUIElement, after before: String?) -> Bool {
+        for _ in 0..<10 {
+            if backButton.exists && backButton.isHittable && backButton.label != before { return true }
+            wait(0.3)
+        }
+        return false
+    }
+
+    /// Schreibt den Aufbau der Oberfläche als Text neben die Bilder (zur Fehlersuche)
+    private func dump(_ name: String) {
+        guard let dir = ProcessInfo.processInfo.environment["BFC_SHOTS"] else { return }
+        let url = URL(fileURLWithPath: dir).appendingPathComponent("Aufbau \(name).txt")
+        try? app.debugDescription.write(to: url, atomically: true, encoding: .utf8)
     }
 
     private func scrollTo(_ element: XCUIElement, swipes: Int = 8) -> Bool {
@@ -176,12 +213,27 @@ final class RundgangTests: XCTestCase {
         return element.exists
     }
 
+    /// Zurück nur über den echten Zurück-Knopf (sonst würde z. B. „Eigenes Rezept“ links oben getippt)
     private func back() {
-        let button = app.navigationBars.buttons.element(boundBy: 0)
+        let button = app.navigationBars.buttons["BackButton"]
         if button.exists && button.isHittable {
             button.tap()
-            wait(0.8)
+        } else {
+            // Wischen vom linken Rand, wie mit dem Daumen
+            let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.01, dy: 0.5))
+            start.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5)))
         }
+        wait(0.8)
+    }
+
+    /// Erstes sichtbares Element: ausgeblendete Bereiche und frühere Seiten im Stapel enthalten oft gleich benannte Knöpfe
+    private func visible(_ query: XCUIElementQuery) -> XCUIElement {
+        _ = query.firstMatch.waitForExistence(timeout: 4)
+        for i in 0..<min(query.count, 40) {
+            let e = query.element(boundBy: i)
+            if e.isHittable { return e }
+        }
+        return query.firstMatch
     }
 
     /// Prüft, ob die App noch läuft; nach einem Absturz wird sie neu gestartet, damit der Rundgang weitergeht.

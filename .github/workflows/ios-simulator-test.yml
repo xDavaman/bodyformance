@@ -65,13 +65,32 @@ jobs:
           xcrun simctl spawn "$UDID" log stream --style compact --predicate 'process == "FitScan"' > out/app-protokoll.txt 2>&1 & LOG=$!
           sleep 2
           set +e
-          xcodebuild test \
+          # TEST_RUNNER_-Variablen gibt xcodebuild als Umgebung an den Test weiter
+          TEST_RUNNER_BFC_SHOTS="$PWD/out/bilder" xcodebuild test \
             -project uitests/BFCUITests.xcodeproj -scheme BFCUITests \
             -destination "id=$UDID" -resultBundlePath out/rundgang.xcresult \
-            TEST_RUNNER_BFC_SHOTS="$PWD/out/bilder" \
             2>&1 | tee out/test.log | grep -E "RUNDGANG|error:|failed|passed|Test Suite|TEST (SUCCEEDED|FAILED)"
           RESULT=${PIPESTATUS[0]}
           kill -INT $VIDEO; kill $LOG; wait $VIDEO
+          # Falls der Test keine Bilder direkt schreiben konnte: aus dem Testergebnis holen
+          if ! ls out/bilder/*.png >/dev/null 2>&1; then
+            mkdir -p out/xcanhang
+            xcrun xcresulttool export attachments --path out/rundgang.xcresult --output-path out/xcanhang || true
+            if [ -f out/xcanhang/manifest.json ]; then
+              jq -r '.[].attachments[] | [.exportedFileName, .suggestedHumanReadableName] | @tsv' out/xcanhang/manifest.json |
+                while IFS=$'\t' read -r file name; do
+                  base="${name%%_*}"; [ -n "$base" ] || base="$file"
+                  cp "out/xcanhang/$file" "out/bilder/${base%.png}.png"
+                done
+            fi
+          fi
+          # Video verkleinern, damit es auf GitHub angesehen werden kann
+          cp out/bilder/*.txt pub/bilder/ 2>/dev/null || true
+          if [ -f out/rundgang.mp4 ]; then
+            avconvert --source out/rundgang.mp4 --output out/rundgang-klein.mp4 --preset Preset960x540 --replace > out/avconvert.txt 2>&1 || true
+            [ -s out/rundgang-klein.mp4 ] && mv out/rundgang-klein.mp4 out/rundgang.mp4
+          fi
+          ls -la out out/bilder
           exit $RESULT
       - name: Absturzberichte einsammeln
         if: always()
@@ -97,7 +116,12 @@ jobs:
             fi
             echo "## App-Protokoll (Fehler und Warnungen)"
             echo '```'
-            grep -iE "error|fault|warning|crash|fatal|exception" out/app-protokoll.txt | cut -c1-300 | sort | uniq -c | sort -rn | head -60
+            grep -vE "com.apple.dt.xctest|XC_kAX|error: \(null\)" out/app-protokoll.txt | grep -iE "error|fault|warning|crash|fatal|exception" | cut -c25-300 | sort | uniq -c | sort -rn | head -60
+            echo '```'
+            echo "## Dateien"
+            echo '```'
+            ls -la out out/bilder | head -80
+            cat out/avconvert.txt 2>/dev/null | tail -5
             echo '```'
           } > out/ERGEBNIS.md
           cat out/ERGEBNIS.md
@@ -118,7 +142,8 @@ jobs:
             sips -s format jpeg -s formatOptions 70 -Z 1000 "$f" --out "pub/bilder/$n.jpg" >/dev/null
             printf '\n**%s**\n\n<img src="bilder/%s" width="300">\n' "$n" "$(echo "$n.jpg" | sed 's/ /%20/g')" >> pub/README.md
           done
-          if [ -f out/rundgang.mp4 ] && [ $(stat -f%z out/rundgang.mp4) -lt 45000000 ]; then cp out/rundgang.mp4 pub/; echo -e "\n[Video vom Rundgang](rundgang.mp4)" >> pub/README.md; fi
+          cp out/bilder/*.txt pub/bilder/ 2>/dev/null || true
+          if [ -f out/rundgang.mp4 ] && [ $(stat -f%z out/rundgang.mp4) -lt 95000000 ]; then cp out/rundgang.mp4 pub/; echo -e "\n[Video vom Rundgang](rundgang.mp4)" >> pub/README.md; fi
           cd pub
           git init -q -b "$BRANCH"
           git -c user.name="github-actions" -c user.email="github-actions@users.noreply.github.com" add -A
