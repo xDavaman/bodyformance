@@ -28,6 +28,9 @@ struct TrainingView: View {
                         Label("Training aufzeichnen (Zeit, Schritte, Tempo)", systemImage: "play.circle")
                     }
                     NavigationLink { SportView() } label: { Label("Sport und Laufen", systemImage: "figure.run") }
+                    NavigationLink { GymExploreView() } label: {
+                        Label("Fitnessstudio erkunden", systemImage: "building.2")
+                    }
                     NavigationLink { PlanExportView() } label: { Label("Plan als PDF", systemImage: "doc.richtext") }
                 }
 

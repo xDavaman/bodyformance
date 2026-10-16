@@ -36,6 +36,14 @@ struct ExerciseDetailView: View {
                 }
             }
 
+            if let station = GymStation.of(exercise) {
+                Section("Im Fitnessstudio") {
+                    NavigationLink { GymExploreView(focus: station) } label: {
+                        Label("\(station.title) zeigen", systemImage: station.icon)
+                    }
+                }
+            }
+
             if exercise.isMobility {
                 MobilityTimerSection(exercise: exercise)
             } else {
