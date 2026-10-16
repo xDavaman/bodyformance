@@ -156,7 +156,9 @@ final class RundgangTests: XCTestCase {
 
     @discardableResult
     private func tap(_ element: XCUIElement, _ what: String, timeout: TimeInterval = 4) -> Bool {
-        guard element.waitForExistence(timeout: timeout) else {
+        // Listen laden Zeilen erst beim Scrollen; was nicht sichtbar ist, erst suchen
+        if !element.waitForExistence(timeout: timeout) { _ = scrollTo(element) }
+        guard element.exists else {
             note("nicht gefunden: \(what)")
             return false
         }
