@@ -16,6 +16,8 @@ struct GoalPlan {
     let reps: ClosedRange<Int>
     let rest: String
     let note: String
+    /// leichtere Woche: Gewichtsvorschlag 10 % niedriger
+    var deload = false
 }
 
 extension Goal {
@@ -220,6 +222,10 @@ enum Progression {
             warning = "Deine Kraft liegt über 10 % unter deiner Bestleistung. Prüfe Kaloriendefizit, Protein und Schlaf."
         }
 
+        if plan.deload {
+            return Recommendation(weightKg: roundToPlate(weight * 0.9), setsText: setsText, repsText: repsText,
+                                  message: "Deload-Woche: etwa 10 % leichter als sonst. " + message, warning: nil)
+        }
         return Recommendation(weightKg: weight, setsText: setsText, repsText: repsText, message: message, warning: warning)
     }
 

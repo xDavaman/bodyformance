@@ -75,6 +75,7 @@ final class RecipeStore: ObservableObject {
     func deleteCustom(_ r: Recipe) {
         customs.removeAll { "custom-" + $0.id.uuidString == r.id }
         removePhoto(for: r)
+        removeAllPhotos(r)
     }
 
     // MARK: Fotos

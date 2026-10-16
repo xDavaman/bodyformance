@@ -21,6 +21,7 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    NavigationLink { BodyShapeView() } label: { Label("3D-Figur an deinen Körper anpassen", systemImage: "figure.arms.open") }
                     NavigationLink { BodyScanView() } label: { Label("Eigenes 3D-Modell scannen", systemImage: "figure.stand") }
                     NavigationLink { ScanView() } label: { Label("Körpermaße und Körperfett", systemImage: "ruler") }
                     NavigationLink { ScanCheckInView() } label: {
@@ -35,7 +36,7 @@ struct SettingsView: View {
                 } header: {
                     Text("3D-Modell und Körperscan")
                 } footer: {
-                    Text("Scan mit der iPhone-Kamera (LiDAR) oder aus einem Video. Alles bleibt auf diesem iPhone.")
+                    Text("Die Figur folgt Größe, Gewicht, Körperfett und auf Wunsch deinem Scan (LiDAR-Kamera oder Video); einzelne Regionen lassen sich nachstellen. Alles bleibt auf diesem iPhone.")
                 }
 
                 Section("Geräte und Daten") {

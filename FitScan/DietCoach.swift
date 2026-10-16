@@ -55,7 +55,7 @@ struct DietPlan {
 }
 
 extension UserProfile {
-    var bmrValue: Double { 10 * weightKg + 6.25 * heightCm - 5 * Double(age) + 5 }
+    var bmrValue: Double { 10 * weightKg + 6.25 * heightCm - 5 * Double(age) + bmrSexOffset }
     var maintenanceKcal: Int {
         Int((bmrValue * (1.3 + 0.05 * Double(trainingDays) + (sport == .none ? 0 : 0.05))).rounded())
     }

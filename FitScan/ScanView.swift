@@ -17,16 +17,16 @@ struct ScanView: View {
                           systemImage: lidarAvailable ? "checkmark.seal" : "xmark.seal")
                 }
 
-                Section("Körpermaße (Zwischenlösung)") {
+                Section("Körpermaße (mit dem Maßband)") {
                     Stepper("Alter: \(profile.age)", value: $profile.age, in: 14...90)
                     numberField("Größe (cm)", $profile.heightCm)
                     numberField("Gewicht (kg)", $profile.weightKg)
                     numberField("Taille (cm)", $profile.waistCm)
                     numberField("Hals (cm)", $profile.neckCm)
-                    if let bf = profile.bodyFatEstimate {
-                        LabeledContent("Geschätzter Körperfettanteil", value: String(format: "%.1f %%", bf))
-                    }
+                    numberField(profile.sex == .female ? "Hüfte (cm)" : "Hüfte (cm, optional)", $profile.hipCm)
                 }
+
+                BodyFatSection(showLink: false)
 
                 Section("3D-Scan") {
                     NavigationLink { BodyScanView() } label: { Label("Körper scannen (LiDAR oder Video)", systemImage: "figure.stand") }
