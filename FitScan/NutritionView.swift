@@ -266,9 +266,10 @@ struct RecipeLibraryView: View {
     @State private var vegOnly = false
     @State private var diet: Set<DietTag> = []
     @State private var search = ""
+    @State private var sort: RecipeSort = .standard
 
     private var items: [Recipe] {
-        store.all.filter { r in
+        sort.apply(store.all.filter { r in
             (slot == nil || r.slots.contains(slot!))
                 && (!fastOnly || r.isFast)
                 && (!prepOnly || r.isMealPrep)
@@ -276,7 +277,7 @@ struct RecipeLibraryView: View {
                 && diet.isSubset(of: Set(r.tags))
                 && (search.isEmpty || r.name.localizedCaseInsensitiveContains(search)
                     || r.items.contains { $0.ing.name.localizedCaseInsensitiveContains(search) })
-        }
+        })
     }
 
     var body: some View {
@@ -309,6 +310,9 @@ struct RecipeLibraryView: View {
                 Toggle("Schnell (bis 15 Min.)", isOn: $fastOnly)
                 Toggle("Meal Prep", isOn: $prepOnly)
                 Toggle("Vegetarisch", isOn: $vegOnly)
+                Picker("Sortieren", selection: $sort) {
+                    ForEach(RecipeSort.allCases) { Text($0.rawValue).tag($0) }
+                }
             }
             Section("\(items.count) Rezepte") {
                 ForEach(items) { r in
@@ -319,7 +323,7 @@ struct RecipeLibraryView: View {
                             RecipeCover(recipe: r, height: 56)
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(r.name)
-                                Text("\(g0(r.kcal)) kcal · \(g0(r.protein)) g Eiweiß · \(eur(r.price))")
+                                Text("\(g0(r.kcal)) kcal · \(g0(r.protein)) g Eiweiß · \(String(format: "%.1f", r.salt)) g Salz · \(eur(r.price))")
                                     .font(.footnote).foregroundStyle(.secondary)
                                 Text("\(r.slots.map(\.rawValue).joined(separator: ", ")) · \(r.minutes) Min.\(r.isMealPrep ? " · Meal Prep" : "")\(r.vegan ? " · vegan" : (r.vegetarian ? " · vegetarisch" : ""))\(r.rating.map { " · ★ " + String(format: "%.1f", $0) } ?? "")")
                                     .font(.caption).foregroundStyle(.secondary)
@@ -362,6 +366,7 @@ struct RecipeDetailView: View {
     @State private var shareSheet = false
     @State private var photoItem: PhotosPickerItem?
     @State private var showCamera = false
+    @State private var cooking = false
 
     init(recipe: Recipe, factor: Double, slot: MealSlot, day: Date) {
         self.recipe = recipe
@@ -417,6 +422,7 @@ struct RecipeDetailView: View {
                     Text(recipe.source).font(.footnote).foregroundStyle(.secondary)
                 }
             }
+            RecipeGallerySection(recipe: recipe)
             if !recipe.tags.isEmpty {
                 Section {
                     HStack {
@@ -429,13 +435,8 @@ struct RecipeDetailView: View {
                 }
             }
             Section("Nährwerte pro Portion") {
-                LabeledContent("Kalorien", value: "\(g0(recipe.kcal * factor)) kcal")
-                LabeledContent("Eiweiß", value: "\(g0(recipe.protein * factor)) g")
-                LabeledContent("Kohlenhydrate", value: "\(g0(recipe.carbs * factor)) g")
-                LabeledContent("Fett", value: "\(g0(recipe.fat * factor)) g")
+                MacroOverview(recipe: recipe, factor: factor)
                 LabeledContent("davon Zucker", value: String(format: "%.1f g", recipe.sugar * factor))
-                LabeledContent("Salz", value: String(format: "%.1f g", recipe.salt * factor))
-                LabeledContent("Preis ca.", value: eur(recipe.price * factor))
                 LabeledContent("Zubereitung", value: "\(recipe.minutes) Min.")
                 Stepper(value: $factor, in: 0.5...2.5, step: 0.25) {
                     Text("Portionsgröße: ×\(FoodLog.fmt(factor))")
@@ -455,6 +456,7 @@ struct RecipeDetailView: View {
                 ForEach(Array(recipe.items.enumerated()), id: \.offset) { _, item in
                     LabeledContent(item.ing.name, value: amount(item))
                 }
+                PriceBreakdown(recipe: recipe, scale: factor * Double(portions))
                 if portions > 1 {
                     LabeledContent("Gesamtpreis ca.", value: eur(recipe.price * factor * Double(portions)))
                     ShareLink(item: shoppingText) { Label("Einkaufsliste teilen", systemImage: "square.and.arrow.up") }
@@ -472,9 +474,22 @@ struct RecipeDetailView: View {
             }
             Section {
                 let steps = store.steps(for: recipe)
+                if !steps.isEmpty {
+                    Button { cooking = true } label: {
+                        Label(portions > 1 ? "Kochen starten (\(portions) Portionen)" : "Kochen starten", systemImage: "frying.pan")
+                            .font(.headline)
+                    }
+                }
                 if steps.isEmpty { Text("Noch keine Schritte. Tippe auf „Schritte bearbeiten“.").foregroundStyle(.secondary) }
                 ForEach(Array(steps.enumerated()), id: \.offset) { i, s in
-                    Text("\(i + 1). \(s)")
+                    HStack(alignment: .top) {
+                        Text("\(i + 1). \(s)")
+                        if let img = store.stepPhoto(recipe, step: i) {
+                            Spacer()
+                            Image(uiImage: img).resizable().scaledToFill()
+                                .frame(width: 54, height: 54).clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                    }
                 }
                 if !recipe.note.isEmpty {
                     Text(recipe.note).font(.footnote).foregroundStyle(.secondary)
@@ -506,6 +521,9 @@ struct RecipeDetailView: View {
             if let i = store.customIndex(for: recipe) { ShareToCommunitySheet(recipe: store.customs[i]) }
         }
         .sheet(isPresented: $editRecipe) { CustomRecipeEditor(recipe: store.customIndex(for: recipe).map { store.customs[$0] }) }
+        .fullScreenCover(isPresented: $cooking) {
+            CookModeView(recipe: recipe, scale: factor * Double(portions))
+        }
         .fullScreenCover(isPresented: $showCamera) {
             CameraPicker { img in store.setPhoto(img, for: recipe) }
                 .ignoresSafeArea()
