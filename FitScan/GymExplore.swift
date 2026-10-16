@@ -225,7 +225,7 @@ extension GymRoom {
         let mob = Entity()
         mob.position = [1.95, 0, -1.65]
         root.addChild(mob)
-        GymProps.box([0.95, 0.025, 2.0], [0, 0.0125, 0], GymTex.paint(UIColor(red: 0.18, green: 0.30, blue: 0.52, alpha: 1), rough: 0.8), corner: 0.01, parent: mob)
+        GymProps.box([0.95, 0.025, 2.0], [0, 0.0125, 0], GymTex.paint(GymLook.teal, rough: 0.8), corner: 0.01, parent: mob)
         register(mob, as: .mobilityArea)
 
         let rollers = Entity()
@@ -259,12 +259,12 @@ extension GymRoom {
         }
         register(bandRack, as: .bands)
 
-        // Freie Fläche: Markierung auf dem Boden rechts vorn
+        // Freie Fläche: Kunstrasen rechts vorn
         let free = Entity()
         free.position = [1.6, 0, 2.2]
         root.addChild(free)
-        GymProps.box([1.6, 0.008, 1.2], [0, 0.004, 0], GymTex.paint(UIColor(white: 0.26, alpha: 1), rough: 0.9), parent: free)
-        for z: Float in [-0.6, 0.6] { GymProps.box([1.6, 0.01, 0.05], [0, 0.005, z], red, parent: free) }
+        GymProps.box([1.6, 0.008, 1.2], [0, 0.004, 0], GymLook.tiled(GymLook.turf(), scale: [1.6, 1.2], rough: 0.95), parent: free)
+        for z: Float in [-0.6, 0.6] { GymProps.box([1.6, 0.01, 0.05], [0, 0.005, z], GymTex.paint(GymLook.cream, rough: 0.8), parent: free) }
         register(free, as: .bodyweight)
 
         for (_, e) in stations { e.generateCollisionShapes(recursive: true) }
@@ -374,6 +374,7 @@ struct GymExploreScene: UIViewRepresentable {
     func makeUIView(context: Context) -> ARView {
         let view = KickARView(frame: CGRect(x: 0, y: 0, width: 320, height: 400), cameraMode: .nonAR, automaticallyConfigureSession: false)
         view.environment.background = .color(.black)
+        GymLook.applyEnvironment(to: view)
         let c = context.coordinator
         c.view = view
         let anchor = AnchorEntity(world: .zero)

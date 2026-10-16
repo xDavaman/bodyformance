@@ -50,6 +50,14 @@ final class RundgangTests: XCTestCase {
         if tap(visible(app.buttons.matching(NSPredicate(format: "label == 'Fitnessstudio erkunden'"))), "Fitnessstudio öffnen") {
             wait(5)
             shot("Fitnessstudio")
+            // Einmal im Kreis umschauen (je Wischer gut eine Vierteldrehung)
+            for name in ["Blick 2", "Blick 3", "Blick 4"] {
+                let from = app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.85, dy: 0.42))
+                let to = app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.20, dy: 0.42))
+                from.press(forDuration: 0.1, thenDragTo: to)
+                wait(1.5)
+                shot("Fitnessstudio \(name)")
+            }
             app.swipeUp()
             wait(1)
             shot("Fitnessstudio Stationen")
