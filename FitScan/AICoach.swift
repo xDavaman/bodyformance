@@ -1,3 +1,4 @@
+import Combine
 import SwiftUI
 #if canImport(FoundationModels)
 import FoundationModels
