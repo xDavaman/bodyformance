@@ -137,6 +137,7 @@ struct MainTabBar: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(t.title)
+                .accessibilityIdentifier("tab.\(t.rawValue)")
                 .accessibilityAddTraits(on ? .isSelected : [])
             }
         }

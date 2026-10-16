@@ -1,0 +1,97 @@
+# Startet die App im iPhone-Simulator auf einem Mac von GitHub und tippt sich durch alle Bereiche (uitests/).
+# Ergebnis als Artefakt „simulator-rundgang“: Bildschirmfotos, Video, App-Protokoll und ggf. Absturzberichte.
+name: iOS-Simulator-Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-simulator-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rundgang:
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Xcode wählen
+        run: |
+          XC=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$XC" ]; then sudo xcode-select -s "$XC"; fi
+          xcodebuild -version
+      - name: Projektformat für dieses Xcode
+        # Wie im iOS-Build: das Projekt ist mit einem neueren Xcode gespeichert
+        run: sed -i '' 's/objectVersion = 110;/objectVersion = 77;/' FitScan.xcodeproj/project.pbxproj
+      - name: iPhone-Simulator auswählen und starten
+        run: |
+          UDID=$(xcrun simctl list devices available -j | jq -r '
+            [.devices | to_entries[] | select(.key | test("iOS-26")) | .value[] | select(.name | test("^iPhone"))]
+            | (map(select(.name | test("Pro$"))) + .) | .[0].udid')
+          NAME=$(xcrun simctl list devices | grep "$UDID" | head -1)
+          echo "Simulator: $NAME"
+          echo "UDID=$UDID" >> "$GITHUB_ENV"
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl status_bar "$UDID" override --time "9:41" --batteryLevel 100 --batteryState charged || true
+      - name: App bauen (Simulator)
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project FitScan.xcodeproj -target FitScan -sdk iphonesimulator -configuration Debug \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=YES SYMROOT="$PWD/build" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            | tee build.log | grep -E "error:|BUILD (SUCCEEDED|FAILED)" || true
+          grep -q "BUILD SUCCEEDED" build.log
+      - name: App im Simulator installieren
+        run: xcrun simctl install "$UDID" build/Debug-iphonesimulator/FitScan.app
+      - name: Test-Projekt erzeugen
+        run: |
+          brew install xcodegen
+          cd uitests && xcodegen
+      - name: Rundgang mit Video
+        id: rundgang
+        continue-on-error: true
+        run: |
+          mkdir -p out/bilder
+          xcrun simctl io "$UDID" recordVideo --codec=h264 --force out/rundgang.mp4 & VIDEO=$!
+          xcrun simctl spawn "$UDID" log stream --style compact --predicate 'process == "FitScan"' > out/app-protokoll.txt 2>&1 & LOG=$!
+          sleep 2
+          set +e
+          xcodebuild test \
+            -project uitests/BFCUITests.xcodeproj -scheme BFCUITests \
+            -destination "id=$UDID" -resultBundlePath out/rundgang.xcresult \
+            TEST_RUNNER_BFC_SHOTS="$PWD/out/bilder" \
+            2>&1 | tee out/test.log | grep -E "RUNDGANG|error:|failed|passed|Test Suite|TEST (SUCCEEDED|FAILED)"
+          RESULT=${PIPESTATUS[0]}
+          kill -INT $VIDEO; kill $LOG; wait $VIDEO
+          exit $RESULT
+      - name: Absturzberichte einsammeln
+        if: always()
+        run: |
+          mkdir -p out/abstuerze
+          cp ~/Library/Logs/DiagnosticReports/FitScan* out/abstuerze/ 2>/dev/null || true
+          ls out/bilder out/abstuerze
+      - name: Ergebnis hochladen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulator-rundgang
+          path: |
+            out/bilder
+            out/abstuerze
+            out/rundgang.mp4
+            out/app-protokoll.txt
+            out/test.log
+          retention-days: 14
+      - name: Testergebnis
+        if: steps.rundgang.outcome == 'failure'
+        run: |
+          grep -E "error:|RUNDGANG" out/test.log | head -60
+          exit 1

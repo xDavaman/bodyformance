@@ -29,3 +29,6 @@ secrets.*
 __pycache__/
 *.pyc
 tools/motions/vorschau/
+
+# Simulator-Test (wird aus uitests/project.yml erzeugt)
+uitests/BFCUITests.xcodeproj/
