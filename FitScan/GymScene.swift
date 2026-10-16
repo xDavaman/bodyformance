@@ -11,6 +11,7 @@ import simd
 // Höhe zu den Bewegungsdaten passen muss.
 // Deko (immer sichtbar, an den Wänden, außerhalb der Kamerabahn): Kurzhantel-Ablage mit 10 Paaren, Kettlebells,
 // Scheibenbaum, Power-Rack mit Langhantel, Kabelzug-Station, Hantelbänke, Langhantel-Halter.
+// In der Studio-Ansicht (GymExplore.swift) sind diese Geräte antippbar und kommen weitere dazu.
 
 /// Wo die Umlenkrollen am Kabelturm sitzen
 enum CableSetup: Equatable {
@@ -251,6 +252,14 @@ final class GymRoom {
     private var pulleys: [Entity] = []
     private let pulleyX: Float = 0.72
     private let towerZ: Float = 1.10
+    /// Geräte, die man in der Studio-Ansicht antippen kann (Wurzel-Entity je Station)
+    private(set) var stations: [(GymStation, Entity)] = []
+    /// Kabelturm von außen (für die Studio-Ansicht)
+    var cableTower: Entity { tower }
+
+    func register(_ e: Entity, as station: GymStation) {
+        stations.append((station, e))
+    }
 
     init() {
         buildRoom()
@@ -591,6 +600,7 @@ final class GymRoom {
         let rack = Entity()
         rack.position = [1.35, 0, -3.70]
         root.addChild(rack)
+        register(rack, as: .dumbbells)
         let length: Float = 3.0
         // schräge Ablagen (zum Betrachter geneigt) und Seitenwangen
         for (y, tilt) in [(Float(0.78), Float(0.22)), (0.36, 0.12)] {
@@ -621,11 +631,14 @@ final class GymRoom {
     /// Kettlebells auf dem Boden an der Rückwand
     private func buildKettlebells() {
         let colors: [UIColor] = [.systemPink, .systemTeal, .systemYellow, .systemPurple, .systemGreen, .systemOrange]
+        let group = Entity()
+        root.addChild(group)
         for i in 0..<6 {
             let kb = GymProps.kettlebell(scale: 0.8 + Float(i) * 0.08, color: colors[i].withAlphaComponent(1))
             kb.position = [-3.35 + Float(i) * 0.30, 0, -3.70]
-            root.addChild(kb)
+            group.addChild(kb)
         }
+        register(group, as: .kettlebells)
     }
 
     /// Hantelscheiben-Baum
@@ -635,6 +648,7 @@ final class GymRoom {
         let tree = Entity()
         tree.position = [-0.65, 0, -3.65]
         root.addChild(tree)
+        register(tree, as: .barbellRack)
         box([0.55, 0.05, 0.55], [0, 0.025, 0], frame, parent: tree)
         GymProps.cylinder(1.3, 0.025, [0, 0.65, 0], frame, parent: tree)
         for (k, y) in [Float(0.35), 0.70, 1.05].enumerated() {
@@ -653,6 +667,7 @@ final class GymRoom {
         rack.position = [-3.30, 0, -2.55]
         rack.orientation = simd_quatf(angle: .pi / 2, axis: [0, 1, 0])
         root.addChild(rack)
+        register(rack, as: .barbellRack)
         for x: Float in [-0.6, 0.6] {
             for z: Float in [-0.45, 0.45] {
                 box([0.08, 2.3, 0.08], [x, 1.15, z], frame, corner: 0.008, parent: rack)
@@ -679,6 +694,7 @@ final class GymRoom {
         st.position = [3.45, 0, 2.95]
         st.orientation = simd_quatf(angle: Float(atan2(-3.45, -2.95)), axis: [0, 1, 0])
         root.addChild(st)
+        register(st, as: .latStation)
         // Turm mit Gewichtsblock
         box([0.55, 2.35, 0.14], [0, 1.175, 0.0], frame, corner: 0.01, parent: st)
         box([0.30, 1.30, 0.20], [0, 0.75, 0.16], GymTex.steel(0.35), corner: 0.01, parent: st)
@@ -700,10 +716,12 @@ final class GymRoom {
         let flat = GymProps.bench()
         flat.position = [-3.50, 0, 1.55]
         root.addChild(flat)
+        register(flat, as: .bench)
         let incline = GymProps.bench(incline: 0.6)
         incline.position = [3.45, 0, -2.10]
         incline.orientation = simd_quatf(angle: .pi, axis: [0, 1, 0])
         root.addChild(incline)
+        register(incline, as: .bench)
     }
 
     /// Senkrechte Halter mit Langhanteln in der hinteren rechten Ecke
@@ -712,6 +730,7 @@ final class GymRoom {
         let h = Entity()
         h.position = [3.55, 0, -3.55]
         root.addChild(h)
+        register(h, as: .barbellRack)
         box([0.60, 0.10, 0.30], [0, 0.05, 0], frame, corner: 0.01, parent: h)
         for i in 0..<5 {
             let bar = GymProps.cylinder(1.6, 0.014, [-0.24 + Float(i) * 0.12, 0.85, 0], GymTex.steel(0.72), parent: h)
