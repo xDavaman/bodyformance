@@ -16,6 +16,10 @@ struct TrainingView: View {
                         LabeledContent("Schwerpunkt", value: profile.focusMuscles.map(\.rawValue).sorted().joined(separator: ", "))
                     }
                     Text(plan.note).font(.footnote).foregroundStyle(.secondary)
+                    NavigationLink { CoachView() } label: {
+                        Label(profile.trainingGoal.map { "KI-Coach: \($0.rawValue)" } ?? "KI-Coach: Ziel wählen und Plan bauen", systemImage: "sparkles")
+                            .font(.headline)
+                    }
                     NavigationLink("Ziel und Plan anpassen") { ProfileView() }
                 } header: {
                     Text("Dein Plan")

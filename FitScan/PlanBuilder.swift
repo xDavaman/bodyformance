@@ -78,9 +78,11 @@ enum PlanBuilder {
     private static let legMuscles: Set<Muscle> = [.quads, .hamstrings, .glutes, .calves]
 
     static func plan(profile: UserProfile) -> [TrainingDay] {
-        let days = max(2, min(6, profile.trainingDays))
+        // Mit Trainingsziel (KI-Coach): nur die Krafttage, Calisthenics immer mit Körpergewicht
+        let goal = profile.trainingGoal
+        let days = max(2, min(6, goal?.strengthDays(of: profile.trainingDays) ?? profile.trainingDays))
         let focus = profile.focusMuscles
-        let setup = profile.setup
+        let setup: Setup = goal == .calisthenics ? .bodyweight : profile.setup
 
         func day(_ name: String, _ sub: String, _ slots: Slots, _ muscles: Set<Muscle>) -> TrainingDay {
             var used = Set<String>()
@@ -117,6 +119,12 @@ enum PlanBuilder {
         let legDay = { day("Beine", "Oberschenkel, Gesäß, Waden", legs, legMuscles) }
         let upperDay = { (n: String) in day(n, "Oberkörper", upper, pushMuscles.union(pullMuscles)) }
         let lowerDay = { (n: String) in day(n, "Unterkörper", lower, legMuscles) }
+
+        if goal == .runner || goal == .health {
+            return [day("Ganzkörper A", "Beine, Druck, Zug", fullA, all),
+                    day("Ganzkörper B", "Hüfte, Zug, Druck", fullB, all),
+                    day("Ganzkörper A", "Beine, Druck, Zug", fullA, all)].prefix(days).map { $0 }
+        }
 
         switch days {
         case 2:

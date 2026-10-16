@@ -135,6 +135,12 @@ final class UserProfile: ObservableObject {
         case .slow: sets = sets.lowerBound...max(sets.lowerBound, sets.upperBound - 1)
         case .normal: break
         }
+        if deloadActive {
+            sets = max(1, sets.lowerBound / 2)...max(1, sets.upperBound / 2)
+            return GoalPlan(sets: sets, reps: reps, rest: rest,
+                            note: "Deload-Woche: halb so viele Sätze und etwa 10 % weniger Gewicht, damit sich der Körper erholt. " + base.note,
+                            deload: true)
+        }
         return GoalPlan(sets: sets, reps: reps, rest: rest, note: base.note + " " + aesthetic.note + " " + pace.note(for: goal))
     }
 
