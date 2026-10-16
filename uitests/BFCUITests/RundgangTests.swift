@@ -133,6 +133,9 @@ final class RundgangTests: XCTestCase {
             if scrollTo(gym, swipes: 4), tap(gym, "Station im Fitnessstudio") {
                 wait(4)
                 shot("\(name) im Fitnessstudio")
+                // Die Station öffnet ein Blatt über dem Studio, das erst geschlossen werden muss
+                let done = app.buttons["Fertig"].firstMatch
+                if done.exists && done.isHittable { done.tap(); wait(0.8) }
                 back()
             }
             back()
