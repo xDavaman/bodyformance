@@ -65,7 +65,7 @@ final class RundgangTests: XCTestCase {
         openTab(2, "Rezepte")
         wait(1)
         shot("Rezepte")
-        if tap(visible(app.buttons.matching(NSPredicate(format: "label CONTAINS 'kcal ·'"))), "erstes Rezept öffnen") {
+        if push(visible(app.buttons.matching(NSPredicate(format: "label CONTAINS 'kcal ·'"))), "erstes Rezept öffnen") {
             wait(1.5)
             shot("Rezept")
             let cook = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Kochen starten'")).firstMatch
@@ -124,7 +124,7 @@ final class RundgangTests: XCTestCase {
             search.typeText(name)
         }
         let row = visible(app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)))
-        if tap(row, "Übung \(name) öffnen") {
+        if push(row, "Übung \(name) öffnen") {
             wait(3)
             shot("\(name) 3D")
             wait(1.2)
@@ -167,6 +167,38 @@ final class RundgangTests: XCTestCase {
         allowSystemAlerts()
         check(what)
         return app.state == .runningForeground
+    }
+
+    /// Tippt eine Listenzeile und prüft, ob sich die nächste Seite öffnet; sonst zweiter Versuch und Aufzeichnung der Oberfläche
+    private func push(_ element: XCUIElement, _ what: String) -> Bool {
+        let backButton = app.navigationBars.buttons["BackButton"]
+        let before = backButton.exists && backButton.isHittable ? backButton.label : nil
+        guard tap(element, what) else { return false }
+        if opened(backButton, after: before) { return true }
+        note("öffnet nicht beim ersten Tippen: \(what) (\(element.label))")
+        dump("vor zweitem Versuch \(what)")
+        if element.exists {
+            element.coordinate(withNormalizedOffset: CGVector(dx: 0.4, dy: 0.5)).tap()
+            if opened(backButton, after: before) { return true }
+        }
+        note("öffnet nicht: \(what)")
+        dump("nach zweitem Versuch \(what)")
+        return false
+    }
+
+    private func opened(_ backButton: XCUIElement, after before: String?) -> Bool {
+        for _ in 0..<10 {
+            if backButton.exists && backButton.isHittable && backButton.label != before { return true }
+            wait(0.3)
+        }
+        return false
+    }
+
+    /// Schreibt den Aufbau der Oberfläche als Text neben die Bilder (zur Fehlersuche)
+    private func dump(_ name: String) {
+        guard let dir = ProcessInfo.processInfo.environment["BFC_SHOTS"] else { return }
+        let url = URL(fileURLWithPath: dir).appendingPathComponent("Aufbau \(name).txt")
+        try? app.debugDescription.write(to: url, atomically: true, encoding: .utf8)
     }
 
     private func scrollTo(_ element: XCUIElement, swipes: Int = 8) -> Bool {
