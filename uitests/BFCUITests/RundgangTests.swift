@@ -149,7 +149,7 @@ final class RundgangTests: XCTestCase {
 
     private func openTab(_ index: Int, _ title: String) {
         let byId = app.buttons["tab.\(index)"]
-        tap(byId.exists ? byId : app.buttons[title].lastMatch, "Bereich \(title)")
+        tap(byId.exists ? byId : app.buttons.matching(NSPredicate(format: "label == %@", title)).lastMatch, "Bereich \(title)")
         wait(1)
         check(title)
     }
