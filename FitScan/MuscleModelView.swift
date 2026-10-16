@@ -162,6 +162,7 @@ struct MuscleRealityScene: UIViewRepresentable {
     func makeUIView(context: Context) -> ARView {
         let view = KickARView(frame: CGRect(x: 0, y: 0, width: 320, height: 340), cameraMode: .nonAR, automaticallyConfigureSession: false)
         view.environment.background = .color(.black)
+        GymLook.applyEnvironment(to: view)
         let c = context.coordinator
 
         let anchor = AnchorEntity(world: .zero)

@@ -2,7 +2,7 @@ import RealityKit
 import UIKit
 import simd
 
-// Gym-Raum für die Übungsansicht: Boden, Wände, Decke, Lichter und Geräte. Alles in Metern, der Körper steht bei (0,0,0)
+// Gym-Raum für die Übungsansicht: Boden, Wände, Decke, Lichter und Geräte (Aussehen des Raums: GymLook.swift). Alles in Metern, der Körper steht bei (0,0,0)
 // und schaut nach +z. Der Raum ist statisch, die Kamera kreist um den Körper. Reine Optik – austauschbar, ohne die
 // Körperdateien anzufassen.
 //
@@ -262,13 +262,14 @@ final class GymRoom {
     }
 
     init() {
-        buildRoom()
-        buildLights()
+        buildInterior()
+        buildLighting()
         buildTower()
         buildBenchRack()
         buildPullRig()
         buildSquatRack()
         buildDecor()
+        buildDecorations()
         buildMat()
         for e in [tower, pullRig, squatRack, benchRack] { e.isEnabled = false; root.addChild(e) }
         mat.isEnabled = false
@@ -317,126 +318,6 @@ final class GymRoom {
     @discardableResult
     private func box(_ size: SIMD3<Float>, _ pos: SIMD3<Float>, _ m: Material, corner: Float = 0, parent: Entity? = nil) -> ModelEntity {
         GymProps.box(size, pos, m, corner: corner, parent: parent ?? root)
-    }
-
-    private func buildRoom() {
-        let half: Float = 4.0, hgt: Float = 3.4
-        // Boden: dunkler Gummi mit 1-m-Fugen
-        let floorTex = GymTex.make(1024, 1024, key: "floor") { c, s in
-            UIColor(white: 0.17, alpha: 1).setFill(); c.fill(CGRect(origin: .zero, size: s))
-            for _ in 0..<9000 {
-                let g = CGFloat.random(in: 0.10...0.26)
-                UIColor(white: g, alpha: 1).setFill()
-                c.fill(CGRect(x: CGFloat.random(in: 0..<s.width), y: CGFloat.random(in: 0..<s.height), width: 3, height: 3))
-            }
-            UIColor(white: 0.07, alpha: 1).setStroke(); c.setLineWidth(5)
-            let n = 8
-            for i in 0...n {
-                let p = s.width * CGFloat(i) / CGFloat(n)
-                c.move(to: CGPoint(x: p, y: 0)); c.addLine(to: CGPoint(x: p, y: s.height))
-                c.move(to: CGPoint(x: 0, y: p)); c.addLine(to: CGPoint(x: s.width, y: p))
-            }
-            c.strokePath()
-        }
-        _ = box([half * 2 + 0.2, 0.1, half * 2 + 0.2], [0, -0.05, 0], GymTex.mat(floorTex, rough: 0.85))
-
-        // Decke mit Platten
-        let ceilTex = GymTex.make(1024, 1024, key: "ceiling") { c, s in
-            UIColor(white: 0.80, alpha: 1).setFill(); c.fill(CGRect(origin: .zero, size: s))
-            UIColor(white: 0.58, alpha: 1).setStroke(); c.setLineWidth(4)
-            let n = 8
-            for i in 0...n {
-                let p = s.width * CGFloat(i) / CGFloat(n)
-                c.move(to: CGPoint(x: p, y: 0)); c.addLine(to: CGPoint(x: p, y: s.height))
-                c.move(to: CGPoint(x: 0, y: p)); c.addLine(to: CGPoint(x: s.width, y: p))
-            }
-            c.strokePath()
-        }
-        _ = box([half * 2 + 0.2, 0.1, half * 2 + 0.2], [0, hgt + 0.05, 0], GymTex.mat(ceilTex, rough: 0.95))
-        // Stahlträger
-        for z: Float in [-2.2, 0.0, 2.2] {
-            _ = box([half * 2, 0.22, 0.14], [0, hgt - 0.11, z], GymTex.steel(0.30))
-        }
-
-        // Wände: dunkles Paneel unten, helle Wand oben, rote Zierleiste
-        func wallTex(logo: Bool, mirror: Bool) -> TextureResource? {
-            GymTex.make(2048, 870, key: "wall-\(logo)-\(mirror)") { c, s in
-                UIColor(white: 0.88, alpha: 1).setFill(); c.fill(CGRect(origin: .zero, size: s))
-                let wain = s.height * 0.36
-                UIColor(red: 0.16, green: 0.18, blue: 0.22, alpha: 1).setFill()
-                c.fill(CGRect(x: 0, y: s.height - wain, width: s.width, height: wain))
-                UIColor(red: 0.85, green: 0.16, blue: 0.14, alpha: 1).setFill()
-                c.fill(CGRect(x: 0, y: s.height - wain - 14, width: s.width, height: 14))
-                UIColor(white: 0.70, alpha: 1).setStroke(); c.setLineWidth(3)
-                for i in 0...8 {
-                    let x = s.width * CGFloat(i) / 8
-                    c.move(to: CGPoint(x: x, y: 0)); c.addLine(to: CGPoint(x: x, y: s.height - wain - 14))
-                }
-                c.strokePath()
-                if mirror {
-                    let r = CGRect(x: s.width * 0.12, y: s.height * 0.10, width: s.width * 0.76, height: s.height * 0.78)
-                    let cs = CGColorSpaceCreateDeviceRGB()
-                    let g = CGGradient(colorsSpace: cs, colors: [UIColor(red: 0.62, green: 0.72, blue: 0.80, alpha: 1).cgColor,
-                                                                UIColor(red: 0.25, green: 0.33, blue: 0.40, alpha: 1).cgColor] as CFArray, locations: [0, 1])!
-                    c.saveGState(); c.clip(to: r)
-                    c.drawLinearGradient(g, start: CGPoint(x: r.minX, y: r.minY), end: CGPoint(x: r.maxX, y: r.maxY), options: [])
-                    UIColor(white: 1, alpha: 0.14).setFill()
-                    c.fill(CGRect(x: r.minX + r.width * 0.15, y: r.minY, width: r.width * 0.07, height: r.height))
-                    c.fill(CGRect(x: r.minX + r.width * 0.30, y: r.minY, width: r.width * 0.02, height: r.height))
-                    c.restoreGState()
-                    UIColor(white: 0.12, alpha: 1).setStroke(); c.setLineWidth(10); c.stroke(r)
-                    UIColor(white: 0.12, alpha: 1).setStroke(); c.setLineWidth(6)
-                    for i in 1..<4 {
-                        let x = r.minX + r.width * CGFloat(i) / 4
-                        c.move(to: CGPoint(x: x, y: r.minY)); c.addLine(to: CGPoint(x: x, y: r.maxY))
-                    }
-                    c.strokePath()
-                }
-                if logo {
-                    let para = NSMutableParagraphStyle(); para.alignment = .center
-                    let a: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 120, weight: .black),
-                                                           .foregroundColor: UIColor(red: 0.85, green: 0.16, blue: 0.14, alpha: 1),
-                                                           .paragraphStyle: para, .kern: 12]
-                    ("BODYFORMANCE" as NSString).draw(in: CGRect(x: 0, y: s.height * 0.12, width: s.width, height: 200), withAttributes: a)
-                    let b: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 56, weight: .bold),
-                                                           .foregroundColor: UIColor(white: 0.25, alpha: 1), .paragraphStyle: para, .kern: 6]
-                    ("TRAIN  ·  MOVE  ·  RECOVER" as NSString).draw(in: CGRect(x: 0, y: s.height * 0.12 + 190, width: s.width, height: 80), withAttributes: b)
-                }
-            }
-        }
-        let back = GymTex.mat(wallTex(logo: true, mirror: false), rough: 0.9)
-        let side = GymTex.mat(wallTex(logo: false, mirror: false), rough: 0.9)
-        let mir = GymTex.mat(wallTex(logo: false, mirror: true), rough: 0.35)
-        _ = box([half * 2 + 0.2, hgt, 0.1], [0, hgt / 2, -half - 0.05], back)
-        _ = box([half * 2 + 0.2, hgt, 0.1], [0, hgt / 2, half + 0.05], side)
-        _ = box([0.1, hgt, half * 2], [half + 0.05, hgt / 2, 0], side)
-        _ = box([0.1, hgt, half * 2], [-half - 0.05, hgt / 2, 0], mir)
-        // Fußleiste
-        _ = box([half * 2, 0.10, 0.03], [0, 0.05, -half + 0.015], GymTex.paint(UIColor(white: 0.1, alpha: 1)))
-    }
-
-    private func buildLights() {
-        let panel = UnlitMaterial(color: UIColor(red: 1.0, green: 0.97, blue: 0.90, alpha: 1))
-        for x: Float in [-1.8, 1.8] {
-            for z: Float in [-1.8, 1.8] {
-                _ = box([1.3, 0.04, 0.28], [x, 3.30, z], panel)
-                let p = PointLight()
-                p.light.intensity = 90000
-                p.light.attenuationRadius = 12
-                p.light.color = UIColor(red: 1.0, green: 0.96, blue: 0.90, alpha: 1)
-                p.position = [x, 3.15, z]
-                root.addChild(p)
-            }
-        }
-        let key = DirectionalLight()
-        key.light.intensity = 2200
-        key.shadow = DirectionalLightComponent.Shadow(maximumDistance: 8, depthBias: 2)
-        key.look(at: .zero, from: [1.6, 3.0, 2.2], relativeTo: nil)
-        root.addChild(key)
-        let fill = DirectionalLight()
-        fill.light.intensity = 1100
-        fill.look(at: .zero, from: [-2.0, 1.6, -2.5], relativeTo: nil)
-        root.addChild(fill)
     }
 
     // MARK: Kabelturm
@@ -740,7 +621,7 @@ final class GymRoom {
 
     private func buildMat() {
         mat.model = ModelComponent(mesh: .generateBox(size: [0.95, 0.025, 2.3], cornerRadius: 0.01),
-                                   materials: [GymTex.paint(UIColor(red: 0.18, green: 0.30, blue: 0.52, alpha: 1), rough: 0.8)])
+                                   materials: [GymTex.paint(GymLook.teal, rough: 0.8)])
         mat.position = [0, 0.0125, 0]
     }
 }
