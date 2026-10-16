@@ -2,10 +2,16 @@
 # So zeigen sich Compiler-Fehler in jedem Pull Request, auch ohne eigenen Mac.
 name: iOS-Build
 
+# Mac-Minuten zählen bei GitHub zehnfach: nur bauen, wenn sich App oder Projekt ändern.
+# Auf main nicht noch einmal, denn der Pull Request wurde schon gebaut.
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
+    paths:
+      - "FitScan/**"
+      - "FitScan.xcodeproj/**"
+      - "BFC-Info.plist"
+      - "FitScan.entitlements"
+      - ".github/workflows/ios-build.yml"
   workflow_dispatch:
 
 permissions:

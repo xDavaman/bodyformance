@@ -2,10 +2,15 @@
 # Ergebnis als Artefakt „simulator-rundgang“: Bildschirmfotos, Video, App-Protokoll und ggf. Absturzberichte.
 name: iOS-Simulator-Test
 
+# Der Rundgang dauert auf dem Mac rund 10 bis 20 Minuten (zählt zehnfach): deshalb nicht bei jedem Pull Request,
+# sondern nur nach Änderungen an der App auf main oder von Hand (Actions → iOS-Simulator-Test → Run workflow).
 on:
   push:
     branches: [ "main" ]
-  pull_request:
+    paths:
+      - "FitScan/**"
+      - "FitScan.xcodeproj/**"
+      - "uitests/**"
   workflow_dispatch:
 
 permissions:

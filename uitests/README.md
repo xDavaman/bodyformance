@@ -5,7 +5,7 @@
 Einstellungen mit eigener 3D-Figur) und speichert nach jedem Schritt ein Bildschirmfoto.
 Stürzt die App ab, schlägt der Test fehl.
 
-Läuft automatisch über `.github/workflows/ios-simulator-test.yml` (bei jedem Pull Request und auf `main`,
+Läuft über `.github/workflows/ios-simulator-test.yml` (nach App-Änderungen auf `main`,
 oder von Hand unter Actions → iOS-Simulator-Test → Run workflow). Ergebnis: Artefakt `simulator-rundgang`
 mit Bildschirmfotos, Video, App-Protokoll und ggf. Absturzberichten.
 
