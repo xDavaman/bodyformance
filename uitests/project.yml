@@ -1,0 +1,26 @@
+# Eigenes kleines Test-Projekt für den Simulator-Rundgang (wird in GitHub Actions mit XcodeGen erzeugt).
+# Es steuert die fertig installierte App über ihre Bundle-ID, deshalb bleibt FitScan.xcodeproj unverändert.
+name: BFCUITests
+options:
+  deploymentTarget:
+    iOS: "26.0"
+targets:
+  BFCUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [BFCUITests]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: test.FitScan.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.0"
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "-"
+        DEVELOPMENT_TEAM: ""
+schemes:
+  BFCUITests:
+    build:
+      targets:
+        BFCUITests: [test]
+    test:
+      targets: [BFCUITests]
