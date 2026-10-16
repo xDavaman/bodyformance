@@ -203,6 +203,7 @@ struct MuscleRealityScene: UIViewRepresentable {
             c.gear = gear
             let def = BodyRig.library[motion] ?? BodyRig.library[.idle]!
             c.motionDef = def
+            c.rig.beginTransition()
             c.clip = MotionStore.clips[motion.rawValue] ?? MotionStore.clips["idle"]
             c.time = 0
             c.layout = GymLayout.forMotion(motion, def: def, gear: gear)

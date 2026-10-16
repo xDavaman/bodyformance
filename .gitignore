@@ -28,3 +28,4 @@ secrets.*
 # Python-Hilfsskripte
 __pycache__/
 *.pyc
+tools/motions/vorschau/
