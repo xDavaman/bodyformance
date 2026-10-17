@@ -23,7 +23,7 @@ struct BodyScanView: View {
                     row("3D-Modell aus Video", "video", "Video um die Person herum filmen, daraus rechnet das iPhone ein Netz")
                 }
                 Button { importing = true } label: {
-                    row("Modell oder Punktwolke importieren", "square.and.arrow.down", "USDZ, OBJ oder PLY, z. B. aus dem 3D-Modellprojekt")
+                    row("Modell oder Punktwolke importieren", "square.and.arrow.down", "USDZ, OBJ oder PLY. Aus FitScan alle Dateien des Scanordners auf einmal auswählen")
                 }
                 if let importError { Text(importError).font(.footnote).foregroundStyle(.red) }
             } header: {
@@ -33,6 +33,8 @@ struct BodyScanView: View {
             Section {
                 if let p = BodyModelBridge.provider {
                     Label("Verbunden: \(p.name)", systemImage: "checkmark.seal")
+                    Text("\(p.name) rechnet am PC aus Video und Maßen dein Körpermodell. Schick dir koerper.obj, koerper.mtl, die Hautbilder (koerper_haut.jpg, koerper_augen.jpg) und scan.json per AirDrop oder „Dateien“ und importiere sie zusammen. Die App zeigt dann deinen Avatar und übernimmt die genauen Maße.")
+                        .font(.footnote).foregroundStyle(.secondary)
                 } else {
                     Label("Platzhalter: 3D-Modellprojekt", systemImage: "puzzlepiece.extension")
                     Text("Hier wird das 3D-Modellprojekt eingehängt. Es bekommt jeden Scan (Punktwolke, Netz, Maße) und liefert den fertigen Avatar zurück, der dann in der Übungsansicht trainiert.")
@@ -64,16 +66,18 @@ struct BodyScanView: View {
             }
         }
         .navigationTitle("Körper scannen")
-        .fileImporter(isPresented: $importing, allowedContentTypes: Self.importTypes) { result in
+        .fileImporter(isPresented: $importing, allowedContentTypes: Self.importTypes, allowsMultipleSelection: true) { result in
             switch result {
-            case .success(let url): importFile(url)
+            case .success(let urls):
+                if FitScanFiles.isFitScanSelection(urls) { importFitScan(urls) } else { urls.forEach(importFile) }
             case .failure(let e): importError = e.localizedDescription
             }
         }
     }
 
     static var importTypes: [UTType] {
-        [UTType.usdz, UTType(filenameExtension: "obj"), UTType(filenameExtension: "ply")].compactMap { $0 }
+        [UTType.usdz, UTType(filenameExtension: "obj"), UTType(filenameExtension: "ply"), UTType(filenameExtension: "mtl"),
+         UTType.json, UTType.jpeg, UTType.png].compactMap { $0 }
     }
 
     private func row(_ title: String, _ icon: String, _ sub: String) -> some View {
@@ -94,8 +98,43 @@ struct BodyScanView: View {
         return parts.joined(separator: " · ")
     }
 
+    /// Übernimmt einen FitScan-Scanordner (Modell, Material, Hautbilder, scan.json) als einen Scan.
+    private func importFitScan(_ urls: [URL]) {
+        var r = BodyScanRecord(source: .modelProject)
+        let folder = store.folder(for: r)
+        for url in urls where FitScanFiles.extensions.contains(url.pathExtension.lowercased()) {
+            let access = url.startAccessingSecurityScopedResource()
+            defer { if access { url.stopAccessingSecurityScopedResource() } }
+            // Namen beibehalten: koerper.mtl verweist auf koerper_haut.jpg usw.
+            let dst = folder.appendingPathComponent(url.lastPathComponent)
+            try? FileManager.default.removeItem(at: dst)
+            do {
+                try FileManager.default.copyItem(at: url, to: dst)
+            } catch {
+                importError = "Import fehlgeschlagen: \(error.localizedDescription)"
+                store.delete(r)
+                return
+            }
+        }
+        guard let model = FitScanFiles.modelFile(in: folder) else {
+            importError = "Kein FitScan-Modell dabei. Bitte koerper.obj (oder ein USDZ) mit auswählen."
+            store.delete(r)
+            return
+        }
+        r.modelFile = model.lastPathComponent
+        if model.pathExtension.lowercased() == "obj" {
+            let (v, f) = MeshFileIO.load(model)
+            r.vertexCount = v.count; r.faceCount = f.count
+        }
+        r.measurements = FitScanFiles.measurements(in: folder)
+        r.note = "FitScan (PC)"
+        importError = nil
+        store.add(r)
+    }
+
     /// Übernimmt eine Datei aus „Dateien“ als neuen Scan.
     private func importFile(_ url: URL) {
+        guard ["ply", "obj", "usdz"].contains(url.pathExtension.lowercased()) else { return }
         let access = url.startAccessingSecurityScopedResource()
         defer { if access { url.stopAccessingSecurityScopedResource() } }
         var r = BodyScanRecord(source: .imported)

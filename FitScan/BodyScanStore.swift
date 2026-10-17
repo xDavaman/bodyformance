@@ -57,15 +57,21 @@ nonisolated struct BodyScanRecord: Codable, Identifiable, Hashable {
 protocol BodyModelProvider {
     /// Anzeigename, z. B. „FitScan-Avatar“
     var name: String { get }
+    /// Ob sich aus diesem Scan ein Modell erzeugen lässt (sonst blendet die Vorschau den Knopf aus).
+    func canMakeModel(from scan: BodyScanRecord, folder: URL) -> Bool
     /// Erzeugt aus einem gespeicherten Scan (Punktwolke und/oder Netz) ein bewegliches Körpermodell (USDZ) und gibt die Datei zurück.
     func makeModel(from scan: BodyScanRecord, folder: URL) async throws -> URL
     /// Optional genauere Maße, als die App selbst aus der Punktwolke schätzt.
     func measurements(from scan: BodyScanRecord, folder: URL) async throws -> BodyMeasurements?
 }
 
+extension BodyModelProvider {
+    func canMakeModel(from scan: BodyScanRecord, folder: URL) -> Bool { true }
+}
+
 enum BodyModelBridge {
-    /// Hier hängt sich das 3D-Modellprojekt ein (nil = noch nicht verbunden).
-    static var provider: BodyModelProvider?
+    /// Hier hängt sich das 3D-Modellprojekt ein (nil = noch nicht verbunden). FitScan: siehe FitScanBridge.swift.
+    static var provider: BodyModelProvider? = FitScanProvider()
 }
 
 // MARK: - Ablage
