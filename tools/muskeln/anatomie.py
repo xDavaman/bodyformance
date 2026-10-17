@@ -398,6 +398,6 @@ def trennlinien(name, p, s):
 def fasern(name, p, s):
     """Helligkeit der Faserstruktur 0…1: längliche Faserbündel, leichte Streifung, unregelmäßige Tönung."""
     q, welle, stark = _faser_lage(name, p, s)
-    v = (0.55 + 0.10 * welle * stark + 0.22 * (rauschen(q, 1.0, 7) - 0.5) + 0.12 * (rauschen(q, 2.1, 8) - 0.5)
+    v = (0.55 + 0.16 * welle * stark + 0.32 * (rauschen(q, 1.0, 7) - 0.5) + 0.16 * (rauschen(q, 2.1, 8) - 0.5)
          + 0.12 * (rauschen(p, 28, 9) - 0.5))
     return np.clip(v, 0, 1)

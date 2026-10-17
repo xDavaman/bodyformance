@@ -19,10 +19,10 @@ HAUT = np.array([0.80, 0.80, 0.80])
 
 def muskel_farbe(c, faser, sehne):
     """Muskelgewebe: dunkle Rillen, hellere Faserbündel, zur Sehne hin blass."""
-    dunkel, hell = c * 0.42, c + (1 - c) * 0.22
+    dunkel, hell = c * 0.32, c + (1 - c) * 0.28
     f = faser[:, None]
     m = dunkel + (hell - dunkel) * f
-    blass = c + (np.array([0.97, 0.93, 0.88]) - c) * 0.62
+    blass = c + (np.array([0.97, 0.93, 0.88]) - c) * 0.75
     return m + (blass - m) * sehne[:, None]
 
 
@@ -39,7 +39,7 @@ def mischen(roh, aktiv, passiv):
                 continue
             wm = w[m][:, None]
             base[m] = base[m] * (1 - wm) + muskel_farbe(farbe, faser[m], sehne[m]) * wm
-            leucht = (licht * (0.45 + 0.55 * faser[m]) * (1 - 0.85 * sehne[m]))[:, None]
+            leucht = (licht * (0.2 + 0.8 * faser[m]) * (1 - 0.9 * sehne[m]))[:, None]
             glow[m] = glow[m] * (1 - wm) + farbe[None, :] * leucht * wm
     return base, glow
 

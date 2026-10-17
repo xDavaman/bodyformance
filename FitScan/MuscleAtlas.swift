@@ -66,10 +66,10 @@ enum MuscleAtlas {
 
     /// Muskelgewebe: dunkle Rillen, hellere Faserbündel, zur Sehne hin blass (wie tools/muskeln/vorschau.py)
     private static func tissue(_ c: SIMD3<Float>, fiber f: Float, tendon s: Float) -> SIMD3<Float> {
-        let dark = c * 0.42
-        let light = c + (SIMD3<Float>(repeating: 1) - c) * 0.22
+        let dark = c * 0.32
+        let light = c + (SIMD3<Float>(repeating: 1) - c) * 0.28
         let m = dark + (light - dark) * f
-        let pale = c + (SIMD3<Float>(0.97, 0.93, 0.88) - c) * 0.62
+        let pale = c + (SIMD3<Float>(0.97, 0.93, 0.88) - c) * 0.75
         return m + (pale - m) * s
     }
 
@@ -112,7 +112,7 @@ enum MuscleAtlas {
                                 let f = Float(t[o + 2]) / 255, s = Float(t[o + 3]) / 255
                                 let col = colors[Int(r)]
                                 c += (tissue(col, fiber: f, tendon: s) - c) * w
-                                let light = lightOf[Int(r)] * (0.45 + 0.55 * f) * (1 - 0.85 * s)
+                                let light = lightOf[Int(r)] * (0.2 + 0.8 * f) * (1 - 0.9 * s)
                                 e += (col * light - e) * w
                             }
                             // erst der schwächere Platz, darüber der stärkere
@@ -136,7 +136,8 @@ enum MuscleAtlas {
     private static func texture(_ px: inout [UInt8], width: Int, height: Int) -> TextureResource? {
         let cg: CGImage? = px.withUnsafeMutableBytes { buf in
             CGContext(data: buf.baseAddress, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4,
-                      space: CGColorSpaceCreateDeviceRGB(),
+                      // sRGB: sonst liest RealityKit die Werte linear, und alles wirkt hell und blass
+                      space: CGColorSpace(name: CGColorSpace.sRGB) ?? CGColorSpaceCreateDeviceRGB(),
                       bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)?.makeImage()
         }
         guard let cg else { return nil }

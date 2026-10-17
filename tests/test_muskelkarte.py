@@ -34,5 +34,10 @@ def test_muscle_enum_passt():
 
 def test_figur_hat_texturkoordinaten():
     usda = zipfile.ZipFile(APP / "FitScan_Skin.usdz").read("FitScan_Skin.usda").decode()
-    assert "texCoord2f[] primvars:st = " in usda
-    assert "int[] primvars:st:indices = " in usda
+    k = usda.index("texCoord2f[] primvars:st = ") + 27
+    # je Punkt, nicht faceVarying: sonst trennt RealityKit das Netz beim Laden auf und das Skinning bricht
+    assert 'interpolation = "vertex"' in usda[k:usda.index(")", usda.index("]", k)) + 1]
+    assert "primvars:st:indices" not in usda
+    punkte = usda[usda.index("point3f[] points = ") + 19:].split("]", 1)[0].count("(")
+    st = usda[k:].split("]", 1)[0].count("(")
+    assert punkte == st
