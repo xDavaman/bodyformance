@@ -441,7 +441,9 @@ struct CustomRecipeEditor: View {
                 }
                 if !isNew {
                     Section {
-                        Button { shareSheet = true } label: { Label("Mit Community teilen", systemImage: "person.3") }
+                        if CommunityConfig.visibleInApp {
+                            Button { shareSheet = true } label: { Label("Mit Community teilen", systemImage: "person.3") }
+                        }
                         Button("Rezept löschen", role: .destructive) {
                             store.customs.removeAll { $0.id == draft.id }
                             dismiss()

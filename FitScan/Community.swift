@@ -8,6 +8,15 @@ enum CommunityConfig {
     static var projectID: String { UserDefaults.standard.string(forKey: "community.projectID") ?? "" }
     static var apiKey: String { UserDefaults.standard.string(forKey: "community.apiKey") ?? "" }
     static var isConfigured: Bool { !projectID.isEmpty && !apiKey.isEmpty }
+    /// Community-Einträge in der App zeigen: im Release nur, wenn ein Firebase-Projekt verbunden ist
+    /// (sonst sähe die App-Prüfung eine Funktion, die nicht geht). In Debug-Builds immer, zum Einrichten.
+    static var visibleInApp: Bool {
+        #if DEBUG
+        return true
+        #else
+        return isConfigured
+        #endif
+    }
 
     static let rules = """
     rules_version = '2';
