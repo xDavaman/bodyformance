@@ -88,6 +88,7 @@ struct RecipePhotosView: View {
                 Text("Rezepte")
             }
 
+            #if DEBUG
             Section {
                 Button {
                     zipURL = store.exportPhotosZip()
@@ -102,6 +103,7 @@ struct RecipePhotosView: View {
             } footer: {
                 Text("Die ZIP enthält jedes Foto als „recipe-<Rezept>.jpg“. Im Projekt nach FitScan/RecipePhotos/ entpacken, dann sind die Bilder fest in der App und jeder sieht sie.")
             }
+            #endif
         }
         .searchable(text: $search, prompt: "Rezept suchen")
         .navigationTitle("Fotos für Essenspläne")

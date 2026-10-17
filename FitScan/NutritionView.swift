@@ -283,7 +283,9 @@ struct RecipeLibraryView: View {
     var body: some View {
         List {
             Section {
-                NavigationLink { CommunityView() } label: { Label("Community-Rezepte", systemImage: "person.3") }
+                if CommunityConfig.visibleInApp {
+                    NavigationLink { CommunityView() } label: { Label("Community-Rezepte", systemImage: "person.3") }
+                }
                 NavigationLink { RecipePhotosView() } label: { Label("Fotos für Essenspläne hochladen", systemImage: "photo.on.rectangle.angled") }
             }
             Section {
@@ -497,7 +499,9 @@ struct RecipeDetailView: View {
                 Button { editSteps = true } label: { Label("Schritte bearbeiten", systemImage: "pencil") }
                 if recipe.isCustom {
                     Button { editRecipe = true } label: { Label("Rezept bearbeiten", systemImage: "square.and.pencil") }
-                    Button { shareSheet = true } label: { Label("Mit Community teilen", systemImage: "person.3") }
+                    if CommunityConfig.visibleInApp {
+                        Button { shareSheet = true } label: { Label("Mit Community teilen", systemImage: "person.3") }
+                    }
                 }
             } header: {
                 Text(store.hasCustomSteps(recipe) ? "Zubereitung (deine Schritte)" : "Zubereitung")
