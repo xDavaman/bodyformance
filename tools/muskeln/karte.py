@@ -1,7 +1,8 @@
 """Muskelkarte backen: UV-Abwicklung der Figur, Muskelzugehörigkeit je Texel, Datei für die App.
 
 Ergebnis:
-- FitScan/FitScan_Skin.usdz bekommt Texturkoordinaten (primvars:st), sonst bleibt das Modell gleich.
+- FitScan/FitScan_Skin.usdz bekommt Texturkoordinaten je Punkt (primvars:st); an den Nähten sind Punkte samt
+  Normalen und Skelettgewichten verdoppelt, sonst bleibt das Modell gleich.
 - FitScan/FitScan_Muscles.bin: je Texel die zwei stärksten Muskeln mit Gewicht, Faserhelligkeit und Sehnenanteil.
 
 Dateiformat FitScan_Muscles.bin (little endian):
@@ -32,21 +33,57 @@ CACHE = Path(__file__).resolve().parent / ".cache"
 N = 1024
 
 
+def _stage(text: str):
+    from pxr import Usd  # usd-core
+
+    d = tempfile.mkdtemp()
+    f = Path(d) / "FitScan_Skin.usda"
+    f.write_text(text)
+    return Usd.Stage.Open(str(f))
+
+
 def lade_netz():
-    """Punkte, Dreiecke, Normalen und usda-Text der Figur (ohne alte Texturkoordinaten)."""
-    from pxr import Usd, UsdGeom  # usd-core
+    """Figur mit Texturkoordinaten je Punkt: Punkte, Dreiecke, Normalen, uv (0…1, Zeile 0 = oben), usda-Text.
+
+    Hat die Figur noch keine Texturkoordinaten je Punkt, wird sie mit xatlas abgewickelt und an den Nähten
+    aufgetrennt (Punkte samt Normalen und Skelettgewichten verdoppelt). So muss RealityKit beim Laden nichts
+    auftrennen; das hatte bei faceVarying-Koordinaten das Skinning zerstört.
+    """
+    from pxr import UsdGeom, UsdSkel  # usd-core
 
     text = zipfile.ZipFile(SKIN).read("FitScan_Skin.usda").decode()
-    text = _ohne_st(text)
-    with tempfile.TemporaryDirectory() as d:
-        f = Path(d) / "FitScan_Skin.usda"
-        f.write_text(text)
-        stage = Usd.Stage.Open(str(f))
-        mesh = UsdGeom.Mesh(stage.GetPrimAtPath("/Body/Mesh"))
+    stage = _stage(text)
+    mesh = UsdGeom.Mesh(stage.GetPrimAtPath("/Body/Mesh"))
+    st = UsdGeom.PrimvarsAPI(mesh).GetPrimvar("st")
+    if st and st.GetInterpolation() == UsdGeom.Tokens.vertex:
         P = np.array(mesh.GetPointsAttr().Get(), np.float64)
         F = np.array(mesh.GetFaceVertexIndicesAttr().Get(), np.int64).reshape(-1, 3)
         Nn = np.array(mesh.GetNormalsAttr().Get(), np.float64)
-    return P, F, Nn, text
+        uv = np.array(st.Get(), np.float64) * [1.0, 2.0]
+        return P, F, Nn, uv, text
+    stage = _stage(_ohne_st(text))
+    mesh = UsdGeom.Mesh(stage.GetPrimAtPath("/Body/Mesh"))
+    P = np.array(mesh.GetPointsAttr().Get(), np.float64)
+    F = np.array(mesh.GetFaceVertexIndicesAttr().Get(), np.int64).reshape(-1, 3)
+    Nn = np.array(mesh.GetNormalsAttr().Get(), np.float64)
+    vm, idx, uv = abwickeln(P, F)
+    # an den Nähten auftrennen
+    bind = UsdSkel.BindingAPI(mesh)
+    ji, jw = bind.GetJointIndicesPrimvar(), bind.GetJointWeightsPrimvar()
+    es = ji.GetElementSize()
+    J = np.array(ji.Get(), np.int32).reshape(-1, es)[vm]
+    W = np.array(jw.Get(), np.float32).reshape(-1, es)[vm]
+    P, Nn, F = P[vm], Nn[vm], idx.astype(np.int64)
+    from pxr import Sdf, Vt
+
+    mesh.GetPointsAttr().Set(Vt.Vec3fArray.FromNumpy(P.astype(np.float32)))
+    mesh.GetNormalsAttr().Set(Vt.Vec3fArray.FromNumpy(Nn.astype(np.float32)))
+    mesh.GetFaceVertexIndicesAttr().Set(Vt.IntArray.FromNumpy(F.ravel().astype(np.int32)))
+    ji.Set(Vt.IntArray.FromNumpy(J.ravel()))
+    jw.Set(Vt.FloatArray.FromNumpy(W.ravel()))
+    pv = UsdGeom.PrimvarsAPI(mesh).CreatePrimvar("st", Sdf.ValueTypeNames.TexCoord2fArray, UsdGeom.Tokens.vertex)
+    pv.Set(Vt.Vec2fArray.FromNumpy((uv * [1.0, 0.5]).astype(np.float32)))
+    return P, F, Nn, uv, stage.GetRootLayer().ExportToString()
 
 
 def _ohne_st(text: str) -> str:
@@ -65,13 +102,13 @@ def _ohne_st(text: str) -> str:
 
 
 def abwickeln(P, F):
-    """UV-Abwicklung mit xatlas (zwischengespeichert). uv in 0…1, Zeile 0 = oben."""
+    """UV-Abwicklung mit xatlas (zwischengespeichert): neuer→alter Punkt, Dreiecke, uv (0…1, Zeile 0 = oben)."""
     CACHE.mkdir(exist_ok=True)
     c = CACHE / "uv.npz"
     if c.exists():
         z = np.load(c)
-        if len(z["idx"]) == len(F):
-            return z["idx"], z["uv"]
+        if "vm" in z and len(z["idx"]) == len(F):
+            return z["vm"], z["idx"], z["uv"]
     import xatlas
 
     atlas = xatlas.Atlas()
@@ -83,8 +120,8 @@ def abwickeln(P, F):
     atlas.generate(xatlas.ChartOptions(), po)
     vm, idx, uv = atlas[0]
     assert (vm[idx] == F).all()
-    np.savez(c, idx=idx, uv=uv)
-    return idx, uv
+    np.savez(c, vm=vm, idx=idx, uv=uv)
+    return vm, idx, uv
 
 
 def rastern(P, F, Nn, idx, uv):
@@ -152,9 +189,9 @@ def felder(p, n):
                 continue
             pm, sm = p[m], s[m]
             f = an.fasern(name, pm, sm)
-            f *= 1 - 0.55 * an.trennlinien(name, pm, sm)
+            f *= 1 - 0.75 * an.trennlinien(name, pm, sm)
             # Wölbung: Mitte des Muskelbauchs heller, Ränder dunkler
-            f *= 0.6 + 0.4 * bauch[m]
+            f *= 0.45 + 0.55 * bauch[m]
             faser[m] = f
             sehne[m] = an.sehne(name, pm, sm)
         ids = np.where(w < 0.004, 0, ids)
@@ -163,8 +200,8 @@ def felder(p, n):
 
 
 def backen(stueck: int = 120_000):
-    P, F, Nn, text = lade_netz()
-    idx, uv = abwickeln(P, F)
+    P, F, Nn, uv, text = lade_netz()
+    idx = F
     r = CACHE / "raster.npz"
     if r.exists():
         z = np.load(r)
@@ -180,7 +217,7 @@ def backen(stueck: int = 120_000):
     for k in range(8):
         roh[voll, k] = cols[k] if k % 4 == 0 else np.round(cols[k] * 255)
     _schreibe_karte(roh)
-    _schreibe_skin(text, idx, uv)
+    _schreibe_skin(text)
     np.savez_compressed(CACHE / "texel.npz", pos=pos.astype(np.float32), nor=nor.astype(np.float32), roh=roh)
     print(f"Muskelkarte {N}x{N}, {voll.sum()} Texel belegt → {KARTE.name} ({KARTE.stat().st_size // 1024} KB)")
 
@@ -201,17 +238,7 @@ def lies_karte() -> np.ndarray:
     return np.frombuffer(raw, np.uint8).reshape(n, n, 8)
 
 
-def _schreibe_skin(text: str, idx, uv):
-    """Texturkoordinaten als faceVarying-primvar einfügen und usdz neu packen."""
-    st = np.stack([uv[:, 0], uv[:, 1] * 0.5], 1)
-    werte = ", ".join(f"({a:.6f},{b:.6f})" for a, b in st)
-    indizes = ",".join(str(int(i)) for i in idx.ravel())
-    zeilen = text.split("\n")
-    k = next(i for i, z in enumerate(zeilen) if z.strip().startswith("normal3f[] normals"))
-    ein = " " * (len(zeilen[k]) - len(zeilen[k].lstrip()))
-    neu = [f"{ein}texCoord2f[] primvars:st = [{werte}] (", f'{ein}    interpolation = "faceVarying"', f"{ein})",
-           f"{ein}int[] primvars:st:indices = [{indizes}]"]
-    text = "\n".join(zeilen[:k + 1] + neu + zeilen[k + 1:])
+def _schreibe_skin(text: str):
     _usdz(text.encode())
 
 
