@@ -155,14 +155,16 @@ struct ScanPreviewView: View {
                     }
                     .disabled(applied)
                 } header: {
-                    Text("Maße aus dem Scan (Schätzung)")
+                    Text(record.source == .modelProject ? "Maße aus FitScan" : "Maße aus dem Scan (Schätzung)")
                 } footer: {
-                    Text("Umfänge werden aus der Punktwolke berechnet und fallen meist 1–3 cm größer aus als mit dem Maßband. Für die Körperfett-Schätzung zählen Taille und Hals.")
+                    Text(record.source == .modelProject
+                         ? "Von FitScan am Modell gemessen (wie mit dem Maßband). Für die Körperfett-Schätzung zählen Taille und Hals."
+                         : "Umfänge werden aus der Punktwolke berechnet und fallen meist 1–3 cm größer aus als mit dem Maßband. Für die Körperfett-Schätzung zählen Taille und Hals.")
                 }
             }
 
             Section {
-                if let provider = BodyModelBridge.provider {
+                if let provider = BodyModelBridge.provider, provider.canMakeModel(from: record, folder: store.folder(for: record)) {
                     Button {
                         Task { await makeAvatar(provider) }
                     } label: {
@@ -170,10 +172,12 @@ struct ScanPreviewView: View {
                     }
                     .disabled(working)
                     if let bridgeError { Text(bridgeError).font(.footnote).foregroundStyle(.red) }
+                } else if let provider = BodyModelBridge.provider {
+                    Label("Avatar mit \(provider.name) am PC erstellen", systemImage: "desktopcomputer")
+                    Text("Filme dich für FitScan am PC (oder nimm dieses Video), lass dort das Modell rechnen und importiere aus dem Scanordner koerper.obj, koerper.mtl, die Hautbilder und scan.json über „Modell oder Punktwolke importieren“.")
+                        .font(.footnote).foregroundStyle(.secondary)
                 } else {
                     Label("3D-Modellprojekt noch nicht verbunden", systemImage: "puzzlepiece.extension")
-                    Text("Platzhalter: Sobald das 3D-Modellprojekt zusammengeführt ist, entsteht hier aus diesem Scan dein beweglicher Avatar für die Übungsansicht.")
-                        .font(.footnote).foregroundStyle(.secondary)
                 }
             } header: {
                 Text("Avatar")
@@ -213,13 +217,16 @@ struct ScanPreviewView: View {
         let folder = store.folder(for: record)
         do {
             let url = try await provider.makeModel(from: record, folder: folder)
-            let dst = folder.appendingPathComponent("avatar.usdz")
-            if url != dst {
+            var r = record
+            if url.deletingLastPathComponent().standardizedFileURL == folder.standardizedFileURL {
+                // Liegt schon im Scanordner (z. B. FitScans OBJ mit Material und Hautbild daneben)
+                r.modelFile = url.lastPathComponent
+            } else {
+                let dst = folder.appendingPathComponent("avatar.usdz")
                 try? FileManager.default.removeItem(at: dst)
                 try FileManager.default.copyItem(at: url, to: dst)
+                r.modelFile = "avatar.usdz"
             }
-            var r = record
-            r.modelFile = "avatar.usdz"
             if let m = try? await provider.measurements(from: r, folder: folder) { r.measurements = m }
             store.update(r)
             record = r
