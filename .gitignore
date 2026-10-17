@@ -32,3 +32,7 @@ tools/motions/vorschau/
 
 # Simulator-Test (wird aus uitests/project.yml erzeugt)
 uitests/BFCUITests.xcodeproj/
+
+# Muskelkarte (tools/muskeln)
+tools/muskeln/.cache/
+tools/muskeln/vorschau/
