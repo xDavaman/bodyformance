@@ -397,7 +397,14 @@ final class BodyRig {
         if var mc = m.components[ModelComponent.self] {
             let original = mc.mesh
             let jointCount = m.jointNames.count
-            if let seg = MuscleSegmenter.segmented(original, key: "FitScan_Skin") {
+            // Bevorzugt: Muskelkarte als Textur (natürliche Muskelform), sonst Zerlegung in Muskelbereiche
+            let hasUV = original.contents.models.contains { $0.parts.contains { $0.textureCoordinates != nil } }
+            if MuscleAtlas.available && hasUV {
+                muscleTextured = true
+                muscleParts = true
+                mc.materials = Array(repeating: material, count: max(mc.materials.count, 1))
+                m.components.set(mc)
+            } else if let seg = MuscleSegmenter.segmented(original, key: "FitScan_Skin") {
                 mc.mesh = seg
                 mc.materials = Array(repeating: material, count: MuscleSegmenter.order.count + 1)
                 m.components.set(mc)
@@ -449,10 +456,12 @@ final class BodyRig {
         }
     }
 
-    /// true, wenn das Körpernetz in Muskelbereiche zerlegt werden konnte (dann sind Muskelfarben möglich)
+    /// true, wenn Muskelfarben möglich sind (Muskelkarte als Textur oder Netz in Muskelbereiche zerlegt)
     private(set) var muscleParts = false
+    /// true, wenn die Muskeln über die Muskelkarte (Textur) gefärbt werden
+    private var muscleTextured = false
 
-    /// Färbt aktive Muskeln rot und passive gelb, alles andere bleibt in der Hautfarbe.
+    /// Färbt aktive Muskeln rot und passive gelb (mit Muskelform und Faserverlauf), alles andere bleibt in der Hautfarbe.
     func setHighlight(primary: [Muscle], secondary: [Muscle], neutral: UIColor) {
         highlight = (primary, secondary, neutral)
         glowLevel = -1
@@ -475,6 +484,18 @@ final class BodyRig {
 
     private func applyHighlight(primary: [Muscle], secondary: [Muscle], neutral: UIColor, activeGlow: Float, passiveGlow: Float) {
         guard muscleParts, let m = body, var mc = m.components[ModelComponent.self] else { return }
+        if muscleTextured, let tex = MuscleAtlas.textures(primary: primary, secondary: secondary, neutral: neutral) {
+            var mat = PhysicallyBasedMaterial()
+            mat.baseColor = .init(tint: .white, texture: .init(tex.base))
+            mat.roughness = .init(floatLiteral: 0.55)
+            mat.metallic = .init(floatLiteral: 0)
+            // Leuchten: aktive Muskeln voll, passive schwächer (in der Textur), Stärke folgt der Anstrengung
+            mat.emissiveColor = .init(color: .white, texture: .init(tex.glow))
+            mat.emissiveIntensity = activeGlow
+            mc.materials = Array(repeating: mat, count: max(mc.materials.count, 1))
+            m.components.set(mc)
+            return
+        }
         func pbr(_ c: UIColor, glow: Float?) -> PhysicallyBasedMaterial {
             var mat = PhysicallyBasedMaterial()
             mat.baseColor = .init(tint: c)

@@ -3,6 +3,9 @@ import UIKit
 import simd
 
 // Muskelfarben auf dem 3D-Körper: aktiv (Hauptmuskeln) rot, passiv (Hilfsmuskeln) gelb.
+// Normalerweise färbt die Muskelkarte (MuscleAtlas.swift) die Muskeln mit Form und Faserverlauf. Die Zerlegung hier
+// ist der Rückfall, falls die Karte oder die Texturkoordinaten fehlen; ihre Grobzuordnung ist auch die Grundlage
+// der Muskelkarte in tools/muskeln/anatomie.py.
 // Das Körpernetz (FitScan_Skin.usdz) ist ein durchgehendes Netz ohne Muskel-Teilnetze. Deshalb wird es beim ersten Laden
 // einmal in Bereiche je Muskelgruppe zerlegt: jedes Dreieck bekommt anhand seiner Lage in der Grundhaltung (Ruhepose)
 // eine Muskelgruppe und damit einen eigenen Materialplatz. Skelett, Gewichte und Animationen bleiben unverändert,
