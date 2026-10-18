@@ -58,6 +58,13 @@ final class RundgangTests: XCTestCase {
                 wait(1.5)
                 shot("Fitnessstudio \(name)")
             }
+            // Station über die Leiste wählen: Liste schließen, dann muss der Kabelturm ganz zu sehen sein
+            if tap(visible(app.buttons.matching(NSPredicate(format: "label CONTAINS 'Kabelturm'"))), "Station Kabelturm") {
+                wait(1.5)
+                _ = tap(visible(app.buttons.matching(NSPredicate(format: "label == 'Fertig'"))), "Liste schließen")
+                wait(2)
+                shot("Fitnessstudio Kabelturm")
+            }
             app.swipeUp()
             wait(1)
             shot("Fitnessstudio Stationen")
