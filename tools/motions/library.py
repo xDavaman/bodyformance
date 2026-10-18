@@ -136,10 +136,11 @@ PLANK = stand(hands(0.20, FLOOR, 0.42, **HANDS_FLAT), {"elbowL": (0.3, 0.0, -1.0
               neck=(-10.0, 0.0, 0.0))
 CHATURANGA = stand(PLANK, feet(0.10, 0.16, -1.06), root=(0.0, 0.29, -0.06), body=(0.0, 84.0, 0.0),
                    elbowL=(0.15, 0.3, -1.0), elbowR=(-0.15, 0.3, -1.0), neck=(-15.0, 0.0, 0.0))
-UP_DOG = stand(PLANK, feet(0.10, 0.05, -0.92), foot_tops(), hands(0.20, FLOOR, 0.40, **HANDS_FLAT),
+UP_DOG = stand(PLANK, feet(0.10, 0.05, -0.92), foot_tops(), hands(0.20, FLOOR, 0.42, **HANDS_FLAT),
                root=(0.0, 0.30, -0.14), body=(0.0, 50.0, 0.0), spine=(-30.0, 0.0, 0.0), neck=(-25.0, 0.0, 0.0))
-DOWN_DOG = stand(hands(0.22, FLOOR, 0.52, **HANDS_FLAT), {"elbowL": (1.0, 0.3, 0.0), "elbowR": (-1.0, 0.3, 0.0)},
-                 feet(0.12, ANKLE, -0.58), flat_feet(0.0), KNEES_FWD, root=(0.0, 0.84, -0.18),
+# Hände bleiben beim Übergang aus dem Brett stehen, die Füße rollen nur über die Zehen zurück
+DOWN_DOG = stand(hands(0.21, FLOOR, 0.42, **HANDS_FLAT), {"elbowL": (1.0, 0.3, 0.0), "elbowR": (-1.0, 0.3, 0.0)},
+                 feet(0.11, ANKLE, -0.76), flat_feet(0.0), KNEES_FWD, root=(0.0, 0.82, -0.26),
                  body=(0.0, 128.0, 0.0), spine=(-8.0, 0.0, 0.0), neck=(5.0, 0.0, 0.0))
 
 SUN_SPACE = WORLD_HANDS
@@ -148,7 +149,7 @@ CHAT_TO_UP = stand(UP_DOG, feet(0.10, 0.21, -1.0), foot_tops(35.0), root=(0.0, 0
                    spine=(-15.0, 0.0, 0.0), neck=(-20.0, 0.0, 0.0))
 UP_ROLL = stand(UP_DOG, feet(0.10, 0.21, -0.95), foot_tops(35.0), root=(0.0, 0.40, -0.18), body=(0.0, 70.0, 0.0),
                 spine=(-10.0, 0.0, 0.0))
-UP_TO_DOWN = stand(PLANK, feet(0.10, 0.15, -0.88), hands(0.21, FLOOR, 0.46, **HANDS_FLAT),
+UP_TO_DOWN = stand(PLANK, feet(0.10, 0.15, -0.86), hands(0.20, FLOOR, 0.42, **HANDS_FLAT),
                    root=(0.0, 0.62, -0.20), body=(0.0, 95.0, 0.0))
 clip("sunA", "Yoga: Sonnengruß A", 18.0, [
     (0.0, MOUNTAIN), (1.5, ARMS_UP), (3.2, FOLD), (4.4, HALF_LIFT), (5.4, FOLD),
@@ -159,7 +160,7 @@ clip("sunA", "Yoga: Sonnengruß A", 18.0, [
     (13.6, stand(DOWN_DOG, footL=(0.12, 0.25, 0.10), soleL=(0.0, 0.0, 0.0), kneeL=(0.1, 0.2, 1.0),
                  root=(0.0, 0.80, -0.20), body=(0.0, 105.0, 0.0))),
     (14.3, FOLD), (15.2, HALF_LIFT), (16.0, FOLD), (17.2, ARMS_UP),
-], space=SUN_SPACE, yaw=1.25, cam_y=0.7)
+], space=SUN_SPACE, yaw=1.25, cam_y=0.7, step_lift=0.20)
 
 CHAIR_ARMS = stand(hands(0.16, 1.75, 0.45), {"elbowL": (1.0, 0.0, 0.0), "elbowR": (-1.0, 0.0, 0.0)},
                    root=(0.0, 0.68, -0.18), body=(0.0, 25.0, 0.0), spine=(10.0, 0.0, 0.0), gripL=0.05, gripR=0.05,
@@ -181,7 +182,7 @@ clip("sunB", "Yoga: Sonnengruß B", 24.0, [
                  footR=(-0.14, ANKLE, -0.62), root=(0.0, 0.62, -0.25), body=(0.0, 80.0, 0.0))),
     (16.4, PLANK), (17.2, CHATURANGA), (17.6, CHAT_TO_UP), (18.0, UP_DOG), (18.4, UP_ROLL), (18.8, UP_TO_DOWN),
     (19.4, DOWN_DOG), (20.6, DOWN_DOG), (21.4, FOLD), (22.6, CHAIR_ARMS),
-], space=SUN_SPACE, yaw=1.25, cam_y=0.7)
+], space=SUN_SPACE, yaw=1.25, cam_y=0.7, step_lift=0.20)
 
 # Krieger III: Stand auf links, Oberkörper und rechtes Bein waagerecht, Arme nach vorn
 W3 = stand(root=(0.02, 0.90, 0.05), body=(0.0, 84.0, 0.0), spine=(0.0, 0.0, 0.0), neck=(-12.0, 0.0, 0.0),
@@ -196,7 +197,7 @@ clip("warrior3", "Yoga: Krieger III", 12.0, [
     (4.0, W3), (8.5, stand(W3, footR=(-0.10, 0.97, -0.88))),
     (10.5, stand(hands(0.13, 0.62, 0.06), elbowL=(1.0, 0.0, 0.0), elbowR=(-1.0, 0.0, 0.0), gripL=0.05, gripR=0.05,
                  footL=(0.07, ANKLE, 0.06), footR=(-0.10, ANKLE, -0.45), soleR=(1.0, 0.0, 25.0))),
-], yaw=1.3, cam_y=0.9)
+], yaw=1.3, cam_y=0.9, step_lift=0.10)
 
 # Halber Mond: Stand auf links, Oberkörper seitlich waagerecht, linke Hand am Boden, rechtes Bein und Arm oben
 HALF_MOON = stand(root=(0.10, 0.92, 0.0), body=(-5.0, 0.0, 82.0), spine=(0.0, 14.0, -25.0), neck=(-5.0, 0.0, 0.0),
@@ -275,7 +276,7 @@ def mirror(p: dict) -> dict:
     out = {}
     for k, v in p.items():
         side = k[-1] if k[-1] in "LR" and k[:-1] in ("hand", "foot", "elbow", "knee", "clav", "palm", "wrist", "grip",
-                                                     "sole", "ankle", "toes") else None
+                                                     "sole", "ankle", "toes", "twist") else None
         name = k[:-1] if side else k
         dst = (name + ("R" if side == "L" else "L")) if side else k
         if name in _VEC:
@@ -336,3 +337,4 @@ from . import lib_boden  # noqa: E402,F401
 from . import lib_beine  # noqa: E402,F401
 from . import lib_rolle  # noqa: E402,F401
 from . import lib_aktiv  # noqa: E402,F401
+from . import lib_kraft  # noqa: E402,F401

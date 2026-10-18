@@ -538,7 +538,10 @@ final class BodyRig {
         modelRoot?.position = pivot * (1 - sizeScale)
         let bandOn = gear == .band && mo.props == .dumbbell && !mo.free
         let cableOn = cableMode && mo.props == .dumbbell && !bandOn
-        for db in dumbbells { db.isEnabled = mo.props == .dumbbell && !cableOn && !bandOn }
+        // Übungen mit einer Hantel in beiden Händen (Pullover, Swing) haben nur einen Gegenstand
+        for (k, db) in dumbbells.enumerated() {
+            db.isEnabled = mo.props == .dumbbell && !cableOn && !bandOn && k < (clip?.propCount ?? dumbbells.count)
+        }
         barbell.isEnabled = mo.props == .barbell
         for k in 0..<2 { bands[k].isEnabled = bandOn; bandGrips[k].isEnabled = bandOn }
         for (kind, list) in aids {

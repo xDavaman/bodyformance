@@ -21,7 +21,8 @@ from .rig import MOTIONS, ROOT
 MAGIC = 0x314D5346
 SWIFT = ROOT / "FitScan" / "BodyMotions.swift"
 FPS = 20  # Dehnungen und Halteübungen sind langsam; die App interpoliert zwischen den Bildern
-PROP_CASE = {"roller": "roller", "ball": "ball", "post": "post", "step": "step"}
+PROP_CASE = {"roller": "roller", "ball": "ball", "post": "post", "step": "step", "dumbbell": "dumbbell",
+             "barbell": "barbell"}
 
 
 def read_bin(path: Path) -> tuple[int, dict[str, bytes]]:
@@ -98,10 +99,19 @@ def main(argv: list[str]) -> None:
     pv = sub.add_parser("vorschau", help="Bildreihen zum Prüfen")
     pv.add_argument("namen", nargs="*")
     pv.add_argument("--ziel", default=str(Path(__file__).parent / "vorschau"))
+    pr = sub.add_parser("pruefen", help="alle Bewegungen der App-Datei auf Fehler prüfen")
+    pr.add_argument("namen", nargs="*")
+    pr.add_argument("--ziel", help="Ordner für befund.json (und Bilder)")
+    pr.add_argument("--bilder", action="store_true", help="Bildreihen schreiben")
     bk = sub.add_parser("backen", help="in die App schreiben")
     bk.add_argument("namen", nargs="*", help="nur diese Bewegungen (Standard: alle aus der Bibliothek)")
     bk.add_argument("--fps", type=float, default=FPS)
     a = ap.parse_args(argv)
+
+    if a.cmd == "pruefen":
+        from .pruefen import main as pruefen
+        pruefen(a.namen, Path(a.ziel) if a.ziel else None, a.bilder)
+        return
 
     from . import library
     rig = Rig()
@@ -110,13 +120,16 @@ def main(argv: list[str]) -> None:
         raise SystemExit("keine passenden Bewegungen")
 
     if a.cmd == "vorschau":
-        from .preview import sheet
+        from .pruefen import Koerper, analyse, bildreihe
+        from .szene import from_baked
         ziel = Path(a.ziel)
         ziel.mkdir(parents=True, exist_ok=True)
+        kp = Koerper(rig.sk)
         for c in chosen:
-            b = bake(rig, c)
-            sheet(rig.sk, b, size=200, yaws=(25.0, 100.0), at_keys=True).save(ziel / f"{c.key}.png")
-            print(f"{c.key}: Bodenkorrektur {b.lift.min():+.3f} … {b.lift.max():+.3f} m")
+            mo = from_baked(bake(rig, c))
+            bildreihe(rig.sk, mo, path=ziel / f"{c.key}.png")
+            befund = analyse(rig.sk, kp, mo)
+            print(f"{c.key}: {'OK' if not befund.fehler else '; '.join(befund.fehler)}")
         return
 
     nb, existing = read_bin(MOTIONS)

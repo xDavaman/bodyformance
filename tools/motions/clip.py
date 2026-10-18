@@ -21,8 +21,11 @@ FPS = 30
 class Prop:
     """Gegenstand in der Szene (z. B. Faszienrolle), Lage je Bild aus der gelösten Haltung."""
 
-    kind: str  # "roller", "ball", "dumbbell"
-    place: Callable  # (Weltpositionen dict name->xyz, Haltung) -> (Position, 3x3-Drehung; lokale y = Achse)
+    kind: str  # "roller", "ball", "dumbbell", "barbell"
+    place: Callable | None = None  # (Welt: name->xyz, Haltung) -> (Position, 3x3-Drehung; lokal y = Achse)
+    # Hantel in der Hand: "L"/"R" (Kurzhantel) oder "LR" (Langhantel zwischen beiden Händen). Die Lage folgt dann
+    # der Hand wie in der App (gleicher Griffpunkt wie die alten Kurzhantel-Bewegungen), place entfällt.
+    hand: str | None = None
 
 
 @dataclasses.dataclass
@@ -46,6 +49,12 @@ class Clip:
     floor: float = 0.0
     # Becken je Bild so verschieben, dass Hände und Füße ihre Ziele in der Welt erreichen
     fit_root: bool = True
+    # Rumpf liegt auf einer Fläche (Hantelbank): Höhe der Oberkante und Grundriss (x halb, z von, z bis). Das Becken
+    # wird je Bild so gehoben oder gesenkt, dass der Rücken genau aufliegt; Füße bleiben über die IK am Boden.
+    rest: tuple | None = None
+    # Schritte: ein Fuß, der sich zwischen zwei Schlüsseln am Boden versetzt, wird in einem Bogen so hoch gehoben
+    # (Meter), statt über den Boden zu rutschen
+    step_lift: float = 0.0
     # Schlüssel beschreiben nur die linke Seite in der ersten Hälfte der Periode; die zweite Hälfte ist das
     # Spiegelbild (rechte Seite). So entsteht jede einseitige Übung ohne doppelte Beschreibung.
     mirror_half: bool = False
@@ -127,7 +136,30 @@ def sample(rig: Rig, clip: Clip, fps: float = FPS) -> tuple[list[dict], np.ndarr
         for f in range(nf):
             v = res[f]
             poses[f][ch] = float(v[0]) if v.shape == (1,) else tuple(float(x) for x in v)
+    if clip.step_lift > 0:
+        _lift_steps(clip, keys, period, t, poses)
     return poses, t
+
+
+def _lift_steps(clip: Clip, keys: list, period: float, t: np.ndarray, poses: list[dict]) -> None:
+    """Hebt Füße, die zwischen zwei Schlüsseln am Boden versetzt werden, in einem flachen Bogen an."""
+    for side in "LR":
+        ch = f"foot{side}"
+        if clip.space.get(ch, "world") != "world":
+            continue
+        pts = [(tk, np.asarray(p[ch], float)) for tk, p in keys]
+        pts.append((period + pts[0][0], pts[0][1]))
+        for (t0, a), (t1, b) in zip(pts, pts[1:]):
+            dist = float(np.linalg.norm((b - a)[[0, 2]]))
+            if dist < 0.04 or max(a[1], b[1]) > clip.floor + 0.22:
+                continue
+            h = clip.step_lift * min(1.0, dist / 0.15)
+            for f, tf in enumerate(t):
+                for off in (0.0, period):
+                    u = (tf + off - t0) / (t1 - t0)
+                    if 0.0 < u < 1.0:
+                        x, y, z = poses[f][ch]
+                        poses[f][ch] = (x, y + h * float(np.sin(np.pi * u)), z)
 
 
 @dataclasses.dataclass
@@ -157,11 +189,15 @@ def bake(rig: Rig, clip: Clip, fps: float = FPS) -> Baked:
     nf = len(poses)
     locs, worlds = [], []
     lows = np.zeros(nf)
+    torso = _torso_mask(sk) if clip.rest else None
     for f, p in enumerate(poses):
         if clip.fit_root:
             p = rig.fit_root(p, clip.space)
             poses[f] = p
         loc, wr, wp = rig.solve(p, clip.space)
+        if clip.rest:
+            p, (loc, wr, wp) = _rest_on(rig, clip, p, torso, (loc, wr, wp))
+            poses[f] = p
         locs.append(loc)
         worlds.append((wr, wp))
         if clip.ground:
@@ -185,7 +221,7 @@ def bake(rig: Rig, clip: Clip, fps: float = FPS) -> Baked:
         pos[f, root] = wp[root]
         named = {n: wp[i] for i, n in enumerate(sk.names)}
         for k, pr in enumerate(clip.props):
-            pp, rr = pr.place(named, poses[f])
+            pp, rr = hand_prop(sk, wr, wp, pr.hand) if pr.hand else pr.place(named, poses[f])
             props_p[f, k] = pp
             props_r[f, k] = to_quat(rr)
     if clip.mirror_half:
@@ -198,6 +234,75 @@ def bake(rig: Rig, clip: Clip, fps: float = FPS) -> Baked:
         flipp = (props_r[f] * props_r[f - 1]).sum(-1) < 0
         props_r[f, flipp] *= -1
     return Baked(clip, rot, pos, props_p, props_r, lift, out_world)
+
+
+# Griffpunkt und Hantelachse im Raum des Handgelenks (Ruhelage), gemessen an den alten Kurzhantel-Bewegungen
+GRIP_OFFSET = np.array([0.002, -0.055, 0.026])
+GRIP_AXIS = np.array([0.43, -0.54, -0.72])
+
+
+def grip(sk, wr, wp, side: str) -> tuple[np.ndarray, np.ndarray]:
+    """Griffpunkt und Richtung der Hantelachse (vom Daumen weg) einer Hand in der Welt."""
+    g = 1.0 if side == "L" else -1.0
+    m = np.array([g, 1.0, 1.0])
+    h = sk.i(f"ha{side}")
+    return wp[h] + wr[h] @ (GRIP_OFFSET * m), wr[h] @ (GRIP_AXIS * m)
+
+
+def hand_prop(sk, wr, wp, hand: str) -> tuple[np.ndarray, np.ndarray]:
+    from .rig import between, frame
+    if hand in ("L", "R"):
+        p, ax = grip(sk, wr, wp, hand)
+        return p, between((0.0, 1.0, 0.0), ax)
+    pl, _ = grip(sk, wr, wp, "L")
+    pr, _ = grip(sk, wr, wp, "R")
+    ax = pl - pr
+    # Stange: lokale y = Achse, lokale x zeigt nach oben (Scheiben stehen senkrecht zur Stange, Lage egal)
+    f = frame(ax, (0.0, 1.0, 0.0))
+    return (pl + pr) / 2, np.stack([f[:, 1], f[:, 0], -f[:, 2]], 1)
+
+
+def align_grip(rig: Rig, pose: dict, axis, space: dict | None = None, side: str = "L") -> tuple:
+    """Sucht twist und wrist (beide Seiten gespiegelt), damit die Kurzhantel in der Haltung entlang axis (Welt)
+    liegt. Hilfe beim Schreiben der Bibliothek, z. B. align_grip(Rig(), FLY_TOP, (0, 0, 1))."""
+    t = np.asarray(axis, float) / np.linalg.norm(axis)
+    best = None
+    for tw in range(-60, 61, 15):
+        for fl in range(-30, 31, 15):
+            for dv in range(-30, 31, 15):
+                p = dict(pose, twistL=tw, twistR=tw, wristL=(fl, dv), wristR=(fl, -dv))
+                _, wr, wp = rig.solve(rig.fit_root(p, space), space)
+                ax = grip(rig.sk, wr, wp, side)[1]
+                err = min(np.linalg.norm(ax - t), np.linalg.norm(ax + t))
+                if best is None or err < best[0]:
+                    best = (float(err), tw, (fl, dv))
+    return best[1], best[2]
+
+
+def _torso_mask(sk) -> np.ndarray:
+    main = sk.ji[np.arange(len(sk.ji)), sk.jw.argmax(1)]
+    names = ("root", "spine1", "spine2", "spine3", "clavL", "clavR", "neck1", "neck2", "head")
+    return np.isin(main, [sk.i(n) for n in names])
+
+
+def _rest_on(rig: Rig, clip: Clip, p: dict, torso: np.ndarray, solved):
+    """Hebt oder senkt das Becken, bis der tiefste Punkt von Rumpf und Kopf über der Fläche genau auf ihr liegt."""
+    top, hx, z0, z1 = clip.rest
+    sk = rig.sk
+    for _ in range(3):
+        _, wr, wp = solved
+        V = sk.skin(wr, wp, step=5)
+        sel = torso[::5] & (np.abs(V[:, 0]) < hx) & (V[:, 2] > z0) & (V[:, 2] < z1)
+        if not sel.any():
+            break
+        gap = float(V[sel, 1].min()) - top
+        if abs(gap) < 0.002:
+            break
+        x, y, z = p["root"]
+        p = dict(p)
+        p["root"] = (x, y - gap, z)
+        solved = rig.solve(p, clip.space)
+    return p, solved
 
 
 def _mirrored(sk, rot, pos, props_p, props_r, lift, world):

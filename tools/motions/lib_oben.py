@@ -75,7 +75,8 @@ _door_lean = stand(_door, root=(0.0, 0.90, 0.20), body=(0.0, 4.0, 0.0), footL=(0
                    footR=(-0.12, 0.08, -0.10), soleR=(1.0, -6.0, 10.0), kneeL=(0.1, 0.0, 1.0), neck=(-6.0, 0.0, 0.0))
 # im Türrahmen: Unterarme am Rahmen, linker Fuß vor, Brust schiebt durch die Tür (zweite Hälfte rechter Fuß vor)
 clip("doorChest", "Brustdehnung im Türrahmen", 16.0, sides(STAND_W, _door_lean, via=_door),
-     space={"handL": "world", "handR": "world"}, props=POSTS, mirror_half=True, yaw=1.5, cam_y=1.1)
+     space={"handL": "world", "handR": "world"}, props=POSTS, mirror_half=True, yaw=1.5, cam_y=1.1,
+     step_lift=0.08)
 
 # Hände hinter dem Rücken verschränken, Arme strecken und anheben, Brust öffnet sich
 _clasp_b = stand(handL=(0.03, -0.46, -0.20), handR=(-0.03, -0.46, -0.20), elbowL=(1.0, 0.0, -0.5),
