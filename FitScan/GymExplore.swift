@@ -193,14 +193,17 @@ extension GymRoom {
         return nil
     }
 
-    /// Mittelpunkt einer Station in der Welt (für Kamera und Markierung)
-    func center(of station: GymStation) -> SIMD3<Float>? {
+    /// Umriss einer Station in der Welt (für Kamera und Markierung)
+    func bounds(of station: GymStation) -> BoundingBox? {
         let list = stations.filter { $0.0 == station }.map(\.1)
         guard let first = list.first else { return nil }
         var b = first.visualBounds(relativeTo: nil)
         for e in list.dropFirst() { b = b.union(e.visualBounds(relativeTo: nil)) }
-        return b.center
+        return b
     }
+
+    /// Anzahl der Teile, aus denen eine Station besteht (z. B. zwei Bänke)
+    func parts(of station: GymStation) -> Int { stations.filter { $0.0 == station }.count }
 }
 
 // MARK: 3D-Ansicht
@@ -221,6 +224,9 @@ struct GymExploreScene: UIViewRepresentable {
         var targetYaw: Float = .pi
         var targetPitch: Float = -0.12
         var fov: Float = 62
+        /// Standpunkt der Kamera: Raummitte, bei Geräten nahe der Mitte (Kabelturm) weiter zurück
+        var eye = SIMD3<Float>(0, 1.55, 0)
+        var targetEye = SIMD3<Float>(0, 1.55, 0)
         var time: Float = 0
         var subscription: Cancellable?
         weak var view: ARView?
@@ -255,12 +261,14 @@ struct GymExploreScene: UIViewRepresentable {
             parent.selected = s
         }
 
-        /// Kamera dreht sich zur Station, eine rote Fläche markiert sie am Boden
+        /// Kamera dreht sich zur Station, eine rote Fläche markiert sie am Boden.
+        /// Steht das Gerät zu nah an der Raummitte, tritt die Kamera zurück, damit es ganz ins Bild passt.
         func select(_ s: GymStation) {
             shown = s
-            guard let c = room.center(of: s) else { return }
-            let eye = SIMD3<Float>(0, 1.55, 0)
-            let d = c - eye
+            guard let b = room.bounds(of: s) else { return }
+            let c = b.center
+            targetEye = standpoint(for: b, single: room.parts(of: s) == 1)
+            let d = c - targetEye
             // Blickrichtung (sin(yaw), …, -cos(yaw)) zeigt bei yaw = π nach +z
             var want = atan2(d.x, -d.z)
             while want - targetYaw > .pi { want -= 2 * .pi }
@@ -271,11 +279,25 @@ struct GymExploreScene: UIViewRepresentable {
             marker.isEnabled = true
         }
 
+        /// Abstand, aus dem ein Gerät ganz zu sehen ist; die Kamera bleibt in der Mitte, wenn das reicht
+        private func standpoint(for b: BoundingBox, single: Bool) -> SIMD3<Float> {
+            let home = SIMD3<Float>(0, 1.55, 0)
+            guard single else { return home }
+            let c = SIMD2(b.center.x, b.center.z)
+            let half = max(b.extents.x, b.extents.z) / 2
+            let need = min(3.0, max(1.8, (half + 0.25) / 0.55 + half))
+            let dist = simd_length(c)
+            guard dist < need else { return home }
+            let away = dist > 0.01 ? -c / dist : SIMD2<Float>(0, -1)
+            let p = c + away * need
+            return [min(3.2, max(-3.2, p.x)), 1.55, min(3.2, max(-3.2, p.y))]
+        }
+
         func tick(_ dt: Float) {
             time += dt
             yaw += (targetYaw - yaw) * min(1, dt * 5)
             pitch += (targetPitch - pitch) * min(1, dt * 5)
-            let eye = SIMD3<Float>(0, 1.55, 0)
+            eye += (targetEye - eye) * min(1, dt * 4)
             let dir = SIMD3<Float>(sin(yaw) * cos(pitch), sin(pitch), -cos(yaw) * cos(pitch))
             camera.look(at: eye + dir, from: eye, relativeTo: nil)
             if marker.isEnabled { marker.scale = [1, 1, 1] * (1 + 0.06 * sin(time * 4)) }
