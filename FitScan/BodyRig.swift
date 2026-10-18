@@ -468,14 +468,24 @@ final class BodyRig {
 
     private func applyHighlight(primary: [Muscle], secondary: [Muscle], neutral: UIColor, activeGlow: Float, passiveGlow: Float) {
         guard muscleParts, let m = body, var mc = m.components[ModelComponent.self] else { return }
-        if muscleTextured, let tex = MuscleAtlas.textures(primary: primary, secondary: secondary, neutral: neutral) {
+        // Stufe der Anstrengung aus activeGlow (0.15 … 0.9)
+        let step = Int(((activeGlow - 0.15) / 0.75 * Float(MuscleAtlas.glowSteps - 1)).rounded())
+        if muscleTextured {
             var mat = PhysicallyBasedMaterial()
-            mat.baseColor = .init(tint: .white, texture: .init(tex.base))
             mat.roughness = .init(floatLiteral: 0.55)
             mat.metallic = .init(floatLiteral: 0)
-            // Leuchten: aktive Muskeln voll, passive schwächer (in der Textur), Stärke folgt der Anstrengung
-            mat.emissiveColor = .init(color: .white, texture: .init(tex.glow))
-            mat.emissiveIntensity = activeGlow
+            if let tex = MuscleAtlas.texture(primary: primary, secondary: secondary, neutral: neutral, level: step) {
+                mat.baseColor = .init(tint: .white, texture: .init(tex))
+            } else {
+                // Texturen der Übung entstehen im Hintergrund; bis dahin Hautfarbe, die Bewegung läuft weiter
+                mat.baseColor = .init(tint: neutral)
+                MuscleAtlas.prepare(primary: primary, secondary: secondary, neutral: neutral) { [weak self] in
+                    guard let self, self.highlight != nil else { return }
+                    let level = max(self.glowLevel, 0)
+                    self.glowLevel = -1
+                    self.setGlow(level: level)
+                }
+            }
             mc.materials = Array(repeating: mat, count: max(mc.materials.count, 1))
             m.components.set(mc)
             return

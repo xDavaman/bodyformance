@@ -18,30 +18,36 @@ HAUT = np.array([0.80, 0.80, 0.80])
 
 
 def muskel_farbe(c, faser, sehne):
-    """Muskelgewebe: dunkle Rillen, hellere Faserbündel, zur Sehne hin blass."""
-    dunkel, hell = c * 0.32, c + (1 - c) * 0.28
+    """Muskelgewebe: kräftige Grundfarbe, dunklere Rillen, hellere Faserbündel, zur Sehne hin blass."""
+    dunkel, hell = c * 0.62, c + (1 - c) * 0.12
     f = faser[:, None]
     m = dunkel + (hell - dunkel) * f
-    blass = c + (np.array([0.97, 0.93, 0.88]) - c) * 0.75
+    blass = c + (np.array([0.97, 0.93, 0.88]) - c) * 0.6
     return m + (blass - m) * sehne[:, None]
 
 
-def mischen(roh, aktiv, passiv):
-    """Grundfarbe und Leuchtfarbe je Texel (wie in der App): erst der schwächere Platz, darüber der stärkere."""
+HEISS = {"aktiv": np.array([1.0, 0.42, 0.30]), "passiv": np.array([1.0, 0.93, 0.45])}
+
+
+def mischen(roh, aktiv, passiv, glut: float = 0.5):
+    """Farbe je Texel (wie MuscleAtlas.compose): erst der schwächere Platz, darüber der stärkere.
+
+    glut 0…1 = Anstrengung; aktive Muskeln werden dabei heller. Zweiter Rückgabewert bleibt für Aufrufer: kein Leuchten.
+    """
     base = np.tile(HAUT, (len(roh), 1))
-    glow = np.zeros((len(roh), 3))
     ida, idp = [an.ID[m] for m in aktiv], [an.ID[m] for m in passiv]
     for o in (4, 0):
         ids, w, faser, sehne = roh[:, o], roh[:, o + 1] / 255, roh[:, o + 2] / 255, roh[:, o + 3] / 255
-        for farbe, liste, licht in ((PASSIV, idp, 0.4), (AKTIV, ida, 1.0)):
+        for farbe, liste, heiss, hitze in ((PASSIV, idp, HEISS["passiv"], 0.25 * glut),
+                                           (AKTIV, ida, HEISS["aktiv"], 0.55 * glut)):
             m = np.isin(ids, liste) & (w > 0)
             if not m.any():
                 continue
             wm = w[m][:, None]
-            base[m] = base[m] * (1 - wm) + muskel_farbe(farbe, faser[m], sehne[m]) * wm
-            leucht = (licht * (0.2 + 0.8 * faser[m]) * (1 - 0.9 * sehne[m]))[:, None]
-            glow[m] = glow[m] * (1 - wm) + farbe[None, :] * leucht * wm
-    return base, glow
+            mf = muskel_farbe(farbe, faser[m], sehne[m])
+            mf = mf + (heiss - mf) * (hitze * (0.4 + 0.6 * faser[m]) * (1 - sehne[m]))[:, None]
+            base[m] = base[m] * (1 - wm) + mf * wm
+    return base, np.zeros_like(base)
 
 
 def bild(aktiv, passiv, gieren: float = 0.0, groesse: int = 900, leuchten: float = 0.5, titel: str = ""):
