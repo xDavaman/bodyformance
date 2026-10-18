@@ -136,10 +136,6 @@ enum GymStation: String, CaseIterable, Identifiable {
 extension GymRoom {
     /// Baut die Geräte, die es nur in der Studio-Ansicht gibt, und macht alle Stationen antippbar.
     func buildShowroom() {
-        let frame = GymTex.paint(GymTex.frameBlack, rough: 0.4)
-        let red = GymTex.paint(GymTex.brandRed, rough: 0.4)
-        let pad = SimpleMaterial(color: UIColor(white: 0.09, alpha: 1), roughness: 0.6, isMetallic: false)
-        let steel = GymTex.steel(0.6)
 
         // Kabelturm vor der Mitte, Griffe hängen an den Rollen
         setLayout(GymLayout(cableHeight: 1.05, cableSetup: .sides))
@@ -148,78 +144,13 @@ extension GymRoom {
         register(cableTower, as: .cableTower)
 
         // Beinpresse an der linken Wand
-        let lp = Entity()
-        lp.position = [-3.15, 0, -0.35]
-        lp.orientation = simd_quatf(angle: .pi / 2, axis: [0, 1, 0])
-        root.addChild(lp)
-        GymProps.box([0.80, 0.08, 1.90], [0, 0.04, 0], frame, corner: 0.01, parent: lp)
-        let rail = GymProps.box([0.60, 0.08, 1.30], [0, 0.65, 0.30], frame, corner: 0.01, parent: lp)
-        rail.orientation = simd_quatf(angle: -0.75, axis: [1, 0, 0])
-        let plate = GymProps.box([0.70, 0.55, 0.06], [0, 1.02, 0.78], steel, corner: 0.01, parent: lp)
-        plate.orientation = simd_quatf(angle: -0.75, axis: [1, 0, 0])
-        GymProps.box([0.55, 0.10, 0.55], [0, 0.42, -0.45], pad, corner: 0.04, parent: lp)
-        let back = GymProps.box([0.55, 0.65, 0.10], [0, 0.72, -0.78], pad, corner: 0.04, parent: lp)
-        back.orientation = simd_quatf(angle: -0.45, axis: [1, 0, 0])
-        for x: Float in [-0.42, 0.42] {
-            GymProps.cylinder(0.30, 0.025, [x, 0.95, 0.70], steel, axis: [1, 0, 0], parent: lp)
-            GymProps.cylinder(0.04, 0.22, [x * 1.15, 0.95, 0.70], red, axis: [1, 0, 0], parent: lp)
-        }
-        register(lp, as: .legPress)
-
+        register(place("Beinpresse", [-3.15, 0, -0.35], yaw: .pi / 2), as: .legPress)
         // Klimmzug- und Dip-Station mit Schlingentrainer
-        let ps = Entity()
-        ps.position = [-1.95, 0, -2.55]
-        root.addChild(ps)
-        for x: Float in [-0.6, 0.6] {
-            GymProps.box([0.09, 2.35, 0.09], [x, 1.175, 0], frame, corner: 0.01, parent: ps)
-            GymProps.box([0.09, 0.05, 0.9], [x, 0.025, 0.1], frame, parent: ps)
-            GymProps.cylinder(0.42, 0.018, [x * 0.55, 1.25, 0.32], steel, axis: [0, 0, 1], parent: ps)
-            GymProps.box([0.06, 0.06, 0.40], [x * 0.75, 1.25, 0.15], frame, parent: ps)
-        }
-        GymProps.cylinder(1.3, 0.017, [0, 2.30, 0.05], steel, axis: [1, 0, 0], parent: ps)
-        let strap = GymTex.paint(UIColor(red: 0.95, green: 0.75, blue: 0.10, alpha: 1), rough: 0.7)
-        for x: Float in [-0.12, 0.12] {
-            GymProps.box([0.035, 1.10, 0.008], [x, 1.73, 0.05], strap, parent: ps)
-            GymProps.cylinder(0.12, 0.014, [x, 1.17, 0.05], pad, axis: [1, 0, 0], parent: ps)
-        }
-        register(ps, as: .pullStation)
-
+        register(place("Kraftturm", [-1.95, 0, -2.55]), as: .pullStation)
         // Kraftmaschine (Brust- und Schulterpresse) an der rechten Wand
-        let mc = Entity()
-        mc.position = [3.35, 0, 0.55]
-        mc.orientation = simd_quatf(angle: -.pi / 2, axis: [0, 1, 0])
-        root.addChild(mc)
-        GymProps.box([0.90, 0.06, 1.30], [0, 0.03, 0], frame, parent: mc)
-        GymProps.box([0.40, 2.10, 0.14], [0, 1.05, -0.55], frame, corner: 0.01, parent: mc)
-        GymProps.box([0.28, 1.10, 0.18], [0, 0.70, -0.40], GymTex.steel(0.35), corner: 0.01, parent: mc)
-        GymProps.box([0.48, 0.09, 0.45], [0, 0.48, 0.10], pad, corner: 0.03, parent: mc)
-        GymProps.box([0.48, 0.70, 0.10], [0, 0.95, -0.12], pad, corner: 0.03, parent: mc)
-        for x: Float in [-0.36, 0.36] {
-            GymProps.box([0.05, 0.05, 0.50], [x, 1.15, 0.15], frame, parent: mc)
-            GymProps.cylinder(0.16, 0.018, [x, 1.15, 0.42], pad, parent: mc)
-        }
-        GymProps.box([0.42, 0.05, 0.16], [0, 2.08, -0.55], red, parent: mc)
-        register(mc, as: .machines)
-
-        // Cardio: Laufband und Ergometer an der vorderen Wand
-        let cd = Entity()
-        cd.position = [-1.7, 0, 3.35]
-        cd.orientation = simd_quatf(angle: .pi, axis: [0, 1, 0])
-        root.addChild(cd)
-        GymProps.box([0.80, 0.18, 1.80], [-0.55, 0.09, 0], frame, corner: 0.03, parent: cd)
-        GymProps.box([0.55, 0.02, 1.50], [-0.55, 0.19, 0], GymTex.paint(UIColor(white: 0.05, alpha: 1), rough: 0.9), parent: cd)
-        for x: Float in [-0.90, -0.20] {
-            GymProps.box([0.05, 1.20, 0.05], [x, 0.70, 0.80], frame, parent: cd)
-        }
-        GymProps.box([0.80, 0.30, 0.10], [-0.55, 1.30, 0.82], GymTex.steel(0.3), corner: 0.02, parent: cd)
-        // Ergometer
-        GymProps.box([0.30, 0.06, 1.0], [0.75, 0.03, 0], frame, parent: cd)
-        GymProps.box([0.08, 0.75, 0.08], [0.75, 0.40, -0.25], frame, parent: cd)
-        GymProps.box([0.26, 0.07, 0.30], [0.75, 0.80, -0.25], pad, corner: 0.03, parent: cd)
-        GymProps.cylinder(0.12, 0.22, [0.75, 0.28, 0.25], red, axis: [1, 0, 0], parent: cd)
-        GymProps.box([0.06, 0.95, 0.06], [0.75, 0.55, 0.40], frame, parent: cd)
-        GymProps.cylinder(0.45, 0.016, [0.75, 1.02, 0.40], pad, axis: [1, 0, 0], parent: cd)
-        register(cd, as: .cardio)
+        register(place("Brustpresse", [3.35, 0, 0.55], yaw: -.pi / 2), as: .machines)
+        // Cardio: Laufband und Indoor-Bike an der vorderen Wand
+        register(place("Cardio", [-1.7, 0, 3.35], yaw: .pi), as: .cardio)
 
         // Mobility-Ecke: Matte, Faszienrollen, Medizinbälle, Bänder
         let mob = Entity()
@@ -238,26 +169,8 @@ extension GymRoom {
         GymProps.cylinder(0.07, 0.035, [0.2, 0.035, 0.45], GymTex.paint(.systemRed, rough: 0.6), parent: rollers)
         register(rollers, as: .foamRoller)
 
-        let balls = Entity()
-        balls.position = [2.85, 0, -2.35]
-        root.addChild(balls)
-        GymProps.box([0.40, 0.04, 0.90], [0, 0.30, 0], frame, parent: balls)
-        for (k, c) in [UIColor.systemOrange, .systemGreen, .systemPurple].enumerated() {
-            let b = ModelEntity(mesh: .generateSphere(radius: 0.12), materials: [GymTex.paint(c, rough: 0.7)])
-            b.position = [0, 0.44, -0.28 + Float(k) * 0.28]
-            balls.addChild(b)
-        }
-        for z: Float in [-0.42, 0.42] { GymProps.box([0.40, 0.30, 0.04], [0, 0.15, z], frame, parent: balls) }
-        register(balls, as: .medballs)
-
-        let bandRack = Entity()
-        bandRack.position = [0.75, 0, -3.88]
-        root.addChild(bandRack)
-        GymProps.box([0.70, 0.05, 0.05], [0, 1.60, 0], frame, parent: bandRack)
-        for (k, c) in [UIColor.systemYellow, .systemRed, .systemGreen, .systemBlue, .black].enumerated() {
-            GymProps.box([0.03, 0.75, 0.012], [-0.24 + Float(k) * 0.12, 1.22, 0.04], GymTex.paint(c, rough: 0.6), parent: bandRack)
-        }
-        register(bandRack, as: .bands)
+        register(place("Medizinbaelle", [2.85, 0, -2.35]), as: .medballs)
+        register(place("Baender", [0.75, 0, -3.88]), as: .bands)
 
         // Freie Fläche: Kunstrasen rechts vorn
         let free = Entity()
