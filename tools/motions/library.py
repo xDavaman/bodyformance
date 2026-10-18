@@ -16,6 +16,11 @@ from .rig import axis_angle, normalize
 CLIPS: list[Clip] = []
 
 ARMS_DOWN = {"handL": (0.24, -0.47, 0.05), "handR": (-0.24, -0.47, 0.05)}
+# Locker hängende Arme wie Rig.neutral(): Schultern etwas gesenkt, Hände leicht vor den Oberschenkeln,
+# Handflächen zum Bein, Finger leicht gekrümmt
+RELAXED_ARMS = {"handL": (0.21, -0.49, 0.10), "handR": (-0.21, -0.49, 0.10), "elbowL": (0.1, 0.0, -1.0),
+                "elbowR": (-0.1, 0.0, -1.0), "twistL": -20.0, "twistR": -20.0, "clavL": (-4.0, 0.0),
+                "clavR": (-4.0, 0.0), "gripL": 0.3, "gripR": 0.3}
 ANKLE = 0.08
 
 
@@ -47,14 +52,12 @@ def P(**kw) -> dict:
 
 
 def stand(*parts: dict, **kw) -> dict:
-    base = {"root": (0.0, 0.93, 0.0), "body": (0.0, 0.0, 0.0), "turn": 0.0, "spine": (0.0, 0.0, 0.0), "neck": (0.0, 0.0, 0.0),
+    base = {"root": (0.0, 0.96, 0.0), "body": (0.0, 0.0, 0.0), "turn": 0.0, "spine": (0.0, 0.0, 0.0), "neck": (0.0, 0.0, 0.0),
             "footL": (0.12, ANKLE, -0.01), "footR": (-0.12, ANKLE, -0.01),
             "soleL": (1.0, 6.0, 0.0), "soleR": (1.0, -6.0, 0.0),
             "kneeL": (0.15, 0.0, 1.0), "kneeR": (-0.15, 0.0, 1.0),
-            "handL": (0.24, -0.47, 0.05), "handR": (-0.24, -0.47, 0.05),
-            "elbowL": (0.4, -0.2, -1.0), "elbowR": (-0.4, -0.2, -1.0),
-            "palmL": (0.0, 0.0), "palmR": (0.0, 0.0), "gripL": 0.15, "gripR": 0.15,
-            "clavL": (0.0, 0.0), "clavR": (0.0, 0.0), "ankleL": 0.0, "ankleR": 0.0, "toesL": 0.0, "toesR": 0.0,
+            **RELAXED_ARMS,
+            "palmL": (0.0, 0.0), "palmR": (0.0, 0.0), "ankleL": 0.0, "ankleR": 0.0, "toesL": 0.0, "toesR": 0.0,
             "wristL": (0.0, 0.0), "wristR": (0.0, 0.0)}
     for part in parts:
         base.update(part)
@@ -338,3 +341,5 @@ from . import lib_beine  # noqa: E402,F401
 from . import lib_rolle  # noqa: E402,F401
 from . import lib_aktiv  # noqa: E402,F401
 from . import lib_kraft  # noqa: E402,F401
+from . import lib_stehen  # noqa: E402,F401
+from . import lib_dehnen  # noqa: E402,F401

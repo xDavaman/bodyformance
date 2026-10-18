@@ -87,17 +87,19 @@ class Rig:
         """Lockerer Stand, Arme hängen, Füße hüftbreit."""
         sk = self.sk
         chest = sk.pos("spine3")
-        p = {"root": (0.0, 0.93, 0.0), "body": (0.0, 0.0, 0.0), "turn": 0.0, "spine": (0.0, 0.0, 0.0),
+        p = {"root": (0.0, 0.96, 0.0), "body": (0.0, 0.0, 0.0), "turn": 0.0, "spine": (0.0, 0.0, 0.0),
              "neck": (0.0, 0.0, 0.0)}
         for s in SIDES:
             g = sgn(s)
-            p[f"clav{s}"] = (0.0, 0.0)
-            p[f"hand{s}"] = (g * 0.24, 0.93 - 0.08 - chest[1] - 0.02, 0.02 - chest[2])
-            p[f"elbow{s}"] = (g * 0.4, -0.2, -1.0)
+            # Arme hängen locker: Schultern etwas gesenkt, Hände leicht vor den Oberschenkeln, Ellbogen zeigen nach
+            # hinten, Handflächen zum Bein, Finger leicht gekrümmt
+            p[f"clav{s}"] = (-4.0, 0.0)
+            p[f"hand{s}"] = (g * 0.21, 0.93 - 0.08 - chest[1], 0.07 - chest[2])
+            p[f"elbow{s}"] = (g * 0.1, 0.0, -1.0)
             p[f"palm{s}"] = (0.0, 0.0)
             p[f"wrist{s}"] = (0.0, 0.0)
-            p[f"twist{s}"] = 0.0
-            p[f"grip{s}"] = 0.15
+            p[f"twist{s}"] = -20.0
+            p[f"grip{s}"] = 0.3
             p[f"foot{s}"] = (g * 0.12, 0.08, -0.01)
             p[f"knee{s}"] = (g * 0.15, 0.0, 1.0)
             p[f"sole{s}"] = (1.0, g * 6.0, 0.0)
@@ -107,9 +109,16 @@ class Rig:
 
     # ------------------------------------------------------------------ Lösen
 
-    def fit_root(self, pose: dict, space: dict | None = None, slack: float = 0.97, iters: int = 30) -> dict:
-        """Schiebt das Becken so, dass alle Hand- und Fußziele in der Welt erreichbar sind (Arme und Beine
-        höchstens zu `slack` gestreckt). Ziele in Körper-Räumen bewegen sich mit und zählen nicht."""
+    # Wie weit Beine und Arme beim Anpassen des Beckens höchstens gestreckt werden (Anteil der Länge). Fast ganz
+    # gestreckt, damit die Knie im Stand nur locker gebeugt sind (bei 0,97 waren es fast 30°, die Figur stand wie
+    # in einer leichten Hocke) und die Arme im Stütz oder Hang nicht unnatürlich angewinkelt bleiben.
+    LEG_SLACK = 0.998
+    ARM_SLACK = 0.99
+
+    def fit_root(self, pose: dict, space: dict | None = None, slack: float | None = None, iters: int = 30) -> dict:
+        """Schiebt das Becken so, dass alle Hand- und Fußziele in der Welt erreichbar sind (Beine höchstens zu
+        LEG_SLACK, Arme zu ARM_SLACK gestreckt, oder beide zu `slack`). Ziele in Körper-Räumen bewegen sich mit
+        und zählen nicht."""
         sk = self.sk
         sp = dict(DEFAULT_SPACE)
         if space:
@@ -120,7 +129,8 @@ class Rig:
             for s in SIDES:
                 key, limb = f"{group[0]}{s}", group[1][s]
                 if sp.get(key, "world") == "world":
-                    reach = (np.linalg.norm(limb.u0) + np.linalg.norm(limb.f0)) * slack
+                    k = slack if slack is not None else (self.LEG_SLACK if group[0] == "foot" else self.ARM_SLACK)
+                    reach = (np.linalg.norm(limb.u0) + np.linalg.norm(limb.f0)) * k
                     chains.append((limb.a, np.asarray(pose[key], float), reach))
             if chains:
                 break

@@ -239,7 +239,7 @@ extension BodyRig {
         .swimming: Motion(period: 2.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 1.2, camY: 0.3, props: .none),
         .warrior1: Motion(period: 14.0, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.9, camY: 0.8, props: .none),
         .warrior2: Motion(period: 10.0, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.15, camY: 0.85, props: .none),
-        .tree: Motion(period: 14.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 0.35, camY: 0.85, props: .none),
+        .tree: Motion(period: 14.0, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.35, camY: 0.85, props: .none),
         .chair: Motion(period: 7.0, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.55, camY: 0.9, props: .none),
         .seatTwist: Motion(period: 10.0, lying: false, bench: false, free: true, wallZ: nil, yaw: 0.12, camY: 0.5, props: .none),
         .sideBend: Motion(period: 10.0, lying: false, bench: false, free: false, wallZ: nil, yaw: 0.35, camY: 0.9, props: .none),

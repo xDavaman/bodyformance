@@ -49,7 +49,7 @@ clip("calfBand", "Wadendehnung mit Band", 16.0, sides(_band, _band_pull, extra=[
 
 # Kreisen: linker Fuß leicht angehoben, Fußspitze beschreibt einen Kreis
 _lift = stand(STAND_W, footL=(0.14, 0.20, 0.15), kneeL=(0.1, 0.0, 1.0), soleL=(0.0, 0.0, 0.0), ankleL=10.0,
-              root=(-0.03, 0.93, 0.0), handL=(0.32, 0.95, 0.04), handR=(-0.32, 0.95, 0.04))
+              root=(-0.03, 0.96, 0.0), handL=(0.32, 0.95, 0.04), handR=(-0.32, 0.95, 0.04))
 _circ = []
 for k, (ank, dx, dy) in enumerate(((30.0, 0.0, 0.0), (10.0, 0.03, 0.02), (-15.0, 0.0, 0.03), (10.0, -0.03, 0.02))):
     _circ.append(stand(_lift, ankleL=ank, footL=(0.14 + dx, 0.20 + dy, 0.15)))

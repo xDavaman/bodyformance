@@ -58,6 +58,9 @@ class Clip:
     # Schlüssel beschreiben nur die linke Seite in der ersten Hälfte der Periode; die zweite Hälfte ist das
     # Spiegelbild (rechte Seite). So entsteht jede einseitige Übung ohne doppelte Beschreibung.
     mirror_half: bool = False
+    # Lebendigkeit: Atmung (Brustkorb und Schultern heben sich leicht) und im Stand ein leichtes Pendeln des
+    # Gewichts, damit die Figur auch in Haltephasen nicht wie eine Statue wirkt. 0 schaltet es ab.
+    alive: float = 1.0
 
     @property
     def key_period(self) -> float:
@@ -138,7 +141,46 @@ def sample(rig: Rig, clip: Clip, fps: float = FPS) -> tuple[list[dict], np.ndarr
             poses[f][ch] = float(v[0]) if v.shape == (1,) else tuple(float(x) for x in v)
     if clip.step_lift > 0:
         _lift_steps(clip, keys, period, t, poses)
+    if clip.alive > 0:
+        _alive(clip, period, t, poses)
     return poses, t
+
+
+BREATH = 4.5  # Sekunden je Atemzug in Ruhe
+SWAY = 7.0  # Sekunden je Gewichtspendeln
+
+
+def _alive(clip: Clip, period: float, t: np.ndarray, poses: list[dict]) -> None:
+    """Atmung und Gewichtspendeln über die interpolierten Haltungen legen (periodisch, damit die Schleife glatt
+    schließt). Bei mirror_half pendelt das Gewicht in halben Schwingungen, das Spiegeln setzt sie fort."""
+    a = clip.alive
+    n_b = max(1, int(round(period / BREATH)))
+    breath = np.sin(2 * np.pi * n_b * t / period)
+    standing = clip.ground and not clip.lying and not clip.bench and clip.space.get("footL", "world") == "world"
+    if clip.mirror_half:
+        n_s = max(1, int(round(period / (SWAY / 2))))
+        n_s += 1 - n_s % 2  # ungerade Zahl halber Schwingungen
+        sway = np.sin(np.pi * n_s * t / period)
+    else:
+        n_s = max(1, int(round(period / SWAY)))
+        sway = np.sin(2 * np.pi * n_s * t / period)
+    for f, p in enumerate(poses):
+        b = a * float(breath[f])
+        sb, ss, st = p["spine"]
+        p["spine"] = (sb - 1.2 * b, ss, st)
+        nb, ns, nt = p["neck"]
+        p["neck"] = (nb + 0.8 * b, ns, nt)
+        for s in "LR":
+            up, fwd = p[f"clav{s}"]
+            p[f"clav{s}"] = (up + 1.5 * b, fwd)
+        if standing:
+            x, y, z = p["root"]
+            w = a * float(sway[f])
+            p["root"] = (x + 0.012 * w, y, z)
+            yaw, pitch, roll = p["body"]
+            p["body"] = (yaw, pitch, roll + 1.2 * w)
+            sb, ss, st = p["spine"]
+            p["spine"] = (sb, ss - 1.5 * w, st)
 
 
 def _lift_steps(clip: Clip, keys: list, period: float, t: np.ndarray, poses: list[dict]) -> None:
@@ -267,7 +309,7 @@ def align_grip(rig: Rig, pose: dict, axis, space: dict | None = None, side: str 
     liegt. Hilfe beim Schreiben der Bibliothek, z. B. align_grip(Rig(), FLY_TOP, (0, 0, 1))."""
     t = np.asarray(axis, float) / np.linalg.norm(axis)
     best = None
-    for tw in range(-60, 61, 15):
+    for tw in range(-90, 91, 15):
         for fl in range(-30, 31, 15):
             for dv in range(-30, 31, 15):
                 p = dict(pose, twistL=tw, twistR=tw, wristL=(fl, dv), wristR=(fl, -dv))
