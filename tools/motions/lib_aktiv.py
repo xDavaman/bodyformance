@@ -109,10 +109,10 @@ clip("monsterWalk", "Monster Walk", 6.0, [
 ], space=WORLD, mirror_half=True, yaw=0.3, cam_y=0.7)
 
 # Einbeinstand: auf dem linken Bein, rechtes Knie auf Hüfthöhe, Arme leicht seitlich zum Ausbalancieren
-_one = stand(STAND_W, footL=(0.06, ANKLE, 0.0), root=(0.04, 0.93, 0.0), footR=(-0.12, 0.50, 0.30),
+_one = stand(STAND_W, footL=(0.06, ANKLE, 0.0), root=(0.04, 0.96, 0.0), footR=(-0.12, 0.50, 0.30),
              kneeR=(-0.1, 0.0, 1.0), soleR=(0.0, 0.0, 0.0), ankleR=15.0,
              handL=(0.42, 1.02, 0.04), handR=(-0.42, 1.02, 0.04))
-_one_sway = stand(_one, root=(0.06, 0.93, 0.01), body=(0.0, 0.0, 2.0), handL=(0.44, 1.05, 0.06))
+_one_sway = stand(_one, root=(0.06, 0.96, 0.01), body=(0.0, 0.0, 2.0), handL=(0.44, 1.05, 0.06))
 clip("singleLeg", "Einbeinstand", 16.0, sides(STAND_W, _one, move=0.18, hold=0.6,
                                               extra=[(0.3, _one_sway), (0.7, _one)]),
      space=WORLD, mirror_half=True, yaw=0.5, cam_y=0.9)

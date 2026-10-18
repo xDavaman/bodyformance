@@ -317,7 +317,7 @@ def _shoulder(pose: dict, side: str, space=None):
 # Hüftbeuger-Dehnung im Kniestand: rechts nach hinten absetzen, Knie ab, Becken nach vorn, Arme hoch
 _HIP_HALF = stand(UPRIGHT, footR=(-0.13, ANKLE + 0.02, -0.55), kneeR=(-0.1, -0.4, 1.0), soleR=(1.0, -6.0, 30.0),
                   root=(0.0, 0.78, -0.22), body=(0.0, 8.0, 0.0))
-_HIP_KNEEL = stand(UPRIGHT, footR=(-0.13, 0.06, -1.15), kneeR=(-0.1, -1.0, 0.0), soleR=(0.0, 0.0, 0.0), ankleR=75.0,
+_HIP_KNEEL = stand(UPRIGHT, footR=(-0.13, 0.08, -1.02), kneeR=(-0.1, -1.0, 0.0), soleR=(0.0, 0.0, 0.0), ankleR=75.0,
                    kneeL=(0.1, 0.0, 1.0), root=(0.0, 0.52, -0.42), body=(0.0, 0.0, 0.0))
 _HIP_PUSH = stand(_HIP_KNEEL, ARMS_HIGH, root=(0.0, 0.48, -0.36), body=(0.0, -6.0, 0.0), spine=(-6.0, 0.0, 0.0))
 clip("hipStretch", "Hüftbeuger-Dehnung im Kniestand", 14.0,

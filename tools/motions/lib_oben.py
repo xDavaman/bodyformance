@@ -61,7 +61,7 @@ STAND_W = stand(handL=(0.24, 0.86, 0.04), handR=(-0.24, 0.86, 0.04))
 _wall_arm = stand(STAND_W, handL=(0.62, 1.36, 0.50), elbowL=(0.0, -1.0, 0.0), palmL=(0.0, 0.0),
                   wristL=(-60.0, 0.0), gripL=0.0)
 _wall_turn = stand(_wall_arm, body=(-30.0, 0.0, 0.0), spine=(0.0, 0.0, -20.0), neck=(0.0, 0.0, -25.0),
-                   root=(-0.05, 0.93, -0.05))
+                   root=(-0.05, 0.96, -0.05))
 clip("wallShoulder", "Schulter- und Brustdehnung an der Wand", 16.0, sides(STAND_W, _wall_turn, via=_wall_arm),
      space={"handL": "world", "handR": "world"}, mirror_half=True, wall_z=0.56, yaw=1.9, cam_y=1.0)
 
@@ -92,6 +92,6 @@ POST_L = [Prop("post", lambda w, p: (np.array([0.62, 1.0, 0.10]), np.eye(3)))]
 _bar_hold = stand(STAND_W, handL=(0.60, 1.42, 0.06), elbowL=(0.0, -1.0, 0.0), gripL=0.8, palmL=(0.0, 0.0),
                   wristL=(0.0, 0.0))
 _bar_turn = stand(_bar_hold, body=(-32.0, 0.0, 0.0), spine=(0.0, 0.0, -18.0), neck=(0.0, 0.0, -20.0),
-                  root=(-0.05, 0.93, -0.08), footR=(-0.16, 0.08, -0.12), soleR=(1.0, -30.0, 0.0))
+                  root=(-0.05, 0.96, -0.08), footR=(-0.16, 0.08, -0.12), soleR=(1.0, -30.0, 0.0))
 clip("barChest", "Brustdehnung an der Stange", 16.0, sides(STAND_W, _bar_turn, via=_bar_hold),
      space={"handL": "world", "handR": "world"}, props=POST_L, mirror_half=True, yaw=1.9, cam_y=1.0)

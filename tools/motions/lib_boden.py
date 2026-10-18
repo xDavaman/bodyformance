@@ -39,7 +39,7 @@ clip("floorChest", "Brustdehnung auf dem Boden", 16.0, sides(_prone_arm, _prone_
 # Nadelöhr: aus dem Vierfüßlerstand fädelt der linke Arm unter dem rechten durch, Schulter und Schläfe sinken
 _thread_open = stand(QUAD, handL=(0.45, 0.85, 0.20), elbowL=(1.0, 0.0, 0.0), palmL=(0.0, 0.0),
                      spine=(0.0, 0.0, 45.0), neck=(0.0, 0.0, 35.0))
-_thread = stand(QUAD, handL=(-0.50, 0.07, 0.28), elbowL=(0.0, 0.0, 1.0), palmL=(0.0, 0.0), gripL=0.1,
+_thread = stand(QUAD, handL=(-0.50, 0.10, 0.28), elbowL=(0.0, 0.0, 1.0), palmL=(0.0, 0.0), gripL=0.1,
                 handR=(-0.24, FLOOR, 0.40), root=(0.0, 0.50, -0.22), spine=(10.0, 0.0, -50.0),
                 neck=(0.0, 10.0, -35.0))
 clip("threadNeedle", "Rückendehnung Nadelöhr", 16.0, sides(QUAD, _thread, via=_thread_open, move=0.32),

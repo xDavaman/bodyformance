@@ -45,6 +45,8 @@ ineinander (`durch`, oft gewollte Berührung) und falsch herum gebeugte Gelenke 
 | `library.py` | Grundhaltungen und Hilfen (`stand`, `sides`, `mirror`), Yoga |
 | `lib_oben.py`, `lib_boden.py`, `lib_beine.py`, `lib_rolle.py`, `lib_aktiv.py` | Nacken/Schulter/Brust, Boden-Dehnungen, Waden/Sprunggelenk/Handgelenk, Faszienrolle, Aktivierung/Reha/Pilates |
 | `lib_kraft.py` | Krafttraining mit Bank, Klimmzugstange, Kurz-/Langhantel, Matte, Ausfallschritte |
+| `lib_stehen.py` | Stehen, Kniebeugen, Waden, Hantel-/Kabelübungen im Stand, Gehen/Laufen/Farmer's Walk (`gait`), Aufwärmen |
+| `lib_dehnen.py` | Nacken-, Schulter- und Beindehnungen im Stand, Wandübungen, Baum, Stuhl, Crunch, Fersensitz, Kamel, Kosakenhocke |
 | `szene.py` | gebackene Bewegungen lesen, Gegenstände der App-Szene als Netze |
 | `ansicht.py` | Renderer mit Tiefenpuffer (Durchdringungen sichtbar) |
 | `pruefen.py` | Fehlerprüfung und Bildreihen |
@@ -61,3 +63,11 @@ Hilfen für Gegenstände und Kontakte (`clip.py`):
   die Hantelachse in eine gewünschte Richtung zeigt.
 - `Clip(rest=(oberkante, halbe_breite, z0, z1))` legt den Rücken auf eine Fläche (Bank), `ground=False` für
   Hängen und Bank, `step_lift` hebt Füße bei Schritten an, statt sie über den Boden zu ziehen.
+
+Natürliche Haltung:
+
+- `Pose.LEG_SLACK` (0.998) und `ARM_SLACK` (0.99) sagen, wie weit `fit_root` Beine und Arme streckt. Kleinere
+  Werte beugen die Knie auch im Stand sichtbar (0.97 ergab fast 30°).
+- `RELAXED_ARMS` in `library.py` lässt die Arme locker am Körper hängen; `stand()` nutzt sie als Grundhaltung.
+- `Clip.alive` (Standard 1.0, 0 schaltet ab) legt Atmung (Brustkorb, Schultern, Kopf) und im Stand eine leichte
+  Gewichtsverlagerung über jede Bewegung.
