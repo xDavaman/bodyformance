@@ -107,7 +107,7 @@ enum GymLook {
                       space: CGColorSpaceCreateDeviceRGB(),
                       bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)?.makeImage()
         }
-        guard let cg, let t = try? TextureResource.generate(from: cg, withName: nil, options: .init(semantic: .normal)) else { return nil }
+        guard let cg, let t = try? TextureResource(image: cg, withName: nil, options: .init(semantic: .normal)) else { return nil }
         normalCache[key] = t
         return t
     }
