@@ -153,7 +153,7 @@ final class RundgangTests: XCTestCase {
             back()
         }
         // Suche beenden, dann zurück zum Trainingsplan
-        for label in ["Abbrechen", "Cancel"] where app.buttons[label].exists {
+        for label in ["close", "Abbrechen", "Cancel"] where app.buttons[label].exists && app.buttons[label].isHittable {
             app.buttons[label].tap()
             break
         }
