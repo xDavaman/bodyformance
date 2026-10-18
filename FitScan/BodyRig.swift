@@ -284,23 +284,12 @@ final class BodyRig {
     /// Gym-Raum mit Boden, Wänden, Decke, Lichtern und Geräten
     let gym = GymRoom()
     private var dumbbells: [Entity] = []
-    /// Langhantel (Stange 2,2 m + je 2 Scheiben), Achse = lokale y-Achse
+    /// Langhantel (Stange 2,2 m mit Bumpern, Modell aus tools/geraete), Achse = lokale y-Achse
     let barbell: Entity = {
         let e = Entity()
-        let steel = SimpleMaterial(color: UIColor(white: 0.72, alpha: 1), roughness: 0.25, isMetallic: true)
-        let plate = SimpleMaterial(color: UIColor(white: 0.10, alpha: 1), roughness: 0.5, isMetallic: false)
-        let red = SimpleMaterial(color: UIColor(red: 0.80, green: 0.12, blue: 0.10, alpha: 1), roughness: 0.5, isMetallic: false)
-        e.addChild(ModelEntity(mesh: .generateCylinder(height: 2.2, radius: 0.014), materials: [steel]))
-        for s: Float in [-1, 1] {
-            let sleeve = ModelEntity(mesh: .generateCylinder(height: 0.40, radius: 0.025), materials: [steel])
-            sleeve.position = [0, s * 0.80, 0]
-            e.addChild(sleeve)
-            for (k, y) in [0.50, 0.545, 0.58].enumerated() {
-                let pl = ModelEntity(mesh: .generateCylinder(height: 0.04, radius: k == 0 ? 0.225 : 0.17), materials: [k == 0 ? red : plate])
-                pl.position = [0, s * Float(y), 0]
-                e.addChild(pl)
-            }
-        }
+        let bar = GymModels.make("Langhantel")
+        bar.orientation = simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
+        e.addChild(bar)
         e.isEnabled = false
         return e
     }()
@@ -334,12 +323,7 @@ final class BodyRig {
         let dark = SimpleMaterial(color: UIColor(white: 0.18, alpha: 1), roughness: 0.5, isMetallic: true)
         for _ in 0..<2 {
             let db = Entity()
-            db.addChild(ModelEntity(mesh: .generateCylinder(height: 0.20, radius: 0.0125), materials: [dark]))
-            for y: Float in [-0.092, 0.092] {
-                let plate = ModelEntity(mesh: .generateCylinder(height: 0.035, radius: 0.055), materials: [dark])
-                plate.position = [0, y, 0]
-                db.addChild(plate)
-            }
+            db.addChild(GymModels.make("Kurzhantel"))
             db.isEnabled = false
             root.addChild(db)
             dumbbells.append(db)
