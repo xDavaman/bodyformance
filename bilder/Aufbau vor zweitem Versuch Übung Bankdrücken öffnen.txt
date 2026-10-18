@@ -1,0 +1,452 @@
+Attributes: Application, 0x117fa61c0, pid: 9327, label: 'Bodyformance'
+Element subtree:
+ →Application, 0x117fa61c0, pid: 9327, label: 'Bodyformance'
+    Window (Main), 0x117fa6300, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x117fa6440, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x117fa6580, {{0.0, 0.0}, {402.0, 874.0}}
+          Other, 0x117fa66c0, {{0.0, 0.0}, {402.0, 874.0}}
+            Other, 0x117fa6800, {{0.0, 0.0}, {402.0, 874.0}}
+              Other, 0x117fa6940, {{0.0, 0.0}, {402.0, 785.7}}
+                NavigationBar, 0x117fa6a80, {{0.0, 62.0}, {402.0, 54.0}}, identifier: 'Profil'
+                Other, 0x117fa6bc0, {{0.0, 0.0}, {402.0, 785.7}}
+                  Other, 0x117fa6d00, {{0.0, 0.0}, {402.0, 785.7}}
+                    Other, 0x117fa6e40, {{0.0, 0.0}, {402.0, 785.7}}
+                      Other, 0x117fa6f80, {{0.0, 0.0}, {402.0, 785.7}}
+                        CollectionView, 0x117fa70c0, {{0.0, 0.0}, {402.0, 785.7}}
+                          Other, 0x117fa7200, {{0.0, -598.7}, {402.0, 52.0}}
+                            StaticText, 0x117fa7340, {{16.0, -595.0}, {83.3, 40.7}}, label: 'Profil'
+                          Other, 0x117fa7480, {{-16.0, -379.3}, {434.0, 149.3}}
+                          Cell, 0x117fa75c0, {{16.0, -276.0}, {370.0, 45.7}}
+                            Other, 0x117fa7700, {{16.0, -276.0}, {370.0, 45.7}}
+                            Other, 0x117fa7840, {{16.0, -276.0}, {370.0, 45.7}}
+                              Other, 0x117fa7980, {{16.0, -276.0}, {370.0, 45.7}}
+                                Other, 0x117fa7ac0, {{16.0, -276.0}, {370.0, 45.7}}
+                                  StaticText, 0x117fa7c00, {{16.0, -276.0}, {370.0, 45.7}}, label: '„Jede Wiederholung ist eine Stimme für die Person, die du werden willst.“'
+                          Other, 0x117fa7d40, {{-16.0, -230.3}, {434.0, 296.3}}
+                          Cell, 0x117fa7e80, {{16.0, -230.3}, {370.0, 40.3}}
+                            Other, 0x117f9fd40, {{16.0, -230.3}, {370.0, 40.3}}
+                            Other, 0x117f9fe80, {{16.0, -230.3}, {370.0, 40.3}}
+                              Other, 0x117f9fc00, {{16.0, -230.3}, {370.0, 40.3}}
+                                Other, 0x117f9d680, {{16.0, -230.3}, {370.0, 40.3}}
+                                  StaticText, 0x117f9d7c0, {{16.0, -230.3}, {370.0, 40.3}}, label: 'Schritte'
+                          Cell, 0x117f9d400, {{16.0, -190.0}, {370.0, 122.0}}
+                            Other, 0x117f9d540, {{16.0, -190.0}, {370.0, 122.0}}
+                              Other, 0x117f9d180, {{16.0, -190.0}, {370.0, 122.0}}
+                            Other, 0x117f9d2c0, {{16.0, -190.0}, {370.0, 122.0}}
+                              Other, 0x117f9cf00, {{16.0, -190.0}, {370.0, 122.0}}
+                                Other, 0x117f9d040, {{16.0, -190.0}, {370.0, 122.0}}
+                                  Image, 0x117f9c8c0, {{65.7, -141.7}, {16.0, 25.3}}, identifier: 'figure.walk', label: 'Walk'
+                                  StaticText, 0x117f9ca00, {{132.0, -167.0}, {22.7, 40.7}}, label: '0'
+                                  StaticText, 0x117f9cc80, {{132.0, -124.3}, {112.3, 15.7}}, label: 'Ziel 8.000 Schritte'
+                                  StaticText, 0x117f9cdc0, {{132.0, -106.7}, {147.7, 15.7}}, label: 'Noch 8.000 bis zum Ziel'
+                          Cell, 0x117f9cb40, {{16.0, -68.0}, {370.0, 72.3}}
+                            Other, 0x117f9c280, {{16.0, -68.0}, {370.0, 72.3}}
+                              Other, 0x117f9c3c0, {{16.0, -68.0}, {370.0, 72.3}}
+                            Other, 0x117f9c640, {{16.0, -68.0}, {370.0, 72.3}}
+                              Other, 0x117f9c780, {{16.0, -68.0}, {370.0, 72.3}}
+                                Other, 0x117f9c500, {{16.0, -68.0}, {370.0, 72.3}}
+                                  Button, 0x117f9c000, {{16.0, -68.0}, {370.0, 72.3}}, label: 'Quelle: iPhone (Apple Health nicht erlaubt)'
+                                    Image, 0x117f9c140, {{37.3, -43.0}, {13.3, 22.3}}, identifier: 'iphone', label: 'iphone'
+                                    StaticText, 0x118265b80, {{37.3, -53.0}, {299.0, 42.3}}, label: 'Quelle: iPhone (Apple Health nicht erlaubt)'
+                                    Image, 0x10767b200, {{360.7, -37.7}, {7.0, 12.0}}, identifier: 'chevron.forward'
+                          Cell, 0x10767be80, {{16.0, 4.3}, {370.0, 61.7}}
+                            Other, 0x10767b5c0, {{16.0, 4.3}, {370.0, 61.7}}
+                            Other, 0x10767b480, {{16.0, 4.3}, {370.0, 61.7}}
+                              Other, 0x10767b340, {{16.0, 4.3}, {370.0, 61.7}}
+                                Other, 0x10767bd40, {{16.0, 4.3}, {370.0, 61.7}}
+                                  StaticText, 0x10767b980, {{16.0, 4.3}, {370.0, 61.7}}, label: 'Empfohlenes Ziel für „Muskelaufbau“ (Tempo Normal): 8.000 Schritte. Anpassen unter Einstellungen → Körperdaten und Ziele.'
+                          Other, 0x10767b700, {{-16.0, 66.0}, {434.0, 258.7}}
+                          Cell, 0x10767bc00, {{16.0, 66.0}, {370.0, 40.3}}
+                            Other, 0x10767bac0, {{16.0, 66.0}, {370.0, 40.3}}
+                            Other, 0x10767b840, {{16.0, 66.0}, {370.0, 40.3}}
+                              Other, 0x117edd540, {{16.0, 66.0}, {370.0, 40.3}}
+                                Other, 0x117edc780, {{16.0, 66.0}, {370.0, 40.3}}
+                                  StaticText, 0x117edd680, {{16.0, 66.0}, {370.0, 40.3}}, label: 'Lifetime und Teilen'
+                          Cell, 0x117eddb80, {{16.0, 106.3}, {370.0, 100.3}}
+                            Other, 0x117edc8c0, {{16.0, 106.3}, {370.0, 100.3}}
+                              Other, 0x117edd400, {{16.0, 106.3}, {370.0, 100.3}}
+                            Other, 0x117edc640, {{16.0, 106.3}, {370.0, 100.3}}
+                              Other, 0x117edc280, {{16.0, 106.3}, {370.0, 100.3}}
+                                Other, 0x117ede940, {{16.0, 106.3}, {370.0, 100.3}}
+                                  Image, 0x117edebc0, {{30.3, 125.3}, {27.3, 12.3}}, identifier: 'infinity', label: 'infinity'
+                                  StaticText, 0x117ede440, {{30.3, 121.3}, {169.7, 20.3}}, label: 'Lifetime-Schritte'
+                                  StaticText, 0x117ede800, {{359.0, 121.3}, {11.0, 20.3}}, label: '0'
+                                  StaticText, 0x117edda40, {{32.0, 145.7}, {328.3, 15.7}}, label: 'Erlaube Apple Health, damit alle deine Schritte zählen.'
+                                  StaticText, 0x117edf200, {{32.0, 165.3}, {317.7, 26.3}}, label: 'Garmin, Fitbit & Co.: In deren App „Apple Health“ aktivieren, dann zählen die Schritte hier mit.'
+                          Cell, 0x117edde00, {{16.0, 206.7}, {370.0, 72.3}}
+                            Other, 0x117ede580, {{16.0, 206.7}, {370.0, 72.3}}
+                              Other, 0x117edd900, {{16.0, 206.7}, {370.0, 72.3}}
+                            Other, 0x117edd180, {{16.0, 206.7}, {370.0, 72.3}}
+                              Other, 0x117edf840, {{16.0, 206.7}, {370.0, 72.3}}
+                                Other, 0x117edf340, {{16.0, 206.7}, {370.0, 72.3}}
+                                  Button, 0x117ede6c0, {{16.0, 206.7}, {370.0, 72.3}}, label: 'Ergebnisse teilen (Instagram, TikTok, WhatsApp …)'
+                                    Image, 0x117edc500, {{34.7, 230.0}, {19.0, 25.7}}, identifier: 'square.and.arrow.up', label: 'Share'
+                                    StaticText, 0x117edfe80, {{34.7, 221.7}, {262.7, 42.3}}, label: 'Ergebnisse teilen (Instagram, TikTok, WhatsApp …)'
+                                    Image, 0x117eddcc0, {{360.7, 237.0}, {7.0, 12.0}}, identifier: 'chevron.forward'
+                          Other, 0x117edd7c0, {{72.0, 205.7}, {298.0, 1.0}}
+                          Cell, 0x117edf0c0, {{16.0, 279.0}, {370.0, 45.7}}
+                            Other, 0x117edf5c0, {{16.0, 279.0}, {370.0, 45.7}}
+                            Other, 0x117ede080, {{16.0, 279.0}, {370.0, 45.7}}
+                              Other, 0x117eddf40, {{16.0, 279.0}, {370.0, 45.7}}
+                                Other, 0x117ede300, {{16.0, 279.0}, {370.0, 45.7}}
+                                  StaticText, 0x117eded00, {{16.0, 279.0}, {370.0, 45.7}}, label: 'Wähle beim Teilen zwischen Schrittzähler, Gym-Zeit, Essen, Lauf-Strecke (auch transparent) und Rang.'
+                          Other, 0x11811d2c0, {{-16.0, 324.7}, {434.0, 87.0}}
+                          Cell, 0x11811ca00, {{16.0, 342.3}, {370.0, 52.0}}
+                            Other, 0x11811cdc0, {{16.0, 342.3}, {370.0, 52.0}}
+                              Other, 0x11811cf00, {{16.0, 342.3}, {370.0, 52.0}}
+                            Other, 0x11811c8c0, {{16.0, 342.3}, {370.0, 52.0}}
+                              Other, 0x11811cb40, {{16.0, 342.3}, {370.0, 52.0}}
+                                Other, 0x11811da40, {{16.0, 342.3}, {370.0, 52.0}}
+                                  Button, 0x11811db80, {{16.0, 342.3}, {370.0, 52.0}}, label: 'Training aufzeichnen'
+                                    Image, 0x11811dcc0, {{33.3, 357.7}, {21.7, 21.7}}, identifier: 'play.circle', label: 'Play'
+                                    StaticText, 0x11811cc80, {{33.3, 357.7}, {196.7, 21.7}}, label: 'Training aufzeichnen'
+                                    Image, 0x11811d540, {{360.7, 362.3}, {7.0, 12.0}}, identifier: 'chevron.forward'
+                          Other, 0x11811d680, {{-16.0, 411.7}, {434.0, 571.7}}
+                          Cell, 0x11811df40, {{16.0, 411.7}, {370.0, 40.3}}
+                            Other, 0x11811d7c0, {{16.0, 411.7}, {370.0, 40.3}}
+                            Other, 0x11811d040, {{16.0, 411.7}, {370.0, 40.3}}
+                              Other, 0x11811d400, {{16.0, 411.7}, {370.0, 40.3}}
+                                Other, 0x11811d180, {{16.0, 411.7}, {370.0, 40.3}}
+                                  StaticText, 0x11811c140, {{16.0, 411.7}, {370.0, 40.3}}, label: 'Ernährung heute (Krafttag)'
+                          Cell, 0x11811c500, {{16.0, 452.0}, {370.0, 58.3}}
+                            Other, 0x11811c3c0, {{16.0, 452.0}, {370.0, 58.3}}
+                              Other, 0x11811c640, {{16.0, 452.0}, {370.0, 58.3}}
+                            Other, 0x11811c780, {{16.0, 452.0}, {370.0, 58.3}}
+                              Other, 0x11811c280, {{16.0, 452.0}, {370.0, 58.3}}
+                                Other, 0x11811c000, {{16.0, 452.0}, {370.0, 58.3}}
+                                  StaticText, 0x11811de00, {{32.0, 467.0}, {61.7, 20.3}}, label: 'Kalorien'
+                                  StaticText, 0x11811d900, {{265.7, 467.0}, {104.3, 20.3}}, label: '0 / 2.890 kcal'
+                                  ProgressIndicator, 0x117e4e1c0, {{32.0, 491.3}, {338.0, 4.0}}, value: 0 %
+                                    ProgressIndicator, 0x117e4e080, {{32.0, 481.3}, {338.0, 24.0}}, value: 0 %
+                                      Other, 0x117e4e300, {{32.0, 491.3}, {338.0, 4.0}}
+                                        Image, 0x117e4dcc0, {{32.0, 491.3}, {338.0, 4.0}}
+                                        Image, 0x117e4e6c0, {{32.0, 491.3}, {8.0, 4.0}}
+                          Cell, 0x117e4de00, {{16.0, 510.3}, {370.0, 58.3}}
+                            Other, 0x117e4e800, {{16.0, 510.3}, {370.0, 58.3}}
+                              Other, 0x117e4e940, {{16.0, 510.3}, {370.0, 58.3}}
+                            Other, 0x117e4e580, {{16.0, 510.3}, {370.0, 58.3}}
+                              Other, 0x117e4e440, {{16.0, 510.3}, {370.0, 58.3}}
+                                Other, 0x117e4cdc0, {{16.0, 510.3}, {370.0, 58.3}}
+                                  StaticText, 0x117e4da40, {{32.0, 525.3}, {54.0, 20.3}}, label: 'Protein'
+                                  StaticText, 0x117e4c780, {{301.0, 525.3}, {69.0, 20.3}}, label: '0 / 160 g'
+                                  ProgressIndicator, 0x117e4f5c0, {{32.0, 549.7}, {338.0, 4.0}}, value: 0 %
+                                    ProgressIndicator, 0x117e4f340, {{32.0, 539.7}, {338.0, 24.0}}, value: 0 %
+                                      Other, 0x117e4f0c0, {{32.0, 549.7}, {338.0, 4.0}}
+                                        Image, 0x117e4f840, {{32.0, 549.7}, {338.0, 4.0}}
+                                        Image, 0x117e4fe80, {{32.0, 549.7}, {8.0, 4.0}}
+                          Other, 0x117e4ed00, {{32.0, 509.3}, {338.0, 1.0}}
+                          Cell, 0x117e4fd40, {{16.0, 568.7}, {370.0, 58.3}}
+                            Other, 0x117e4db80, {{16.0, 568.7}, {370.0, 58.3}}
+                              Other, 0x117e4f980, {{16.0, 568.7}, {370.0, 58.3}}
+                            Other, 0x117e4d900, {{16.0, 568.7}, {370.0, 58.3}}
+                              Other, 0x117e4fc00, {{16.0, 568.7}, {370.0, 58.3}}
+                                Other, 0x117e4cc80, {{16.0, 568.7}, {370.0, 58.3}}
+                                  StaticText, 0x117e4d680, {{32.0, 583.7}, {109.7, 20.3}}, label: 'Kohlenhydrate'
+                                  StaticText, 0x117e4fac0, {{301.0, 583.7}, {69.0, 20.3}}, label: '0 / 382 g'
+                                  ProgressIndicator, 0x117e4ebc0, {{32.0, 608.0}, {338.0, 4.0}}, value: 0 %
+                                    ProgressIndicator, 0x117e4f480, {{32.0, 598.0}, {338.0, 24.0}}, value: 0 %
+                                      Other, 0x117e4f700, {{32.0, 608.0}, {338.0, 4.0}}
+                                        Image, 0x118353700, {{32.0, 608.0}, {338.0, 4.0}}
+                                        Image, 0x118353980, {{32.0, 608.0}, {8.0, 4.0}}
+                          Other, 0x118351400, {{32.0, 567.7}, {338.0, 1.0}}
+                          Cell, 0x118350b40, {{16.0, 627.0}, {370.0, 58.3}}
+                            Other, 0x118350a00, {{16.0, 627.0}, {370.0, 58.3}}
+                              Other, 0x1183508c0, {{16.0, 627.0}, {370.0, 58.3}}
+                            Other, 0x1183517c0, {{16.0, 627.0}, {370.0, 58.3}}
+                              Other, 0x118352f80, {{16.0, 627.0}, {370.0, 58.3}}
+                                Other, 0x118350780, {{16.0, 627.0}, {370.0, 58.3}}
+                                  StaticText, 0x118353200, {{32.0, 642.0}, {30.3, 20.3}}, label: 'Fett'
+                                  StaticText, 0x118352e40, {{311.3, 642.0}, {58.7, 20.3}}, label: '0 / 80 g'
+                                  ProgressIndicator, 0x1183535c0, {{32.0, 666.3}, {338.0, 4.0}}, value: 0 %
+                                    ProgressIndicator, 0x118350000, {{32.0, 656.3}, {338.0, 24.0}}, value: 0 %
+                                      Other, 0x1183530c0, {{32.0, 666.3}, {338.0, 4.0}}
+                                        Image, 0x118353480, {{32.0, 666.3}, {338.0, 4.0}}
+                                        Image, 0x118350140, {{32.0, 666.3}, {8.0, 4.0}}
+                          Other, 0x118352a80, {{32.0, 626.0}, {338.0, 1.0}}
+                          Cell, 0x118352440, {{16.0, 685.3}, {370.0, 52.0}}
+                            Other, 0x1183521c0, {{16.0, 685.3}, {370.0, 52.0}}
+                              Other, 0x118352300, {{16.0, 685.3}, {370.0, 52.0}}
+                            Other, 0x118352080, {{16.0, 685.3}, {370.0, 52.0}}
+                              Other, 0x118352580, {{16.0, 685.3}, {370.0, 52.0}}
+                                Other, 0x1183526c0, {{16.0, 685.3}, {370.0, 52.0}}
+                                  StaticText, 0x118352940, {{32.0, 701.2}, {32.0, 20.3}}, label: 'Salz'
+                                  StaticText, 0x118350c80, {{308.0, 701.2}, {62.0, 20.3}}, label: '0.0 / 6 g'
+                          Other, 0x117ebc000, {{32.0, 684.3}, {338.0, 1.0}}
+                          Cell, 0x117ebc140, {{16.0, 737.3}, {370.0, 52.0}}
+                            Other, 0x117ebc280, {{16.0, 737.3}, {370.0, 52.0}}
+                              Other, 0x117ebc3c0, {{16.0, 737.3}, {370.0, 52.0}}
+                            Other, 0x117ebc500, {{16.0, 737.3}, {370.0, 52.0}}
+                              Other, 0x117ebc640, {{16.0, 737.3}, {370.0, 52.0}}
+                                Other, 0x117ebc780, {{16.0, 737.3}, {370.0, 52.0}}
+                                  StaticText, 0x117ebc8c0, {{32.0, 753.2}, {56.3, 20.3}}, label: 'Wasser'
+                                  StaticText, 0x117ebca00, {{279.7, 753.2}, {90.3, 20.3}}, label: '0.00 / 3.30 l'
+                          Other, 0x117ebcb40, {{32.0, 736.3}, {338.0, 1.0}}
+                          Cell, 0x117ebcc80, {{16.0, 789.3}, {370.0, 52.0}}
+                            Other, 0x117ebcdc0, {{16.0, 789.3}, {370.0, 52.0}}
+                              Other, 0x117ebcf00, {{16.0, 789.3}, {370.0, 52.0}}
+                            Other, 0x117ebd040, {{16.0, 789.3}, {370.0, 52.0}}
+                              Other, 0x117ebd180, {{16.0, 789.3}, {370.0, 52.0}}
+                                Other, 0x117ebd2c0, {{16.0, 789.3}, {370.0, 52.0}}
+                                  Button, 0x117ebd400, {{16.0, 789.3}, {370.0, 52.0}}, label: 'Produkt scannen oder suchen'
+                                    Image, 0x117ebd540, {{33.7, 805.0}, {21.0, 21.0}}, identifier: 'barcode.viewfinder', label: 'Scan Barcode'
+                                    StaticText, 0x117ebd680, {{33.7, 805.0}, {266.0, 21.0}}, label: 'Produkt scannen oder suchen'
+                          Cell, 0x117ebd7c0, {{16.0, 841.3}, {370.0, 72.3}}
+                            Other, 0x117ebd900, {{16.0, 841.3}, {370.0, 52.0}}
+                              Other, 0x117ebda40, {{16.0, 841.3}, {370.0, 52.0}}
+                            Other, 0x117ebdb80, {{16.0, 841.3}, {370.0, 72.3}}
+                              Other, 0x117ebdcc0, {{16.0, 841.3}, {370.0, 72.3}}
+                                Other, 0x117ebde00, {{16.0, 841.3}, {370.0, 72.3}}
+                                  Button, 0x117ebdf40, {{16.0, 841.3}, {370.0, 72.3}}, label: 'Diät-Coach: was essen, ohne Hunger'
+                                    Image, 0x117ebe080, {{33.3, 866.7}, {21.7, 21.7}}, identifier: 'fork.knife.circle', label: 'fork.knife.circle'
+                                    StaticText, 0x117ebe1c0, {{33.3, 856.3}, {222.3, 42.3}}, label: 'Diät-Coach: was essen, ohne Hunger'
+                                    Image, 0x117ebe300, {{360.7, 871.7}, {7.0, 12.0}}, identifier: 'chevron.forward'
+                          Cell, 0x117ebe440, {{16.0, 913.7}, {370.0, 52.0}}
+                            Other, 0x117ebe580, {{16.0, 913.7}, {370.0, 52.0}}
+                              Other, 0x117ebe6c0, {{16.0, 913.7}, {370.0, 52.0}}
+                            Other, 0x117ebe800, {{16.0, 913.7}, {370.0, 52.0}}
+                              Other, 0x117ebe940, {{16.0, 913.7}, {370.0, 52.0}}
+                                Other, 0x117ebea80, {{16.0, 913.7}, {370.0, 52.0}}
+                                  Button, 0x117ebebc0, {{16.0, 913.7}, {370.0, 52.0}}, label: 'Ernährungs-Analyse und Verlauf'
+                                    Image, 0x117ebed00, {{35.0, 928.3}, {18.0, 23.0}}, identifier: 'chart.bar.doc.horizontal', label: 'chart.bar.doc.horizontal'
+                                    StaticText, 0x117ebee40, {{35.0, 928.3}, {283.0, 23.0}}, label: 'Ernährungs-Analyse und Verlauf'
+                                    Image, 0x117ebef80, {{360.7, 933.7}, {7.0, 12.0}}, identifier: 'chevron.forward'
+                          Cell, 0x117ebf0c0, {{16.0, 1001.0}, {370.0, 52.0}}
+                            Other, 0x117ebf200, {{16.0, 1001.0}, {370.0, 52.0}}
+                              Other, 0x117ebf340, {{16.0, 1001.0}, {370.0, 52.0}}
+                                Other, 0x117ebf480, {{16.0, 1001.0}, {370.0, 52.0}}
+                                  StaticText, 0x117ebf5c0, {{32.0, 1016.8}, {108.7, 20.3}}, label: 'Aktive Energie'
+                                  StaticText, 0x117ebf700, {{325.0, 1016.8}, {45.0, 20.3}}, label: '0 kcal'
+                            Other, 0x117ebf840, {{16.0, 1001.0}, {370.0, 86.0}}
+                              Other, 0x117ebf980, {{16.0, 1001.0}, {370.0, 86.0}}
+                          Cell, 0x117ebfac0, {{16.0, 1053.0}, {370.0, 52.0}}
+                            Other, 0x117ebfc00, {{16.0, 1053.0}, {370.0, 52.0}}
+                              Other, 0x117ebfd40, {{16.0, 1053.0}, {370.0, 52.0}}
+                            Other, 0x117ebfe80, {{16.0, 1053.0}, {370.0, 52.0}}
+                              Other, 0x11823c000, {{16.0, 1053.0}, {370.0, 52.0}}
+                                Other, 0x11823c140, {{16.0, 1053.0}, {370.0, 52.0}}
+                                  StaticText, 0x11823c280, {{32.0, 1068.8}, {62.7, 20.3}}, label: 'Gewicht'
+                                  StaticText, 0x11823c3c0, {{360.3, 1068.8}, {9.7, 20.3}}, label: '–'
+                          Cell, 0x11823c500, {{16.0, 1105.0}, {370.0, 52.0}}
+                            Other, 0x11823c640, {{16.0, 1105.0}, {370.0, 52.0}}
+                              Other, 0x11823c780, {{16.0, 1105.0}, {370.0, 52.0}}
+                            Other, 0x11823c8c0, {{16.0, 1105.0}, {370.0, 52.0}}
+                              Other, 0x11823ca00, {{16.0, 1105.0}, {370.0, 52.0}}
+                                Other, 0x11823cb40, {{16.0, 1105.0}, {370.0, 52.0}}
+                                  StaticText, 0x11823cc80, {{32.0, 1120.8}, {71.0, 20.3}}, label: 'Ruhepuls'
+                                  StaticText, 0x11823cdc0, {{360.3, 1120.8}, {9.7, 20.3}}, label: '–'
+                          Cell, 0x11823cf00, {{16.0, 1157.0}, {370.0, 52.0}}
+                            Other, 0x11823d040, {{16.0, 1157.0}, {370.0, 52.0}}
+                              Other, 0x11823d180, {{16.0, 1157.0}, {370.0, 52.0}}
+                            Other, 0x11823d2c0, {{16.0, 1157.0}, {370.0, 52.0}}
+                              Other, 0x11823d400, {{16.0, 1157.0}, {370.0, 52.0}}
+                                Other, 0x11823d540, {{16.0, 1157.0}, {370.0, 52.0}}
+                                  StaticText, 0x11823d680, {{32.0, 1172.8}, {150.7, 20.3}}, label: 'Workouts (30 Tage)'
+                                  StaticText, 0x11823d7c0, {{359.7, 1172.8}, {10.3, 20.3}}, label: '0'
+                          Cell, 0x11823d900, {{16.0, 1244.0}, {370.0, 72.3}}
+                            Other, 0x11823da40, {{16.0, 1244.0}, {370.0, 72.3}}
+                              Other, 0x11823db80, {{16.0, 1244.0}, {370.0, 72.3}}
+                                Other, 0x11823dcc0, {{16.0, 1244.0}, {370.0, 72.3}}
+                                  Button, 0x11823de00, {{16.0, 1244.0}, {370.0, 72.3}}, label: 'Noch kein Scan gespeichert – jetzt den ersten durchführen.'
+                                    Image, 0x11823df40, {{33.3, 1269.3}, {21.7, 21.7}}, identifier: 'exclamationmark.circle.fill', label: 'exclamationmark.circle.fill'
+                                    StaticText, 0x11823e080, {{33.3, 1259.0}, {307.7, 42.3}}, label: 'Noch kein Scan gespeichert – jetzt den ersten durchführen.'
+                                    Image, 0x11823e1c0, {{360.7, 1274.3}, {7.0, 12.0}}, identifier: 'chevron.forward'
+                            Other, 0x11823e300, {{16.0, 1244.0}, {370.0, 149.7}}
+                              Other, 0x11823e440, {{16.0, 1244.0}, {370.0, 149.7}}
+                          Cell, 0x11823e580, {{16.0, 1351.7}, {370.0, 52.0}}
+                            Other, 0x11823e6c0, {{16.0, 1351.7}, {370.0, 52.0}}
+                              Other, 0x11823e800, {{16.0, 1351.7}, {370.0, 52.0}}
+                            Other, 0x11823e940, {{16.0, 1351.7}, {370.0, 52.0}}
+                              Other, 0x11823ea80, {{16.0, 1351.7}, {370.0, 52.0}}
+                                Other, 0x11823ebc0, {{16.0, 1351.7}, {370.0, 52.0}}
+                                  StaticText, 0x11823ed00, {{32.0, 1367.5}, {52.3, 20.3}}, label: 'Aktuell'
+                                  StaticText, 0x11823ee40, {{318.3, 1367.5}, {51.7, 20.3}}, label: '19.4 %'
+                          Other, 0x11823ef80, {{369.0, 116.0}, {30.0, 669.7}}, label: 'Vertical scroll bar, 4 pages', value: 43 %
+                          Other, 0x11823f0c0, {{369.0, 116.0}, {30.0, 669.7}}, label: 'Vertical scroll bar, 4 pages', value: 43 %
+                Other, 0x11823f200, {{0.0, 0.0}, {402.0, 785.7}}
+                  Other, 0x11823f340, {{0.0, 0.0}, {0.0, 0.0}}
+                  Other, 0x11823f480, {{0.0, 0.0}, {402.0, 785.7}}
+              Other, 0x11823f5c0, {{0.0, 0.0}, {402.0, 785.7}}
+                Other, 0x11823f700, {{0.0, 0.0}, {402.0, 785.7}}
+                  Other, 0x11823f840, {{0.0, 0.0}, {402.0, 785.7}}
+                    Other, 0x11823f980, {{0.0, 0.0}, {402.0, 785.7}}
+                      Other, 0x11823fac0, {{0.0, 0.0}, {402.0, 785.7}}
+                        CollectionView, 0x11823fc00, {{0.0, 0.0}, {402.0, 785.7}}
+                          Other, 0x11823fd40, {{-16.0, -811.3}, {434.0, 1166.3}}
+                          Other, 0x11823fe80, {{0.0, 0.0}, {402.0, 785.7}}
+                          Other, 0x11824c000, {{0.0, 0.0}, {402.0, 785.7}}
+                            Other, 0x11824c140, {{0.0, 644.9}, {402.0, 140.8}}
+                              Image, 0x11824c280, {{-120.0, 649.7}, {642.0, 272.0}}, identifier: 'AdditionalDimmingOverlay'
+                              Other, 0x11824c3c0, {{0.0, 644.9}, {402.0, 140.8}}
+                                Other, 0x11824c500, {{0.0, 644.9}, {402.0, 140.8}}
+                              Other, 0x11824c640, {{0.0, 644.9}, {402.0, 140.8}}
+                                Other, 0x11824c780, {{0.0, 644.9}, {402.0, 140.8}}
+                                Other, 0x11824c8c0, {{0.0, 644.9}, {402.0, 140.8}}
+                          Cell, 0x11824ca00, {{16.0, 97.0}, {370.0, 52.0}}
+                            Other, 0x11824cb40, {{16.0, 97.0}, {370.0, 52.0}}
+                              Other, 0x11824cc80, {{16.0, 97.0}, {370.0, 52.0}}
+                            Other, 0x11824cdc0, {{16.0, 97.0}, {370.0, 52.0}}
+                              Other, 0x11824cf00, {{16.0, 97.0}, {370.0, 52.0}}
+                                Other, 0x11824d040, {{16.0, 97.0}, {370.0, 52.0}}
+                                  StaticText, 0x11824d180, {{32.0, 112.8}, {73.3, 20.3}}, label: 'Kategorie'
+                                  Button, 0x11824d2c0, {{32.0, 106.0}, {338.0, 34.3}}, label: 'Kategorie, Alle'
+                                    StaticText, 0x11824d400, {{325.3, 113.0}, {28.3, 20.3}}, label: 'Alle'
+                          Cell, 0x11824d540, {{16.0, 149.0}, {370.0, 52.0}}
+                            Other, 0x11824d680, {{16.0, 149.0}, {370.0, 52.0}}
+                              Other, 0x11824d7c0, {{16.0, 149.0}, {370.0, 52.0}}
+                            Other, 0x11824d900, {{16.0, 149.0}, {370.0, 52.0}}
+                              Other, 0x11824da40, {{16.0, 149.0}, {370.0, 52.0}}
+                                Other, 0x11824db80, {{16.0, 149.0}, {370.0, 52.0}}
+                                  StaticText, 0x11824dcc0, {{32.0, 164.8}, {108.7, 20.3}}, label: 'Muskelgruppe'
+                                  Button, 0x11824de00, {{32.0, 158.0}, {338.0, 34.3}}, label: 'Muskelgruppe, Alle'
+                                    StaticText, 0x11824df40, {{325.3, 165.0}, {28.3, 20.3}}, label: 'Alle'
+                          Other, 0x11824e080, {{32.0, 148.0}, {338.0, 1.0}}
+                          Cell, 0x11824e1c0, {{16.0, 201.0}, {370.0, 52.0}}
+                            Other, 0x11824e300, {{16.0, 201.0}, {370.0, 52.0}}
+                              Other, 0x11824e440, {{16.0, 201.0}, {370.0, 52.0}}
+                            Other, 0x11824e580, {{16.0, 201.0}, {370.0, 52.0}}
+                              Other, 0x11824e6c0, {{16.0, 201.0}, {370.0, 52.0}}
+                                Other, 0x11824e800, {{16.0, 201.0}, {370.0, 52.0}}
+                                  StaticText, 0x11824e940, {{32.0, 216.8}, {80.7, 20.3}}, label: 'Gerät / Ort'
+                                  Button, 0x11824ea80, {{32.0, 210.0}, {338.0, 34.3}}, label: 'Gerät / Ort, Alle'
+                                    StaticText, 0x11824ebc0, {{325.3, 217.0}, {28.3, 20.3}}, label: 'Alle'
+                          Other, 0x11824ed00, {{32.0, 200.0}, {338.0, 1.0}}
+                          Cell, 0x11824ee40, {{16.0, 253.0}, {370.0, 72.3}}
+                            Other, 0x11824ef80, {{16.0, 253.0}, {370.0, 72.3}}
+                              Other, 0x11824f0c0, {{16.0, 253.0}, {370.0, 72.3}}
+                            Other, 0x11824f200, {{16.0, 253.0}, {370.0, 72.3}}
+                              Other, 0x11824f340, {{16.0, 253.0}, {370.0, 72.3}}
+                                Other, 0x11824f480, {{16.0, 253.0}, {370.0, 72.3}}
+                                  Switch, 0x11824f5c0, {{16.0, 253.0}, {370.0, 72.3}}, label: 'Nur Übungen für meine Ausstattung', value: 0
+                                    StaticText, 0x11824f700, {{32.0, 268.0}, {182.3, 42.3}}, label: 'Nur Übungen für meine Ausstattung'
+                                    Switch, 0x11824f840, {{309.0, 275.3}, {63.0, 28.0}}, value: 0
+                          Other, 0x11824f980, {{32.0, 252.0}, {338.0, 1.0}}
+                          Cell, 0x11824fac0, {{16.0, 325.3}, {370.0, 29.7}}
+                            Other, 0x11824fc00, {{16.0, 325.3}, {370.0, 29.7}}
+                            Other, 0x11824fd40, {{16.0, 325.3}, {370.0, 29.7}}
+                              Other, 0x11824fe80, {{16.0, 325.3}, {370.0, 29.7}}
+                                Other, 0x118254000, {{16.0, 325.3}, {370.0, 29.7}}
+                                  StaticText, 0x118254140, {{16.0, 325.3}, {370.0, 29.7}}, label: '83 von 4.344 Übungen'
+                          Other, 0x118254280, {{-16.0, 355.0}, {434.0, 5432.7}}
+                          Cell, 0x1182543c0, {{16.0, 372.7}, {370.0, 84.3}}
+                            Other, 0x118254500, {{16.0, 372.7}, {370.0, 84.3}}
+                              Other, 0x118254640, {{16.0, 372.7}, {370.0, 84.3}}
+                            Other, 0x118254780, {{16.0, 372.7}, {370.0, 84.3}}
+                              Other, 0x1182548c0, {{16.0, 372.7}, {370.0, 84.3}}
+                                Other, 0x118254a00, {{16.0, 372.7}, {370.0, 84.3}}
+                                  Button, 0x118254b40, {{16.0, 372.7}, {370.0, 84.3}}, label: 'Bankdrücken, Kraft · Langhantel und Bank, Aktiv: Brust. Passiv: Schultern, Trizeps'
+                                    Image, 0x118254c80, {{42.3, 403.0}, {23.3, 24.0}}, identifier: 'figure.strengthtraining.traditional', label: 'figure.strengthtraining.traditional'
+                                    StaticText, 0x118254dc0, {{88.0, 387.7}, {99.7, 20.3}}, label: 'Bankdrücken'
+                                    StaticText, 0x118254f00, {{88.0, 410.0}, {168.0, 15.7}}, label: 'Kraft · Langhantel und Bank'
+                                    Other, 0x118255040, {{88.0, 427.7}, {162.7, 14.3}}, label: 'Aktiv: Brust. Passiv: Schultern, Trizeps'
+                                      StaticText, 0x118255180, {{99.0, 427.7}, {30.3, 14.3}}, label: 'Brust'
+                                      StaticText, 0x1182552c0, {{148.3, 427.7}, {102.3, 14.3}}, label: 'Schultern, Trizeps'
+                                    Image, 0x118255400, {{360.7, 408.7}, {7.0, 12.0}}, identifier: 'chevron.forward'
+                          Cell, 0x118255540, {{16.0, 457.0}, {370.0, 84.3}}
+                            Other, 0x118255680, {{16.0, 457.0}, {370.0, 84.3}}
+                              Other, 0x1182557c0, {{16.0, 457.0}, {370.0, 84.3}}
+                            Other, 0x118255900, {{16.0, 457.0}, {370.0, 84.3}}
+                              Other, 0x118255a40, {{16.0, 457.0}, {370.0, 84.3}}
+                                Other, 0x118255b80, {{16.0, 457.0}, {370.0, 84.3}}
+                                  Button, 0x118255cc0, {{16.0, 457.0}, {370.0, 84.3}}, label: 'Schrägbankdrücken (Kurzhantel), Kraft · Kurzhanteln, Aktiv: Brust, Schultern. Passiv: Trizeps'
+                                    Image, 0x118255e00, {{42.3, 487.3}, {23.3, 24.0}}, identifier: 'figure.strengthtraining.traditional', label: 'figure.strengthtraining.traditional'
+                                    StaticText, 0x118255f40, {{88.0, 472.0}, {250.3, 20.3}}, label: 'Schrägbankdrücken (Kurzhantel)'
+                                    StaticText, 0x118256080, {{88.0, 494.3}, {113.0, 15.7}}, label: 'Kraft · Kurzhanteln'
+                                    Other, 0x1182561c0, {{88.0, 512.0}, {162.7, 14.3}}, label: 'Aktiv: Brust, Schultern. Passiv: Trizeps'
+                                      StaticText, 0x118256300, {{99.0, 512.0}, {91.3, 14.3}}, label: 'Brust, Schultern'
+                                      StaticText, 0x118256440, {{209.3, 512.0}, {41.3, 14.3}}, label: 'Trizeps'
+                                    Image, 0x118256580, {{360.7, 493.0}, {7.0, 12.0}}, identifier: 'chevron.forward'
+                          Other, 0x1182566c0, {{88.0, 456.0}, {282.0, 1.0}}
+                          Cell, 0x118256800, {{16.0, 541.3}, {370.0, 84.3}}
+                            Other, 0x118256940, {{16.0, 541.3}, {370.0, 84.3}}
+                              Other, 0x118256a80, {{16.0, 541.3}, {370.0, 84.3}}
+                            Other, 0x118256bc0, {{16.0, 541.3}, {370.0, 84.3}}
+                              Other, 0x118256d00, {{16.0, 541.3}, {370.0, 84.3}}
+                                Other, 0x118256e40, {{16.0, 541.3}, {370.0, 84.3}}
+                                  Button, 0x118256f80, {{16.0, 541.3}, {370.0, 84.3}}, label: 'Bankdrücken (Langhantel), Kraft · Langhantel und Bank, Aktiv: Brust. Passiv: Schultern, Trizeps'
+                                    Image, 0x1182570c0, {{42.3, 571.7}, {23.3, 24.0}}, identifier: 'figure.strengthtraining.traditional', label: 'figure.strengthtraining.traditional'
+                                    StaticText, 0x118257200, {{88.0, 556.3}, {200.3, 20.3}}, label: 'Bankdrücken (Langhantel)'
+                                    StaticText, 0x118257340, {{88.0, 578.7}, {168.0, 15.7}}, label: 'Kraft · Langhantel und Bank'
+                                    Other, 0x118257480, {{88.0, 596.3}, {162.7, 14.3}}, label: 'Aktiv: Brust. Passiv: Schultern, Trizeps'
+                                      StaticText, 0x1182575c0, {{99.0, 596.3}, {30.3, 14.3}}, label: 'Brust'
+                                      StaticText, 0x118257700, {{148.3, 596.3}, {102.3, 14.3}}, label: 'Schultern, Trizeps'
+                                    Image, 0x118257840, {{360.7, 577.3}, {7.0, 12.0}}, identifier: 'chevron.forward'
+                          Other, 0x118257980, {{88.0, 540.3}, {282.0, 1.0}}
+                          Cell, 0x118257ac0, {{16.0, 625.7}, {370.0, 106.3}}
+                            Other, 0x118257c00, {{16.0, 625.7}, {370.0, 106.3}}
+                              Other, 0x118257d40, {{16.0, 625.7}, {370.0, 106.3}}
+                            Other, 0x118257e80, {{16.0, 625.7}, {370.0, 106.3}}
+                              Other, 0x118320000, {{16.0, 625.7}, {370.0, 106.3}}
+                                Other, 0x118320140, {{16.0, 625.7}, {370.0, 106.3}}
+                                  Button, 0x118320280, {{16.0, 625.7}, {370.0, 106.3}}, label: 'Bankdrücken (Langhantel, Schrägbank 30°), Kraft · Langhantel und Bank, Aktiv: Brust. Passiv: Schultern, Trizeps'
+                                    Image, 0x1183203c0, {{42.3, 666.7}, {23.3, 24.0}}, identifier: 'figure.strengthtraining.traditional', label: 'figure.strengthtraining.traditional'
+                                    StaticText, 0x118320500, {{88.0, 640.7}, {203.3, 42.3}}, label: 'Bankdrücken (Langhantel, Schrägbank 30°)'
+                                    StaticText, 0x118320640, {{88.0, 685.0}, {168.0, 15.7}}, label: 'Kraft · Langhantel und Bank'
+                                    Other, 0x118320780, {{88.0, 702.7}, {162.7, 14.3}}, label: 'Aktiv: Brust. Passiv: Schultern, Trizeps'
+                                      StaticText, 0x1183208c0, {{99.0, 702.7}, {30.3, 14.3}}, label: 'Brust'
+                                      StaticText, 0x118320a00, {{148.3, 702.7}, {102.3, 14.3}}, label: 'Schultern, Trizeps'
+                                    Image, 0x118320b40, {{360.7, 673.0}, {7.0, 12.0}}, identifier: 'chevron.forward'
+                          Other, 0x118320c80, {{88.0, 624.7}, {282.0, 1.0}}
+                          Cell, 0x118320dc0, {{16.0, 731.7}, {370.0, 106.3}}
+                            Other, 0x118320f00, {{16.0, 731.7}, {370.0, 106.3}}
+                              Other, 0x118321040, {{16.0, 731.7}, {370.0, 106.3}}
+                            Other, 0x118321180, {{16.0, 731.7}, {370.0, 106.3}}
+                              Other, 0x1183212c0, {{16.0, 731.7}, {370.0, 106.3}}
+                                Other, 0x118321400, {{16.0, 731.7}, {370.0, 106.3}}
+                                  Button, 0x118321540, {{16.0, 731.7}, {370.0, 106.3}}, label: 'Bankdrücken (Langhantel, Schrägbank 45°), Kraft · Langhantel und Bank, Aktiv: Brust. Passiv: Schultern, Trizeps'
+                                    Image, 0x118321680, {{42.3, 772.7}, {23.3, 24.0}}, identifier: 'figure.strengthtraining.traditional', label: 'figure.strengthtraining.traditional'
+                                    StaticText, 0x1183217c0, {{88.0, 746.7}, {203.3, 42.3}}, label: 'Bankdrücken (Langhantel, Schrägbank 45°)'
+                                    StaticText, 0x118321900, {{88.0, 791.0}, {168.0, 15.7}}, label: 'Kraft · Langhantel und Bank'
+                                    Other, 0x118321a40, {{88.0, 808.7}, {162.7, 14.3}}, label: 'Aktiv: Brust. Passiv: Schultern, Trizeps'
+                                      StaticText, 0x118321b80, {{99.0, 808.7}, {30.3, 14.3}}, label: 'Brust'
+                                      StaticText, 0x118321cc0, {{148.3, 808.7}, {102.3, 14.3}}, label: 'Schultern, Trizeps'
+                                    Image, 0x118321e00, {{360.7, 779.0}, {7.0, 12.0}}, identifier: 'chevron.forward'
+                          Other, 0x118321f40, {{88.0, 731.0}, {282.0, 1.0}}
+                          Other, 0x118322080, {{369.0, 62.0}, {30.0, 637.7}}, label: 'Vertical scroll bar, 8 pages', value: 0 %
+                            Other, 0x1183221c0, {{396.0, 65.0}, {3.0, 99.3}}
+                          Other, 0x118322300, {{369.0, 62.0}, {30.0, 637.7}}, label: 'Vertical scroll bar, 8 pages', value: 0 %
+                            Other, 0x118322440, {{396.0, 65.0}, {3.0, 99.3}}
+                    Other, 0x118322580, {{0.0, 0.0}, {402.0, 785.7}}
+                      Other, 0x1183226c0, {{0.0, 0.0}, {402.0, 785.7}}
+                        Other, 0x118322800, {{0.0, 0.0}, {402.0, 785.7}}
+                Other, 0x118322940, {{0.0, 0.0}, {402.0, 785.7}}
+                  Other, 0x118322a80, {{0.0, 0.0}, {402.0, 785.7}}
+                    Other, 0x118322bc0, {{0.0, 699.7}, {402.0, 86.0}}
+                      Other, 0x118322d00, {{28.0, 709.7}, {346.0, 48.0}}
+                        Other, 0x118322e40, {{28.0, 709.7}, {346.0, 48.0}}
+                          Other, 0x118322f80, {{28.0, 709.7}, {0.0, 0.0}}
+                            Other, 0x1183230c0, {{28.0, 709.7}, {286.0, 48.0}}
+                              Other, 0x118323200, {{28.0, 709.7}, {286.0, 48.0}}
+                                Other, 0x118323340, {{33.0, 714.7}, {276.0, 38.0}}
+                                  SearchField, 0x118323480, {{33.0, 714.7}, {276.0, 38.0}}, label: 'Übung oder Muskel suchen', placeholderValue: 'Übung oder Muskel suchen', value: Bankdrücken
+                                    Image, 0x1183235c0, {{46.0, 724.0}, {20.3, 18.7}}, identifier: 'magnifyingglass', label: 'Search'
+                                    Button, 0x118323700, {{274.7, 724.3}, {19.7, 19.0}}, label: 'Clear text'
+                            Other, 0x118323840, {{326.0, 709.7}, {48.0, 48.0}}
+                              Other, 0x118323980, {{326.0, 709.7}, {48.0, 48.0}}
+                                Other, 0x118323ac0, {{331.0, 714.7}, {38.0, 38.0}}
+                                  Other, 0x118323c00, {{331.0, 714.7}, {38.0, 38.0}}
+                                    Button, 0x118323d40, {{331.0, 714.7}, {38.0, 38.0}}, label: 'close'
+              Button, 0x118323e80, {{0.0, 791.7}, {80.3, 46.3}}, identifier: 'tab.0', label: 'Profil'
+                Image, 0x118324000, {{30.7, 797.3}, {19.0, 19.0}}, identifier: 'person.crop.circle', label: 'Account'
+                StaticText, 0x118324140, {{26.4, 824.7}, {27.7, 13.3}}, label: 'Profil'
+              Button, 0x118324280, {{80.3, 791.7}, {80.3, 46.3}}, identifier: 'tab.1', label: 'Trainingsplan', Selected
+                Image, 0x1183243c0, {{109.0, 795.0}, {23.0, 23.3}}, identifier: 'figure.strengthtraining.traditional', label: 'figure.strengthtraining.traditional'
+                StaticText, 0x118324500, {{108.8, 824.7}, {23.7, 13.3}}, label: 'Plan'
+              Button, 0x118324640, {{160.7, 791.7}, {80.7, 46.3}}, identifier: 'tab.2', label: 'Rezepte'
+                Image, 0x118324780, {{194.7, 796.0}, {13.0, 21.7}}, identifier: 'fork.knife', label: 'Food'
+                StaticText, 0x1183248c0, {{179.5, 824.7}, {43.0, 13.3}}, label: 'Rezepte'
+              Button, 0x118324a00, {{241.3, 791.7}, {80.3, 46.3}}, identifier: 'tab.3', label: 'Mobility'
+                Image, 0x118324b40, {{271.7, 796.3}, {19.3, 20.7}}, identifier: 'figure.yoga', label: 'figure.yoga'
+                StaticText, 0x118324c80, {{260.6, 824.7}, {41.7, 13.3}}, label: 'Mobility'
+              Button, 0x118324dc0, {{321.7, 791.7}, {80.3, 46.3}}, identifier: 'tab.4', label: 'Einstellungen'
+                Image, 0x118324f00, {{351.7, 796.7}, {20.0, 20.0}}, identifier: 'gearshape', label: 'gearshape'
+                StaticText, 0x118325040, {{326.6, 824.7}, {70.3, 13.3}}, label: 'Einstellungen'
+    Window, 0x118325180, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x1183252c0, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x118325400, {{0.0, 0.0}, {402.0, 874.0}}
+Path to element:
+ →Application, 0x117fa61c0, pid: 9327, label: 'Bodyformance'
+Query chain:
+ →Find: Application 'test.FitScan'
+  Output: {
+    Application, 0x118325540, pid: 9327, label: 'Bodyformance'
+  }
