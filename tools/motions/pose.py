@@ -17,6 +17,8 @@ Kanäle (alle optional, fehlende kommen aus `neutral()` bzw. aus der vorigen Sch
     elbowL / elbowR (x, y, z)  Richtung, in die der Ellbogen zeigt (im selben Raum)
     palmL / palmR   (Anteil flach, Richtung der Finger in Grad um die Hochachse)  1 = Handfläche flach auf dem Boden
     wristL / wristR (beugen, seitlich) Grad gegenüber dem Unterarm, wenn die Hand nicht flach liegt
+    twistL / twistR Grad Drehung der Hand um den Unterarm (> 0 dreht den Daumen nach außen), z. B. damit die
+                    Kurzhantel quer liegt
     gripL / gripR   0 … 1  Faust schließen
     footL / footR   (x, y, z)  Ziel für das Sprunggelenk (Standard: Welt)
     kneeL / kneeR   (x, y, z)  Richtung, in die das Knie zeigt
@@ -94,6 +96,7 @@ class Rig:
             p[f"elbow{s}"] = (g * 0.4, -0.2, -1.0)
             p[f"palm{s}"] = (0.0, 0.0)
             p[f"wrist{s}"] = (0.0, 0.0)
+            p[f"twist{s}"] = 0.0
             p[f"grip{s}"] = 0.15
             p[f"foot{s}"] = (g * 0.12, 0.08, -0.01)
             p[f"knee{s}"] = (g * 0.15, 0.0, 1.0)
@@ -240,7 +243,8 @@ class Rig:
         fingers0, palm0 = self.hand0[s]
         flex_axis = normalize(np.cross(fingers0, palm0))
         flex, dev = pose[f"wrist{s}"]
-        rel = fa @ axis_angle(flex_axis, flex) @ axis_angle(palm0, dev)
+        twist = float(pose.get(f"twist{s}", 0.0)) * sgn(s)
+        rel = fa @ axis_angle(self.arm[s].f0, twist) @ axis_angle(flex_axis, flex) @ axis_angle(palm0, dev)
         flat, heading = pose[f"palm{s}"]
         if flat > 1e-3:
             d = rot_y(heading) @ np.array([0.0, 0.0, 1.0])
