@@ -177,6 +177,6 @@ enum MuscleAtlas {
                       bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)?.makeImage()
         }
         guard let cg else { return nil }
-        return try? TextureResource.generate(from: cg, withName: nil, options: .init(semantic: .color))
+        return try? TextureResource(image: cg, withName: nil, options: .init(semantic: .color))
     }
 }

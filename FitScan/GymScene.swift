@@ -73,7 +73,7 @@ struct GymLayout {
             break
         }
         if def.free || (def.lying && !def.bench) { l.mat = true }
-        if (def.lying || def.free) && l.cableHeight == nil { l.radius = 2.4 }
+        if (def.lying || def.free) && l.cableHeight == nil { l.radius = 3.2 }  // liegend: ganzer Körper (gut 1,8 m) im Bild
         return l
     }
 }
@@ -96,7 +96,7 @@ enum GymTex {
         let r = UIGraphicsImageRenderer(size: CGSize(width: w, height: h), format: fmt)
         let img = r.image { ctx in draw(ctx.cgContext, CGSize(width: w, height: h)) }
         guard let cg = img.cgImage else { return nil }
-        return try? TextureResource.generate(from: cg, withName: nil, options: .init(semantic: .color))
+        return try? TextureResource(image: cg, withName: nil, options: .init(semantic: .color))
     }
 
     static func mat(_ tex: TextureResource?, color: UIColor = .white, rough: Float = 0.8, metal: Float = 0) -> PhysicallyBasedMaterial {
