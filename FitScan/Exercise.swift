@@ -105,6 +105,8 @@ struct Exercise: Identifiable, Hashable {
     var motionKey: String? = nil
     /// Kurzbeschreibung des Trainingsziels (z. B. "Gerade Bauchmuskeln")
     var target: String = ""
+    /// Name des gerenderten Übungsvideos im Bundle (ExerciseVideos/bf_XXX_*.mp4), falls vorhanden
+    var videoName: String? = nil
 
     var isMobility: Bool { category == .mobility }
     var allMuscles: [Muscle] { primary + secondary }
