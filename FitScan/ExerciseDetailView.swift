@@ -10,9 +10,17 @@ struct ExerciseDetailView: View {
     var body: some View {
         List {
             Section(exercise.isMobility ? "Bewegung und gedehnte Muskeln" : "Bewegung und trainierte Muskeln") {
-                MuscleModelView(primary: exercise.primary, secondary: exercise.secondary, height: 340,
-                                motion: BodyMotion.scene(for: exercise).0, gear: BodyMotion.scene(for: exercise).1)
-                    .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
+                if let url = ExerciseVideo.url(for: exercise) {
+                    // gerendertes Übungsvideo (Mannequin, Zielmuskeln rot) ersetzt die Live-3D-Figur
+                    ExerciseVideoView(url: url)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 520)
+                        .listRowInsets(EdgeInsets())
+                } else {
+                    MuscleModelView(primary: exercise.primary, secondary: exercise.secondary, height: 340,
+                                    motion: BodyMotion.scene(for: exercise).0, gear: BodyMotion.scene(for: exercise).1)
+                        .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
+                }
             }
 
             Section("Details") {

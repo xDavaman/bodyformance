@@ -1,0 +1,62 @@
+{
+  "_doc": "Body profile. targets: MakeHuman target -> weight (added on top of the base body, 0 removes one). sculpt: strength + per-region multipliers (chest, abs, obliques, back, glutes, shoulders, arms, forearms, legs, calves). head_scale: egg head size. material: roughness / coat / sheen / base (linear RGB). sculpt.grooves: extra depth for the separation lines between muscles. neck_shorten: metres the head sits lower.",
+  "height": 1.84,
+  "targets": {
+    "macrodetails/universal-male-young-maxmuscle-minweight.target.gz": 0.35,
+    "macrodetails/universal-male-young-maxmuscle-averageweight.target.gz": 0.65,
+    "macrodetails/proportions/male-young-maxmuscle-minweight-idealproportions.target.gz": 0.35,
+    "macrodetails/proportions/male-young-maxmuscle-averageweight-idealproportions.target.gz": 0.65,
+    "torso/torso-muscle-pectoral-incr.target.gz": 0.7,
+    "torso/torso-muscle-dorsi-incr.target.gz": 0.8,
+    "torso/torso-vshape-incr.target.gz": 0.3,
+    "torso/measure-waist-circ-decr.target.gz": 0.5,
+    "stomach/stomach-tone-incr.target.gz": 0.6,
+    "arms/l-upperarm-shoulder-muscle-incr.target.gz": 0.55,
+    "arms/r-upperarm-shoulder-muscle-incr.target.gz": 0.55,
+    "arms/l-upperarm-muscle-incr.target.gz": 1.0,
+    "arms/r-upperarm-muscle-incr.target.gz": 1.0,
+    "arms/l-lowerarm-muscle-incr.target.gz": 1.0,
+    "arms/r-lowerarm-muscle-incr.target.gz": 1.0,
+    "arms/measure-upperarm-circ-incr.target.gz": 0.4,
+    "legs/l-upperleg-muscle-incr.target.gz": 1.0,
+    "legs/r-upperleg-muscle-incr.target.gz": 1.0,
+    "legs/l-lowerleg-muscle-incr.target.gz": 0.8,
+    "legs/r-lowerleg-muscle-incr.target.gz": 0.8,
+    "legs/measure-thigh-circ-incr.target.gz": 0.45,
+    "legs/measure-calf-circ-incr.target.gz": 0.3,
+    "buttocks/buttocks-volume-incr.target.gz": 0.25,
+    "neck/measure-neck-circ-incr.target.gz": 0.9,
+    "neck/neck-scale-vert-incr.target.gz": 0.0,
+    "neck/neck-scale-vert-decr.target.gz": 0.45
+  },
+  "sculpt": {
+    "strength": 1.3,
+    "groups": {
+      "chest": 1.3,
+      "abs": 1.25,
+      "obliques": 1.1,
+      "back": 1.3,
+      "glutes": 1.1,
+      "shoulders": 1.1,
+      "arms": 1.35,
+      "forearms": 1.5,
+      "legs": 1.5,
+      "calves": 1.2,
+      "joints": 1.0,
+      "traps": 1.0
+    },
+    "grooves": 1.7
+  },
+  "head_scale": 1.12,
+  "material": {
+    "roughness": 0.62,
+    "coat": 0.0,
+    "sheen": 0.3,
+    "base": [
+      0.8,
+      0.82,
+      0.86
+    ]
+  },
+  "neck_shorten": 0.045
+}

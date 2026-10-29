@@ -52,6 +52,7 @@ enum ExerciseGenerator {
                               startFactor: f.sf > 0 ? f.sf : nil)
             ex.motionKey = f.motion
             ex.target = f.target
+            ex.videoName = String(format: "bf_%03d_%@", fi, f.motion)
             out.append(ex)
         }
         return out
