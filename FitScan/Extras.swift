@@ -64,6 +64,14 @@ struct ReportsView: View {
                 Section { LockedRow(feature: .reports) }
             }
         }
+        .safeAreaInset(edge: .bottom) {
+            NavigationLink { MonthlyReportView() } label: {
+                Label("Ausführlicher Monatsbericht mit Excel und PDF", systemImage: "square.and.arrow.up.on.square")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .padding()
+        }
         .navigationTitle("Berichte")
     }
 
@@ -268,7 +276,7 @@ struct BackupView: View {
     private static let skipPrefixes = ["Apple", "NS", "com.apple", "AK", "bfc.trial", "bfc.premium"]
 
     /// Dateien in Documents, die mit ins Backup gehören (Training: Sätze, Cardio, Mobility, Körpergewicht)
-    private static let backupFiles = ["fitscan-data.json"]
+    private static let backupFiles = ["fitscan-data.json", SupplementStore.fileName]
 
     static func makeBackup() -> URL? {
         var dict: [String: Any] = ["bfc.backup.version": 1]

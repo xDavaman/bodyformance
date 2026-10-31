@@ -7,6 +7,7 @@ struct ContentView: View {
     @EnvironmentObject var tracker: StepTracker
     @EnvironmentObject var nav: AppNav
     @EnvironmentObject var rank: RankStore
+    @EnvironmentObject var vitals: VitalsStore
     /// Reiter werden beim ersten Öffnen erzeugt und bleiben danach erhalten (Scroll-Stand, Eingaben)
     @State private var visited: Set<Int> = [0]
     @AppStorage("bfc.consent.answered") private var consentAnswered = false
@@ -25,7 +26,12 @@ struct ContentView: View {
         }
         .onChange(of: nav.tab) { _, t in visited.insert(t) }
         .task(id: consentHealth) {
-            if consentHealth { await health.requestAuthorization() } else { health.stopLiveUpdates() }
+            if consentHealth {
+                await health.requestAuthorization()
+                if health.isAuthorized { await vitals.refresh() }
+            } else {
+                health.stopLiveUpdates()
+            }
         }
         .onChange(of: consentAnswered) { _, answered in if answered { tracker.start() } }
         .overlay { RankUpOverlay() }
@@ -117,6 +123,12 @@ struct DashboardView: View {
                     }
                 }
                 Section("Aus Apple Health") {
+                    NavigationLink { VitalsView() } label: {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Label("Vitalwerte, Schlaf und Erholung", systemImage: "waveform.path.ecg")
+                            RecoveryHint()
+                        }
+                    }
                     row("Aktive Energie", "\(health.activeEnergyToday) kcal")
                     row("Gewicht", health.latestWeightKg.map { String(format: "%.1f kg", $0) } ?? "–")
                     row("Ruhepuls", health.restingHeartRate.map { "\($0) bpm" } ?? "–")
@@ -138,6 +150,8 @@ struct DashboardView: View {
                 Section("Fortschritt") {
                     NavigationLink { AnalysisView() } label: { Label("Analyse", systemImage: "chart.line.uptrend.xyaxis") }
                     NavigationLink { ReportsView() } label: { Label("Wochen- und Monatsberichte", systemImage: "calendar.badge.clock") }
+                    NavigationLink { MonthlyReportView() } label: { Label("Monatsbericht als Excel oder PDF teilen", systemImage: "square.and.arrow.up.on.square") }
+                    NavigationLink { SupplementsView() } label: { Label("Supplements (z. B. Kreatin)", systemImage: "pills") }
                     NavigationLink { SportView() } label: { Label("Sport und Laufen", systemImage: "figure.run") }
                 }
             }

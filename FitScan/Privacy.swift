@@ -22,7 +22,7 @@ struct ConsentView: View {
                 Text("Willkommen bei BFC").font(.largeTitle.bold())
                 Text("Deine Daten gehören dir. BFC speichert alles auf deinem iPhone und lädt keine Gesundheitsdaten auf Server hoch.")
                 Group {
-                    Label("Apple Health: Schritte, Workouts, Gewicht und Puls werden gelesen, um deinen Fortschritt und Rang zu berechnen.", systemImage: "heart.text.square")
+                    Label("Apple Health: Schritte, Workouts, Gewicht, Puls, HRV, Schlaf und Achtsamkeit werden gelesen, um Fortschritt, Erholung und Rang zu berechnen.", systemImage: "heart.text.square")
                     Label("Körperscan und Maße bleiben lokal auf dem Gerät.", systemImage: "figure.stand")
                     Label("Standort nur während eines Trainings draußen, für Karte und Strecke.", systemImage: "location")
                     Label("Teilen passiert nur, wenn du selbst auf „Teilen“ tippst.", systemImage: "square.and.arrow.up")
@@ -91,6 +91,13 @@ struct PrivacySection: View {
             case is String, is NSNumber, is [Any], is [String: Any]:
                 if JSONSerialization.isValidJSONObject([k: v]) { out[k] = v }
             default: break
+            }
+        }
+        // Training und Supplements liegen als Dateien im App-Ordner
+        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        for name in ["fitscan-data.json", SupplementStore.fileName] {
+            if let d = try? Data(contentsOf: docs.appendingPathComponent(name)), let obj = try? JSONSerialization.jsonObject(with: d) {
+                out["file." + name] = obj
             }
         }
         guard let data = try? JSONSerialization.data(withJSONObject: out, options: [.prettyPrinted, .sortedKeys]) else { return nil }

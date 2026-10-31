@@ -197,6 +197,7 @@ struct NutritionView: View {
                 .buttonStyle(.borderless)
             Button { customSlot = slot } label: { Label("Eigener Eintrag", systemImage: "plus") }
                 .buttonStyle(.borderless)
+            MealPhotoRow(day: day, slot: slot)
         } header: {
             HStack {
                 Label(slot.rawValue, systemImage: slot.icon)
@@ -287,6 +288,13 @@ struct RecipeLibraryView: View {
                     NavigationLink { CommunityView() } label: { Label("Community-Rezepte", systemImage: "person.3") }
                 }
                 NavigationLink { RecipePhotosView() } label: { Label("Fotos für Essenspläne hochladen", systemImage: "photo.on.rectangle.angled") }
+            }
+            Section {
+                OnlineRecipeLinks()
+            } header: {
+                Text("Mehr Rezepte im Internet")
+            } footer: {
+                Text("Öffnet die Seite im Browser. Gefällt dir ein Rezept, leg es mit + als eigenes Rezept an; dann rechnet die App Kalorien und Eiweiß aus.")
             }
             Section {
                 ScrollView(.horizontal, showsIndicators: false) {

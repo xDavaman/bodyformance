@@ -52,6 +52,17 @@ struct ExerciseDetailView: View {
                 }
             }
 
+            Section {
+                Toggle("Kann ich machen", isOn: Binding(get: { !profile.excludedExercises.contains(exercise.name) },
+                                                        set: { profile.setCanDo(exercise, $0) }))
+                if !profile.allows(exercise.equipment) {
+                    Label("\(exercise.equipment.rawValue) hast du laut „Meine Geräte“ nicht.", systemImage: "exclamationmark.circle")
+                        .font(.footnote).foregroundStyle(.orange)
+                }
+            } footer: {
+                Text("Ausgeschaltet nimmt der Plan eine Ersatzübung für denselben Muskel.")
+            }
+
             if exercise.isMobility {
                 MobilityTimerSection(exercise: exercise)
             } else {

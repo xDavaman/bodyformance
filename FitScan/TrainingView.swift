@@ -2,12 +2,31 @@ import SwiftUI
 
 struct TrainingView: View {
     @EnvironmentObject var profile: UserProfile
+    @ObservedObject private var flow = WorkoutFlow.shared
 
     var body: some View {
         NavigationStack {
             let days = PlanBuilder.plan(profile: profile)
             let plan = profile.effectivePlan
             List {
+                Section {
+                    NavigationLink { WorkoutFlowView() } label: {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Label(flow.isActive ? "Training läuft: \(flow.title)" : "Heutiges Training starten",
+                                  systemImage: flow.isActive ? "record.circle" : "play.circle.fill")
+                                .font(.headline)
+                            Text("Aufwärmen und Dehnen → Kraft oder Cardio → Mobility-Abschluss")
+                                .font(.footnote).foregroundStyle(.secondary)
+                        }
+                    }
+                    if !profile.gearAsked {
+                        NavigationLink { GearSetupView() } label: {
+                            Label("Welche Geräte hast du immer? Kurz auswählen, dann passt der Plan.", systemImage: "questionmark.circle")
+                                .foregroundStyle(.orange)
+                        }
+                    }
+                }
+
                 Section {
                     LabeledContent("Ziel", value: profile.goal.rawValue)
                     LabeledContent("Optik", value: profile.aesthetic.rawValue)
@@ -21,6 +40,7 @@ struct TrainingView: View {
                             .font(.headline)
                     }
                     NavigationLink("Ziel und Plan anpassen") { ProfileView() }
+                    NavigationLink("Meine Geräte und Übungen") { GearSetupView() }
                 } header: {
                     Text("Dein Plan")
                 } footer: {
@@ -40,6 +60,10 @@ struct TrainingView: View {
 
                 ForEach(Array(days.enumerated()), id: \.element.id) { index, day in
                     Section {
+                        NavigationLink { WorkoutFlowView(dayIndex: index) } label: {
+                            Label("Diesen Tag mit Aufwärmen und Mobility starten", systemImage: "play.circle")
+                                .font(.subheadline)
+                        }
                         ForEach(day.items) { item in
                             NavigationLink {
                                 ExerciseDetailView(exercise: item.exercise)
@@ -111,7 +135,7 @@ struct ExerciseLibraryView: View {
             (category == nil || ex.category == category)
                 && (muscle == nil || ex.primary.contains(muscle!))
                 && (equipment == nil || ex.equipment == equipment)
-                && (!onlyMine || profile.setup.allows(ex.equipment))
+                && (!onlyMine || profile.canDo(ex))
                 && (q.isEmpty || ex.name.localizedCaseInsensitiveContains(q)
                     || ex.primary.contains { $0.rawValue.localizedCaseInsensitiveContains(q) })
         }

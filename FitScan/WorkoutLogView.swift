@@ -60,6 +60,14 @@ struct ExerciseLogSections: View {
             case .seconds:
                 Stepper(value: $reps, in: 5...600, step: 5) { Text("Dauer: \(reps) s") }
             }
+            let candidate = SetLog(exercise: exercise.name, date: Date(), weightKg: exercise.kind == .seconds ? 0 : weight, reps: reps)
+            if let pct = Progression.change(of: candidate, in: store.sets) {
+                HStack {
+                    Text("Gegenüber der letzten Einheit").font(.footnote).foregroundStyle(.secondary)
+                    Spacer()
+                    PercentBadge(value: pct)
+                }
+            }
             Button("Satz speichern") {
                 store.addSet(exercise: exercise.name, weightKg: exercise.kind == .seconds ? 0 : weight, reps: reps)
             }
@@ -100,17 +108,22 @@ struct ExerciseLogSections: View {
                 .prefix(12)
         )
         if !recent.isEmpty {
-            Section("Letzte Sätze") {
+            Section {
                 ForEach(recent) { s in
                     HStack {
                         Text(s.date, format: .dateTime.day().month())
                         Spacer()
                         Text(describe(s)).foregroundStyle(.secondary)
+                        PercentBadge(value: Progression.change(of: s, in: store.sets))
                     }
                 }
                 .onDelete { offsets in
                     for i in offsets { store.remove(recent[i]) }
                 }
+            } header: {
+                Text("Letzte Sätze")
+            } footer: {
+                Text("Prozent: geschätzte Leistung (Gewicht × Wiederholungen) im Vergleich zum besten Satz der Einheit davor. Grün = besser, rot = schwächer.")
             }
         }
     }

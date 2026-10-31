@@ -82,6 +82,13 @@ final class HealthManager: ObservableObject {
         for id in ids {
             if let t = HKObjectType.quantityType(forIdentifier: id) { types.insert(t) }
         }
+        // Vitalwerte und Schlaf für die Analyse (VitalsStore)
+        for id in VitalsStore.quantityIDs {
+            if let t = HKObjectType.quantityType(forIdentifier: id) { types.insert(t) }
+        }
+        for id in VitalsStore.categoryIDs {
+            if let t = HKObjectType.categoryType(forIdentifier: id) { types.insert(t) }
+        }
         return types
     }
 
