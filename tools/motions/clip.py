@@ -360,7 +360,9 @@ def _mirrored(sk, rot, pos, props_p, props_r, lift, world):
             swap.append(sk.i(n))
     flip = np.array([1.0, -1.0, -1.0, 1.0])
     m_rot = rot[:, swap] * flip
-    m_pos = pos[:, swap].copy()
+    # Ortsteile der Gelenke bleiben die eigenen (Knochenlängen der Seite); getauscht wären sie in fremden
+    # Achsen und die App zöge Arme und Hände zu Bändern (sie nutzt die Ortsteile, die Vorschau nur die Wurzel)
+    m_pos = pos.copy()
     root = sk.i("root")
     m_pos[:, root] = pos[:, root] * np.array([-1.0, 1.0, 1.0])
     m_pp = props_p * np.array([-1.0, 1.0, 1.0])

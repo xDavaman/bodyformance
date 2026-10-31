@@ -53,6 +53,7 @@ struct ContentView: View {
                 .opacity(nav.tab == i ? 1 : 0)
                 .allowsHitTesting(nav.tab == i)
                 .accessibilityHidden(nav.tab != i)
+                .environment(\.tabActive, nav.tab == i)
         }
     }
 }

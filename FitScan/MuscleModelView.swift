@@ -34,7 +34,9 @@ struct MuscleModelView: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            MuscleRealityScene(primary: primary, secondary: secondary, showBack: showBack, motion: motion ?? .idle, gear: gear)
+            ShownOnly {
+                MuscleRealityScene(primary: primary, secondary: secondary, showBack: showBack, motion: motion ?? .idle, gear: gear)
+            }
                 .frame(height: height)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             Picker("Ansicht", selection: $showBack) {
@@ -44,6 +46,35 @@ struct MuscleModelView: View {
             .pickerStyle(.segmented)
             MuscleLegend(primary: primary, secondary: secondary, primaryLabel: primaryLabel, secondaryLabel: secondaryLabel)
         }
+    }
+}
+
+/// true im gerade gezeigten Reiter; ContentView setzt es für ausgeblendete Reiter auf false
+private struct TabActiveKey: EnvironmentKey {
+    static let defaultValue = true
+}
+
+extension EnvironmentValues {
+    var tabActive: Bool {
+        get { self[TabActiveKey.self] }
+        set { self[TabActiveKey.self] = newValue }
+    }
+}
+
+/// Baut die 3D-Szene nur, solange sie zu sehen ist (eigener Reiter aktiv, Seite nicht verdeckt oder weggescrollt).
+/// Jede ARView rendert sonst im Hintergrund weiter; nach einigen Übungen blieben neue 3D-Ansichten schwarz.
+struct ShownOnly<Content: View>: View {
+    @Environment(\.tabActive) private var tabActive
+    @State private var onScreen = false
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
+        ZStack {
+            Color.black
+            if tabActive && onScreen { content() }
+        }
+        .onAppear { onScreen = true }
+        .onDisappear { onScreen = false }
     }
 }
 
@@ -198,6 +229,13 @@ struct MuscleRealityScene: UIViewRepresentable {
         return view
     }
 
+    /// Szene abbauen: Bildtakt abmelden und Inhalte lösen, damit keine Render-Ressourcen liegen bleiben
+    static func dismantleUIView(_ view: ARView, coordinator: Coordinator) {
+        coordinator.subscription?.cancel()
+        coordinator.subscription = nil
+        view.scene.anchors.removeAll()
+    }
+
     func updateUIView(_ view: ARView, context: Context) {
         let c = context.coordinator
         if let shape { c.rig.applyShape(shape) }
@@ -207,17 +245,20 @@ struct MuscleRealityScene: UIViewRepresentable {
             c.rig.setHighlight(primary: primary, secondary: secondary, neutral: MuscleRealityScene.neutralBody)
         }
         if c.motion != motion || c.gear != gear || !c.started {
+            // Erst beim Wechsel überblenden; beim ersten Bild stünde sonst die Ruhehaltung des Modells (T-Pose) am Anfang
+            if c.started { c.rig.beginTransition() }
             c.started = true
             c.motion = motion
             c.gear = gear
             let def = BodyRig.library[motion] ?? BodyRig.library[.idle]!
             c.motionDef = def
-            c.rig.beginTransition()
             c.clip = MotionStore.clips[motion.rawValue] ?? MotionStore.clips["idle"]
             c.time = 0
             c.layout = GymLayout.forMotion(motion, def: def, gear: gear)
             c.rig.gym.setLayout(c.layout)
             c.camera?.camera.fieldOfViewInDegrees = c.layout.fov
+            // Haltung sofort setzen: sonst zeigt das erste Bild die verzerrte Ruhehaltung des Modells (T-Pose)
+            c.rig.apply(def, clip: c.clip, time: 0, gear: gear)
         }
         let target: Float = (showBack ? .pi : 0) + (c.layout.yaw ?? c.motionDef.yaw)
         if abs(c.targetYaw - target) > 0.01 {

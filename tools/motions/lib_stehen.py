@@ -63,9 +63,10 @@ clip("calfDb", "Wadenheben mit Kurzhanteln", 3.2,
 
 # =========================================================================== Hantelübungen im Stand
 
-# Bizeps-Curl: Oberarme bleiben am Körper, nur die Unterarme beugen
-CURL_LOW = stand(UP, arms((0.21, -0.48, 0.11), (0.1, 0.0, -1.0), **SUPINE))
-CURL_TOP = stand(UP, arms((0.21, -0.03, 0.13), (0.05, -1.0, -0.2), **SUPINE), neck=(-3.0, 0.0, 0.0))
+# Bizeps-Curl: Oberarme bleiben am Körper, nur die Unterarme beugen; Hände etwas seitlich und vorn,
+# damit die quer liegende Hantel unten nicht im Oberschenkel steckt
+CURL_LOW = stand(UP, arms((0.27, -0.46, 0.15), (0.1, 0.0, -1.0), **SUPINE))
+CURL_TOP = stand(UP, arms((0.24, -0.03, 0.14), (0.05, -1.0, -0.2), **SUPINE), neck=(-3.0, 0.0, 0.0))
 clip("curl", "Bizeps-Curl mit Kurzhanteln", 3.8, reps(CURL_LOW, CURL_TOP, 3.8, n=1, rest=0.12, up=0.40),
      props=DUMBBELLS, **STAND_KW)
 

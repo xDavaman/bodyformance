@@ -326,6 +326,12 @@ struct GymExploreScene: UIViewRepresentable {
         return view
     }
 
+    static func dismantleUIView(_ view: ARView, coordinator: Coordinator) {
+        coordinator.subscription?.cancel()
+        coordinator.subscription = nil
+        view.scene.anchors.removeAll()
+    }
+
     func updateUIView(_ view: ARView, context: Context) {
         let c = context.coordinator
         c.parent = self
@@ -344,7 +350,7 @@ struct GymExploreView: View {
     var body: some View {
         VStack(spacing: 0) {
             ZStack(alignment: .top) {
-                GymExploreScene(selected: $selected, focus: focus)
+                ShownOnly { GymExploreScene(selected: $selected, focus: focus) }
                 Text("Wischen zum Umschauen, Gerät antippen")
                     .font(.footnote)
                     .padding(.horizontal, 12).padding(.vertical, 6)

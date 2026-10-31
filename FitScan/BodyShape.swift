@@ -409,7 +409,7 @@ struct BodyShapeView: View {
     var body: some View {
         Form {
             Section {
-                MuscleRealityScene(primary: [], secondary: [], showBack: back, motion: .idle, shape: shape)
+                ShownOnly { MuscleRealityScene(primary: [], secondary: [], showBack: back, motion: .idle, shape: shape) }
                     .frame(height: 380)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .listRowInsets(EdgeInsets())

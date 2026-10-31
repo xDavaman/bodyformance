@@ -29,3 +29,22 @@ def test_neue_bewegungen_ohne_fehler():
         if f:
             falsch[name] = f
     assert not falsch
+
+
+def test_gelenke_behalten_ihre_knochenlaenge():
+    """Nur die Wurzel bewegt sich: die App setzt die Ortsteile aller Gelenke, wechselnde Ortsteile (früher beim
+    Spiegeln einseitiger Übungen) ziehen Arme und Hände zu Bändern."""
+    import numpy as np
+
+    from motions.rig import skeleton
+    from motions.szene import read_motions
+
+    sk = skeleton()
+    root = sk.i("root")
+    falsch = {}
+    for name, mo in read_motions().items():
+        spread = np.linalg.norm(np.ptp(mo.pos, axis=0), axis=1)
+        spread[root] = 0
+        if spread.max() > 0.05:
+            falsch[name] = sk.names[int(spread.argmax())]
+    assert not falsch

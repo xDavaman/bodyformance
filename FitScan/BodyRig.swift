@@ -449,11 +449,14 @@ final class BodyRig {
     func setHighlight(primary: [Muscle], secondary: [Muscle], neutral: UIColor) {
         highlight = (primary, secondary, neutral)
         glowLevel = -1
+        textureShown = false
         setGlow(level: 4)
     }
 
     private var highlight: (primary: [Muscle], secondary: [Muscle], neutral: UIColor)?
     private var glowLevel = -1
+    /// true, sobald die Muskeltextur der aktuellen Übung einmal gesetzt wurde
+    private var textureShown = false
     private static let glowLevels = 8
 
     /// Aktive Muskeln leuchten mit der Anstrengung der Bewegung stärker (Stufen, damit nicht jedes Bild neue
@@ -478,15 +481,22 @@ final class BodyRig {
             mat.clearcoatRoughness = .init(floatLiteral: 0.6)
             if let tex = MuscleAtlas.texture(primary: primary, secondary: secondary, neutral: neutral, level: step) {
                 mat.baseColor = .init(tint: .white, texture: .init(tex))
+                textureShown = true
             } else {
-                // Texturen der Übung entstehen im Hintergrund; bis dahin Hautfarbe, die Bewegung läuft weiter
-                mat.baseColor = .init(tint: neutral)
-                MuscleAtlas.prepare(primary: primary, secondary: secondary, neutral: neutral) { [weak self] in
+                // Texturen der Übung entstehen im Hintergrund; bis dahin bleibt die bisherige Färbung stehen
+                // (beim ersten Mal Hautfarbe), die Bewegung läuft weiter
+                let reapply = { [weak self] in
                     guard let self, self.highlight != nil else { return }
                     let level = max(self.glowLevel, 0)
                     self.glowLevel = -1
                     self.setGlow(level: level)
                 }
+                if textureShown {
+                    MuscleAtlas.prepare(primary: primary, secondary: secondary, neutral: neutral, ready: reapply)
+                    return
+                }
+                mat.baseColor = .init(tint: neutral)
+                MuscleAtlas.prepare(primary: primary, secondary: secondary, neutral: neutral, ready: reapply)
             }
             mc.materials = Array(repeating: mat, count: max(mc.materials.count, 1))
             m.components.set(mc)
