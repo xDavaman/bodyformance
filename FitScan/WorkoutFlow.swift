@@ -503,6 +503,7 @@ struct WorkoutFlowView: View {
 
     private var phaseHeader: some View {
         Section {
+            RecoveryHint()
             HStack(spacing: 8) {
                 ForEach(FlowPhase.allCases, id: \.self) { p in
                     let stepsIn = flow.steps.filter { $0.phase == p }

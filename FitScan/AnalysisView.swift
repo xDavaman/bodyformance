@@ -49,6 +49,18 @@ struct AnalysisView: View {
 
     var body: some View {
         List {
+            Section {
+                NavigationLink { MonthlyReportView() } label: {
+                    Label("Analyse teilen: Excel, PDF, Monatsbericht", systemImage: "square.and.arrow.up.on.square")
+                }
+                NavigationLink { VitalsView() } label: {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Label("Schlaf, Herzfrequenz, Erholung, Belastung", systemImage: "waveform.path.ecg")
+                        RecoveryHint()
+                    }
+                }
+                NavigationLink { SupplementsView() } label: { Label("Supplements und Einnahme", systemImage: "pills") }
+            }
             summarySection
             nextSessionSection
             if premium.has(.fullAnalyses) {

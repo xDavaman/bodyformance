@@ -18,6 +18,8 @@ struct FitScanApp: App {
     @StateObject private var avatar = AvatarStore()
     @StateObject private var rank = RankStore()
     @StateObject private var premium = PremiumStore()
+    @StateObject private var supplements = SupplementStore()
+    @StateObject private var vitals = VitalsStore()
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("bfc.consent.answered") private var consentGiven = false
 
@@ -39,6 +41,8 @@ struct FitScanApp: App {
                 .environmentObject(avatar)
                 .environmentObject(rank)
                 .environmentObject(premium)
+                .environmentObject(supplements)
+                .environmentObject(vitals)
                 .keyboardFriendly()
                 .onChange(of: scenePhase) { _, phase in
                     if phase == .active {
@@ -52,6 +56,8 @@ struct FitScanApp: App {
                     if consentGiven { steps.start() }
                     Analytics.track(.appOpen)
                     health.sessionLog = sessionLog
+                    WorkoutFlow.shared.store = store
+                    WorkoutFlow.shared.sessionLog = sessionLog
                 }
         }
     }
