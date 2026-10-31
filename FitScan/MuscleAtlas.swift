@@ -90,7 +90,9 @@ enum MuscleAtlas {
         if list.count == glowSteps {
             cache[k] = list
             cacheOrder.append(k)
-            if cacheOrder.count > 3 { cache[cacheOrder.removeFirst()] = nil }
+            // mehrere Ansichten (Profil, Analyse, Übung) gleichzeitig: bei zu kleinem Speicher verdrängten sie sich
+            // gegenseitig und die Farben fielen bei jedem Stufenwechsel auf Hautfarbe zurück
+            if cacheOrder.count > 8 { cache[cacheOrder.removeFirst()] = nil }
         }
         let calls = waiting.removeValue(forKey: k) ?? []
         if list.count == glowSteps { calls.forEach { $0() } }
@@ -119,8 +121,9 @@ enum MuscleAtlas {
         // Bei Anstrengung werden aktive Muskeln heller und leuchtender, passive etwas.
         var lut = [Float](repeating: 0, count: 3 * 65536 * 3)
         let colors = [skin, passive, active]
-        let hot = [skin, SIMD3<Float>(1.0, 0.93, 0.45), SIMD3<Float>(1.0, 0.42, 0.30)]
-        let heat: [Float] = [0, 0.25 * glow, 0.55 * glow]
+        // Ziel bleibt kräftig rot bzw. gelb: ein blasses Lachsrot verschwamm oben im Curl mit der Hautfarbe
+        let hot = [skin, SIMD3<Float>(1.0, 0.88, 0.25), SIMD3<Float>(1.0, 0.22, 0.14)]
+        let heat: [Float] = [0, 0.25 * glow, 0.45 * glow]
         for r in 1...2 {
             for fi in 0..<256 {
                 for si in 0..<256 {

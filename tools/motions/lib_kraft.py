@@ -320,8 +320,11 @@ _HIP_HALF = stand(UPRIGHT, footR=(-0.13, ANKLE + 0.02, -0.55), kneeR=(-0.1, -0.4
 _HIP_KNEEL = stand(UPRIGHT, footR=(-0.13, 0.08, -1.02), kneeR=(-0.1, -1.0, 0.0), soleR=(0.0, 0.0, 0.0), ankleR=75.0,
                    kneeL=(0.1, 0.0, 1.0), root=(0.0, 0.52, -0.42), body=(0.0, 0.0, 0.0))
 _HIP_PUSH = stand(_HIP_KNEEL, ARMS_HIGH, root=(0.0, 0.48, -0.36), body=(0.0, -6.0, 0.0), spine=(-6.0, 0.0, 0.0))
+# Arme vorn auf Schulterhöhe als Zwischenhaltung: direkt von unten nach oben zögen die Hände durch Brust und Kopf
+_HIP_ARMS_FWD = arms((0.18, 0.02, 0.50), (1.0, -0.3, 0.0), grip=0.1)
 clip("hipStretch", "Hüftbeuger-Dehnung im Kniestand", 14.0,
-     sides(UPRIGHT, _HIP_PUSH, half=7.0, move=0.30, hold=0.46, via=_HIP_KNEEL, back=_HIP_HALF),
+     sides(UPRIGHT, _HIP_PUSH, half=7.0, move=0.30, hold=0.46, via=stand(_HIP_KNEEL, _HIP_ARMS_FWD),
+           back=stand(_HIP_HALF, arms((0.19, -0.12, 0.46), (1.0, -0.3, 0.0), grip=0.1))),
      **dict(LUNGE_KW, step_lift=0.16))
 
 # Krieger I: rechter Fuß weit nach hinten, schräg gestellt, vorderes Knie über dem Fuß, Arme über dem Kopf
@@ -331,7 +334,8 @@ _W1 = stand(ARMS_HIGH, footR=(-0.16, ANKLE, -1.08), soleR=(1.0, -45.0, 0.0), kne
 _W1_STEP = stand(UPRIGHT, footR=(-0.16, ANKLE, -1.08), soleR=(1.0, -45.0, 0.0), kneeR=(-0.4, 0.0, 1.0),
                  root=(0.0, 0.84, -0.50))
 clip("warrior1", "Yoga: Krieger I", 14.0,
-     sides(UPRIGHT, _W1, half=7.0, move=0.30, hold=0.46, via=_W1_STEP, back=_W1_STEP), **LUNGE_KW)
+     sides(UPRIGHT, _W1, half=7.0, move=0.30, hold=0.46, via=stand(_W1_STEP, _HIP_ARMS_FWD),
+           back=stand(_W1_STEP, arms((0.19, -0.12, 0.46), (1.0, -0.3, 0.0), grip=0.1))), **LUNGE_KW)
 
 # Krieger II: linker Fuß weit zur Seite und nach außen gedreht, Knie gebeugt, Arme waagerecht, Blick über die Hand
 _W2 = stand(arms((0.78, 0.06, 0.0), (0.0, -1.0, 0.0), grip=0.05), footL=(0.66, ANKLE, 0.0),
