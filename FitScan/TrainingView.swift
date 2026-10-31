@@ -3,6 +3,8 @@ import SwiftUI
 struct TrainingView: View {
     @EnvironmentObject var profile: UserProfile
     @ObservedObject private var flow = WorkoutFlow.shared
+    @EnvironmentObject var nav: AppNav
+    @EnvironmentObject var store: TrainingStore
 
     var body: some View {
         NavigationStack {
@@ -92,6 +94,9 @@ struct TrainingView: View {
                 }
             }
             .navigationTitle("Trainingsplan")
+            .navigationDestination(isPresented: $nav.openWorkout) { WorkoutFlowView(autoStart: nav.autoStartWorkout) }
+            .onAppear { LiveWorkout.refreshPlan() }
+            .onChange(of: store.sets.count) { _, _ in LiveWorkout.refreshPlan() }
         }
     }
 }

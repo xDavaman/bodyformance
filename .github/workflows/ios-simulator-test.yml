@@ -9,6 +9,10 @@ on:
     branches: [ "main" ]
     paths:
       - "FitScan/**"
+      - "Shared/**"
+      - "BFCWidgets/**"
+      - "BFCWidgets-Info.plist"
+      - "BFCWidgets.entitlements"
       - "FitScan.xcodeproj/**"
       - "uitests/**"
   workflow_dispatch:

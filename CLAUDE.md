@@ -16,3 +16,7 @@ Xcode-Projekt im Repo-Root: `FitScan.xcodeproj`, Quellen in `FitScan/` (Name sta
 - Erzeugt werden die Clips mit der Blender-Pipeline in `tools/videopipeline` (läuft auf Seans Windows-PC, siehe dortige README/STATUS).
 
 Offene Funktionen: `docs/ROADMAP.md`. Monetarisierung: `docs/MONETARISIERUNG.md`.
+
+## Widgets und Sperrbildschirm
+- Ziel `BFCWidgets` (Widget-Erweiterung) mit Ordner `BFCWidgets/`; Code für App und Erweiterung in `Shared/` (beide Ziele).
+- Daten für die Widgets schreibt `LiveWorkout.swift` in die App Group `group.test.FitScan`; die Knöpfe (LiveActivityIntent) laufen im App-Prozess über `WorkoutControl`.

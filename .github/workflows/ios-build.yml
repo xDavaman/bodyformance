@@ -8,6 +8,10 @@ on:
   pull_request:
     paths:
       - "FitScan/**"
+      - "Shared/**"
+      - "BFCWidgets/**"
+      - "BFCWidgets-Info.plist"
+      - "BFCWidgets.entitlements"
       - "FitScan.xcodeproj/**"
       - "BFC-Info.plist"
       - "FitScan.entitlements"
