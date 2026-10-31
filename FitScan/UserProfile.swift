@@ -81,7 +81,12 @@ final class UserProfile: ObservableObject {
     }
     var setup: Setup {
         get { Setup(rawValue: setupRaw) ?? .gym }
-        set { setupRaw = newValue.rawValue; objectWillChange.send() }
+        set {
+            setupRaw = newValue.rawValue
+            // neue Grundausstattung gewählt: feine Geräteauswahl (Meine Geräte) neu davon ableiten
+            UserDefaults.standard.removeObject(forKey: "ownedEquipment")
+            objectWillChange.send()
+        }
     }
     var sport: Sport {
         get { Sport(rawValue: sportRaw) ?? .none }

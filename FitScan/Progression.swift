@@ -295,3 +295,37 @@ enum Progression {
         }
     }
 }
+
+// MARK: - Vergleich mit der letzten Einheit
+
+extension Progression {
+    /// Bester Vergleichswert (geschätztes Maximum) der letzten Einheit vor dem Tag von `date`
+    static func previousBest(exercise: String, before date: Date, in sets: [SetLog]) -> Double? {
+        let cal = Calendar.current
+        let day = cal.startOfDay(for: date)
+        let earlier = sets.filter { $0.exercise == exercise && $0.date < day }
+        guard let lastDay = earlier.map({ cal.startOfDay(for: $0.date) }).max() else { return nil }
+        return earlier.filter { cal.startOfDay(for: $0.date) == lastDay }.map(\.e1RM).max()
+    }
+
+    /// Veränderung in Prozent gegenüber dem Vergleichswert (nil ohne Vergleich)
+    static func change(_ value: Double, vs reference: Double?) -> Double? {
+        guard let r = reference, r > 0, value > 0 else { return nil }
+        return (value - r) / r * 100
+    }
+
+    /// Veränderung eines eingetragenen Satzes gegenüber der besten Leistung der Einheit davor
+    static func change(of set: SetLog, in sets: [SetLog]) -> Double? {
+        change(set.e1RM, vs: previousBest(exercise: set.exercise, before: set.date, in: sets))
+    }
+}
+
+extension UserProfile {
+    /// Satzpause in Sekunden (erste Zahl der Pausen-Angabe, z. B. „2–3 Minuten“ → 120)
+    var restSeconds: Int {
+        let text = effectivePlan.rest
+        let digits = text.prefix { $0.isNumber }
+        let n = Int(digits) ?? 90
+        return text.contains("Minute") ? n * 60 : n
+    }
+}

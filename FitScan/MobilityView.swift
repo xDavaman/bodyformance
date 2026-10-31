@@ -40,7 +40,7 @@ struct MobilityView: View {
         let q = search.trimmingCharacters(in: .whitespaces)
         return ExerciseCatalog.libraryMobility.filter {
             (region == nil || $0.region == region) && (style == nil || MobilityStyle.of($0) == style)
-                && profile.setup.allows($0.equipment)
+                && profile.canDo($0)
                 && (q.isEmpty || $0.name.localizedCaseInsensitiveContains(q))
         }
     }

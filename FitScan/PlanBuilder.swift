@@ -82,17 +82,32 @@ enum PlanBuilder {
         let goal = profile.trainingGoal
         let days = max(2, min(6, goal?.strengthDays(of: profile.trainingDays) ?? profile.trainingDays))
         let focus = profile.focusMuscles
-        let setup: Setup = goal == .calisthenics ? .bodyweight : profile.setup
+        let excluded = profile.excludedExercises
+        // Calisthenics immer mit Körpergewicht, sonst die eigenen Geräte (Meine Geräte) bzw. die Ausstattung
+        let can: (Exercise) -> Bool = { ex in
+            !excluded.contains(ex.name) && (goal == .calisthenics ? Setup.bodyweight.allows(ex.equipment) : profile.allows(ex.equipment))
+        }
 
         func day(_ name: String, _ sub: String, _ slots: Slots, _ muscles: Set<Muscle>) -> TrainingDay {
             var used = Set<String>()
             var items: [PlannedExercise] = []
             for options in slots {
+                var picked = false
                 for n in options {
-                    guard let ex = ExerciseCatalog.exercise(named: n), setup.allows(ex.equipment), !used.contains(n) else { continue }
+                    guard let ex = ExerciseCatalog.exercise(named: n), can(ex), !used.contains(n) else { continue }
                     used.insert(n)
                     items.append(PlannedExercise(exercise: ex, isFocus: !focus.isDisjoint(with: ex.primary)))
+                    picked = true
                     break
+                }
+                // keine Variante möglich (Gerät fehlt oder Übung ausgeschlossen): Ersatz für denselben Hauptmuskel
+                if !picked, let target = options.compactMap({ ExerciseCatalog.exercise(named: $0) }).first?.primary.first,
+                   let sub = ExerciseCatalog.libraryTraining.first(where: {
+                       $0.primary.first == target && [.strength, .calisthenics, .core].contains($0.category)
+                           && can($0) && !used.contains($0.name)
+                   }) {
+                    used.insert(sub.name)
+                    items.append(PlannedExercise(exercise: sub, isFocus: !focus.isDisjoint(with: sub.primary)))
                 }
             }
             // Zusätzliche Übung für jeden Schwerpunkt-Muskel dieses Tages
@@ -100,7 +115,7 @@ enum PlanBuilder {
                 if items.filter({ $0.exercise.primary.contains(m) }).count >= 2 { continue }
                 if let extra = ExerciseCatalog.training.first(where: {
                     $0.primary.contains(m) && $0.category != .drill && $0.category != .core
-                        && setup.allows($0.equipment) && !used.contains($0.name)
+                        && can($0) && !used.contains($0.name)
                 }) {
                     used.insert(extra.name)
                     items.append(PlannedExercise(exercise: extra, isFocus: true))
@@ -196,7 +211,7 @@ enum MobilityPlanner {
 
         var result: [Pick] = []
         for (region, _) in scored {
-            let options = ExerciseCatalog.mobility(in: region).filter { profile.setup.allows($0.equipment) }
+            let options = ExerciseCatalog.mobility(in: region).filter { profile.canDo($0) }
             // am längsten nicht gemacht zuerst
             let lastDone: (Exercise) -> Date = { ex in
                 logs.filter { $0.exercise == ex.name }.map(\.date).max() ?? .distantPast
