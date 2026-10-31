@@ -6,8 +6,9 @@ def linear(c):
 
 
 MATERIALIEN = {
-    # Rahmen: schwarz pulverbeschichteter Stahl, Akzente in Markenrot
-    "rahmen": {"farbe": (0.075, 0.075, 0.08), "rau": 0.42, "metall": 0.15, "lack": 0.3},
+    # gym80-Stil: Rahmen anthrazit-metallic pulverbeschichtet (ähnlich RAL 7016), Akzente in Signalrot,
+    # Polster schwarz mit roter Ziernaht, silberne Abdeckungen und Typenschilder
+    "rahmen": {"farbe": (0.165, 0.175, 0.185), "rau": 0.36, "metall": 0.45, "lack": 0.45},
     "rahmen_rot": {"farbe": (0.70, 0.09, 0.07), "rau": 0.38, "metall": 0.1, "lack": 0.4},
     "rahmen_grau": {"farbe": (0.30, 0.31, 0.33), "rau": 0.45, "metall": 0.2},
     "chrom": {"farbe": (0.86, 0.86, 0.88), "rau": 0.12, "metall": 1.0},
@@ -15,7 +16,10 @@ MATERIALIEN = {
     "raendel": {"farbe": (0.52, 0.53, 0.55), "rau": 0.6, "metall": 1.0},
     "gummi": {"farbe": (0.035, 0.035, 0.037), "rau": 0.85},
     "polster": {"farbe": (0.055, 0.055, 0.058), "rau": 0.5, "lack": 0.15},
-    "naht": {"farbe": (0.16, 0.16, 0.17), "rau": 0.6},
+    "naht": {"farbe": (0.62, 0.08, 0.07), "rau": 0.6},
+    "blende": {"farbe": (0.11, 0.115, 0.12), "rau": 0.3, "metall": 0.5, "lack": 0.5},
+    "blende_silber": {"farbe": (0.72, 0.73, 0.75), "rau": 0.28, "metall": 0.85},
+    "lochblech": {"farbe": (0.02, 0.02, 0.022), "rau": 0.8},
     "griff": {"farbe": (0.06, 0.06, 0.06), "rau": 0.9},
     "scheibe_eisen": {"farbe": (0.12, 0.12, 0.13), "rau": 0.55, "metall": 0.6},
     "stapel": {"farbe": (0.20, 0.205, 0.215), "rau": 0.4, "metall": 0.55},

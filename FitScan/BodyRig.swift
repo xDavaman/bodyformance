@@ -472,8 +472,10 @@ final class BodyRig {
         let step = Int(((activeGlow - 0.15) / 0.75 * Float(MuscleAtlas.glowSteps - 1)).rounded())
         if muscleTextured {
             var mat = PhysicallyBasedMaterial()
-            mat.roughness = .init(floatLiteral: 0.55)
+            mat.roughness = .init(floatLiteral: 0.5)
             mat.metallic = .init(floatLiteral: 0)
+            mat.clearcoat = .init(floatLiteral: 0.12)
+            mat.clearcoatRoughness = .init(floatLiteral: 0.6)
             if let tex = MuscleAtlas.texture(primary: primary, secondary: secondary, neutral: neutral, level: step) {
                 mat.baseColor = .init(tint: .white, texture: .init(tex))
             } else {
