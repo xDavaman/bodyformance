@@ -343,3 +343,4 @@ from . import lib_aktiv  # noqa: E402,F401
 from . import lib_kraft  # noqa: E402,F401
 from . import lib_stehen  # noqa: E402,F401
 from . import lib_dehnen  # noqa: E402,F401
+from . import lib_pilates  # noqa: E402,F401

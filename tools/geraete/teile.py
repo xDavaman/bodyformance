@@ -8,20 +8,23 @@ from .mesh import (Model, Rx, Ry, Rz, T, S, bar, chain, cylinder, lathe, quad, r
 
 # MARK: Rohre und Gestell
 
+# Eckenradius der Rahmenprofile: stark verrundete Rechteckrohre wie bei gym80, nicht scharfkantig
+PROFIL_R = 0.016
 
-def post(m, x, z, y0, y1, w=0.075, d=None, mat="rahmen", r=0.006):
+
+def post(m, x, z, y0, y1, w=0.075, d=None, mat="rahmen", r=PROFIL_R):
     """Senkrechtes Vierkantrohr (Breite w in x, Tiefe d in z)"""
     d = w if d is None else d
     m.add(mat, bar([(x, y0, z), (x, y1, z)], w, d, r, up=(0, 0, 1)))
 
 
-def beam_x(m, x0, x1, y, z, w=0.075, h=None, mat="rahmen", r=0.006):
+def beam_x(m, x0, x1, y, z, w=0.075, h=None, mat="rahmen", r=PROFIL_R):
     """Waagrechtes Vierkantrohr entlang x (Tiefe w in z, Höhe h)"""
     h = w if h is None else h
     m.add(mat, bar([(x0, y, z), (x1, y, z)], w, h, r))
 
 
-def beam_z(m, z0, z1, y, x, w=0.075, h=None, mat="rahmen", r=0.006):
+def beam_z(m, z0, z1, y, x, w=0.075, h=None, mat="rahmen", r=PROFIL_R):
     h = w if h is None else h
     m.add(mat, bar([(x, y, z0), (x, y, z1)], w, h, r))
 
@@ -282,7 +285,21 @@ def weight_stack(m, x, z, plates=16, y0=0.10, w=0.30, d=0.16, th=0.045, pin=7, r
     return yt + 0.05
 
 
-__all__ = ["post", "beam_x", "beam_z", "holes", "foot_cap", "leveler", "plate_bolt", "bumper", "iron_plate", "dumbbell",
+def stack_shroud(m, x, z, w, d, y0, y1, slot=0.05):
+    """Gewichtsabdeckung im gym80-Stil: geschlossene Seitenwände, Front aus zwei Blenden mit Schlitz für den
+    Wahlstift, darin Lochblech-Streifen; oben ein silbernes Typenschild mit rotem Streifen. Front zeigt nach −z."""
+    h, yc = y1 - y0, (y0 + y1) / 2
+    zf = z - d / 2 - 0.035
+    for s in (-1, 1):
+        m.add("blende", rbox((0.008, h, d + 0.07), 0.004, 2, center=(x + s * (w / 2 + 0.035), yc, z)))
+        bw = (w + 0.07 - slot) / 2
+        m.add("blende", rbox((bw, h, 0.008), 0.004, 2, center=(x + s * (slot / 2 + bw / 2), yc, zf)))
+    m.add("lochblech", rbox((slot, h - 0.02, 0.002), 0.001, 1, center=(x, yc, zf + 0.012)))
+    m.add("blende_silber", rbox((w + 0.03, 0.10, 0.006), 0.003, 2, center=(x, y1 - 0.09, zf - 0.006)))
+    m.add("rahmen_rot", rbox((w + 0.03, 0.012, 0.007), 0.002, 1, center=(x, y1 - 0.15, zf - 0.006)))
+
+
+__all__ = ["stack_shroud", "PROFIL_R", "post", "beam_x", "beam_z", "holes", "foot_cap", "leveler", "plate_bolt", "bumper", "iron_plate", "dumbbell",
            "kettlebell", "barbell", "bench_frame", "bench_back", "pulley", "handle", "weight_stack", "S", "rrect", "bar",
            "tube", "sweep", "quad", "rbox", "cylinder", "lathe", "sphere", "torus", "chain", "T", "Rx", "Ry", "Rz",
            "Model", "superpad", "tube_ring"]

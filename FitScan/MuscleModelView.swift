@@ -105,7 +105,8 @@ struct MuscleRealityScene: UIViewRepresentable {
     /// Eigene Form; nil = gespeicherte Form (BodyShape.current) beim Erstellen
     var shape: BodyShape? = nil
 
-    static let neutralBody = UIColor(white: 0.80, alpha: 1)
+    /// Warmer, natürlicher Hautton statt Grau; die Muskelkarte (rot/gelb) liegt darauf
+    static let neutralBody = UIColor(red: 0.85, green: 0.71, blue: 0.61, alpha: 1)
 
     final class Coordinator: NSObject {
         let turntable = Entity()
@@ -139,8 +140,11 @@ struct MuscleRealityScene: UIViewRepresentable {
         static func material(_ color: UIColor) -> PhysicallyBasedMaterial {
             var m = PhysicallyBasedMaterial()
             m.baseColor = .init(tint: color)
-            m.roughness = .init(floatLiteral: 0.55)
+            m.roughness = .init(floatLiteral: 0.5)
             m.metallic = .init(floatLiteral: 0)
+            // leichter Hautglanz
+            m.clearcoat = .init(floatLiteral: 0.12)
+            m.clearcoatRoughness = .init(floatLiteral: 0.6)
             return m
         }
 

@@ -246,7 +246,9 @@ def bake(rig: Rig, clip: Clip, fps: float = FPS) -> Baked:
             lows[f] = sk.skin(wr, wp, step=7)[:, 1].min()
     lift = np.zeros(nf)
     if clip.ground:
-        lift = _smooth_cyclic(clip.floor - lows, 1.5)
+        need = clip.floor - lows
+        # Glätten nimmt kurze Spitzen weg; danach nie unter das Nötige fallen, sonst sinkt der Körper ein
+        lift = np.maximum(_smooth_cyclic(need, 1.5), need)
     rot = np.zeros((nf, len(sk), 4))
     pos = np.zeros((nf, len(sk), 3))
     props_p = np.zeros((nf, len(clip.props), 3))

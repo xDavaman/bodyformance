@@ -88,10 +88,20 @@ final class ScanSchedule: ObservableObject {
     }
 
     /// Plant die Erinnerung für den nächsten Scan-Tag um 9 Uhr.
+    /// Die Mitteilungszentrale antwortet synchron über XPC; beim Start blockierte das den ersten Bildaufbau
+    /// (weißer Bildschirm, im Simulator bis zu einer Minute). Darum läuft der Aufruf im Hintergrund.
     func reschedule() {
+        let id = noteID
+        let due = remindersOn ? nextDue : nil
+        DispatchQueue.global(qos: .utility).async {
+            Self.planReminder(id: id, due: due)
+        }
+    }
+
+    nonisolated private static func planReminder(id: String, due: Date?) {
         let center = UNUserNotificationCenter.current()
-        center.removePendingNotificationRequests(withIdentifiers: [noteID])
-        guard remindersOn, let due = nextDue else { return }
+        center.removePendingNotificationRequests(withIdentifiers: [id])
+        guard let due else { return }
         // Erinnerung ist standardmäßig an: Erlaubnis einholen, sobald es den ersten Termin gibt (fragt nur einmal)
         center.requestAuthorization(options: [.alert, .sound]) { _, _ in }
         var comps = Calendar.current.dateComponents([.year, .month, .day], from: due)
@@ -102,7 +112,7 @@ final class ScanSchedule: ObservableObject {
         content.body = "Der nächste Scan ist fällig – so siehst du deinen Fortschritt."
         content.sound = .default
         let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
-        center.add(UNNotificationRequest(identifier: noteID, content: content, trigger: trigger))
+        center.add(UNNotificationRequest(identifier: id, content: content, trigger: trigger))
     }
 }
 

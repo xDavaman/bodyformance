@@ -7,7 +7,7 @@ import numpy as np
 from .mesh import fillet, rrect, sweep
 from .teile import (Model, Rx, Ry, Rz, T, S, bar, barbell, beam_x, beam_z, bench_back, bench_frame, bumper, chain,
                     cylinder, dumbbell, foot_cap, handle, holes, iron_plate, kettlebell, lathe, leveler, post, pulley,
-                    quad, rbox, sphere, superpad, torus, tube, tube_ring, weight_stack)
+                    quad, rbox, sphere, stack_shroud, PROFIL_R, superpad, torus, tube, tube_ring, weight_stack)
 
 
 def _upright_holes(m, x, z, y0, y1, faces=("-z",), w=0.075, step=0.05):
@@ -46,7 +46,7 @@ def kabelsaeule():
     m = Model()
     # Bodenrahmen
     for x in (-0.17, 0.17):
-        m.add("rahmen", bar([(x, 0.03, -0.32), (x, 0.03, 0.66)], 0.06, 0.06, 0.006))
+        m.add("rahmen", bar([(x, 0.03, -0.32), (x, 0.03, 0.66)], 0.06, 0.06, PROFIL_R))
         foot_cap(m, x, 0.03, -0.33, w=0.065, h=0.065, d=0.02, axis="z")
         foot_cap(m, x, 0.03, 0.67, w=0.065, h=0.065, d=0.02, axis="z")
     beam_x(m, -0.2, 0.2, 0.03, 0.62, 0.06)
@@ -71,9 +71,8 @@ def kabelsaeule():
     m.add("aufkleber", quad(0.22, 0.035, center=(0, 2.39, -0.1102), normal="-z"))
     # Seil vom Block zur oberen Rolle
     m.add("seil", tube([(0, 1.45, 0.30), (0, 2.25, 0.30), (0, 2.25, 0.02), (0, 2.12, -0.06)], 0.0035, bend=0.05, n=8))
-    # Schutzgitter seitlich am Block
-    for x in (-0.16, 0.16):
-        m.add("kunststoff", rbox((0.006, 1.7, 0.30), 0.003, 2, center=(x, 1.05, 0.30)))
+    # Gewichtsabdeckung mit Schlitz für den Wahlstift
+    stack_shroud(m, 0, 0.30, 0.28, 0.15, 0.10, 1.95)
     for x in (-0.17, 0.17):
         leveler(m, x, -0.30)
         leveler(m, x, 0.64)
@@ -133,7 +132,7 @@ def kniebeugenstaender():
         x = s * 0.65
         post(m, x, 0, 0.06, 2.30)
         _upright_holes(m, x, 0, 0.45, 2.1, faces=("+z", "-x" if s > 0 else "+x"))
-        m.add("rahmen", bar([(x, 0.03, -0.32), (x, 0.03, 0.72)], 0.075, 0.06, 0.006))
+        m.add("rahmen", bar([(x, 0.03, -0.32), (x, 0.03, 0.72)], 0.075, 0.06, PROFIL_R))
         foot_cap(m, x, 0.03, 0.73, w=0.08, h=0.065, d=0.02, axis="z")
         foot_cap(m, x, 0.03, -0.33, w=0.08, h=0.065, d=0.02, axis="z")
         _j_hook(m, x, 1.40, 0.0375)
@@ -161,7 +160,7 @@ def bankablage():
         x = s * 0.56
         post(m, x, 0, 0.05, 1.32, 0.06)
         _upright_holes(m, x, 0, 0.6, 1.25, faces=("+z",), w=0.06)
-        m.add("rahmen", bar([(x, 0.025, -0.26), (x, 0.025, 0.36)], 0.06, 0.05, 0.006))
+        m.add("rahmen", bar([(x, 0.025, -0.26), (x, 0.025, 0.36)], 0.06, 0.05, PROFIL_R))
         foot_cap(m, x, 0.025, 0.37, w=0.065, h=0.055, d=0.02, axis="z")
         _j_hook(m, x, 1.02, 0.03, w=0.05)
         m.add("rahmen", bar([(x, 0.72, 0.03), (x, 0.72, 0.36)], 0.045, 0.045, 0.004))
@@ -177,10 +176,10 @@ def klimmzuggestell():
     for s in (-1, 1):
         x = s * 0.72
         post(m, x, 0.05, 0.06, 2.32, 0.08)
-        m.add("rahmen", bar([(x, 0.03, -0.45), (x, 0.03, 0.55)], 0.08, 0.06, 0.006))
+        m.add("rahmen", bar([(x, 0.03, -0.45), (x, 0.03, 0.55)], 0.08, 0.06, PROFIL_R))
         foot_cap(m, x, 0.03, 0.56, w=0.085, h=0.065, d=0.02, axis="z")
         foot_cap(m, x, 0.03, -0.46, w=0.085, h=0.065, d=0.02, axis="z")
-        m.add("rahmen", bar([(x, 2.28, 0.05), (x, 2.28, -0.38)], 0.07, 0.07, 0.006))
+        m.add("rahmen", bar([(x, 2.28, 0.05), (x, 2.28, -0.38)], 0.07, 0.07, PROFIL_R))
         # Halter für die Stange
         m.add("rahmen", rbox((0.09, 0.10, 0.012), 0.004, 2, center=(x - s * 0.06, 2.03, 0.05)))
         m.add("chrom", cylinder(0.06, 0.022, 20), chain(T(x - s * 0.08, 2.03, 0.05), Rz(math.pi / 2)))
@@ -201,9 +200,9 @@ def kurzhantelablage():
     tiers = [(0.80, 0.22), (0.38, 0.12)]
     for x in (-length / 2, 0, length / 2):
         # A-Fuß von der Seite: vorn kürzer, hinten länger
-        m.add("rahmen", bar([(x, 0.03, 0.30), (x, 0.03, -0.30)], 0.06, 0.06, 0.006))
-        m.add("rahmen", bar([(x, 0.04, 0.18), (x, 0.76, 0.12)], 0.06, 0.06, 0.006, up=(0, 0, 1)))
-        m.add("rahmen", bar([(x, 0.04, -0.18), (x, 0.84, -0.14)], 0.06, 0.06, 0.006, up=(0, 0, 1)))
+        m.add("rahmen", bar([(x, 0.03, 0.30), (x, 0.03, -0.30)], 0.06, 0.06, PROFIL_R))
+        m.add("rahmen", bar([(x, 0.04, 0.18), (x, 0.76, 0.12)], 0.06, 0.06, PROFIL_R, up=(0, 0, 1)))
+        m.add("rahmen", bar([(x, 0.04, -0.18), (x, 0.84, -0.14)], 0.06, 0.06, PROFIL_R, up=(0, 0, 1)))
         for z in (0.31, -0.31):
             foot_cap(m, x, 0.03, z, w=0.065, h=0.065, d=0.02, axis="z")
     for y, tilt in tiers:
@@ -241,8 +240,8 @@ def scheibenbaum():
     """Scheibenbaum mit Bumpern und Eisenscheiben; Vorderseite +z"""
     m = Model()
     # Fuß: Kreuz aus Vierkantrohr
-    m.add("rahmen", bar([(-0.30, 0.03, 0), (0.30, 0.03, 0)], 0.06, 0.06, 0.006))
-    m.add("rahmen", bar([(0, 0.03, -0.30), (0, 0.03, 0.30)], 0.06, 0.06, 0.006))
+    m.add("rahmen", bar([(-0.30, 0.03, 0), (0.30, 0.03, 0)], 0.06, 0.06, PROFIL_R))
+    m.add("rahmen", bar([(0, 0.03, -0.30), (0, 0.03, 0.30)], 0.06, 0.06, PROFIL_R))
     for x, z in ((-0.31, 0), (0.31, 0), (0, -0.31), (0, 0.31)):
         foot_cap(m, x, 0.03, z, w=0.065, h=0.065, d=0.02, axis="x" if z == 0 else "z")
     post(m, 0, 0, 0.06, 1.55, 0.07)
@@ -273,10 +272,10 @@ def powerrack():
         for z in (-0.45, 0.45):
             post(m, x, z, 0.06, 2.30)
             _upright_holes(m, x, z, 0.4, 2.1, faces=("+z" if z > 0 else "-z", "-x" if x > 0 else "+x"))
-        m.add("rahmen", bar([(x, 0.03, -0.62), (x, 0.03, 0.62)], 0.075, 0.06, 0.006))
+        m.add("rahmen", bar([(x, 0.03, -0.62), (x, 0.03, 0.62)], 0.075, 0.06, PROFIL_R))
         foot_cap(m, x, 0.03, 0.63, w=0.08, h=0.065, d=0.02, axis="z")
         foot_cap(m, x, 0.03, -0.63, w=0.08, h=0.065, d=0.02, axis="z")
-        m.add("rahmen", bar([(x, 2.27, -0.45), (x, 2.27, 0.45)], 0.075, 0.075, 0.006))
+        m.add("rahmen", bar([(x, 2.27, -0.45), (x, 2.27, 0.45)], 0.075, 0.075, PROFIL_R))
         # Sicherheitsablagen innen
         m.add("rahmen", bar([(x - np.sign(x) * 0.07, 0.86, -0.50), (x - np.sign(x) * 0.07, 0.86, 0.52)], 0.05, 0.05, 0.005))
         m.add("rahmen_rot", rbox((0.05, 0.004, 0.9), 0.001, 1, center=(x - np.sign(x) * 0.07, 0.887, 0)))
@@ -298,7 +297,7 @@ def latzug():
     """Latzug mit Sitz und Knierollen; Turm bei z = 0, Sitz bei z 0.8 (Vorderseite +z)"""
     m = Model()
     for x in (-0.24, 0.24):
-        m.add("rahmen", bar([(x, 0.03, -0.20), (x, 0.03, 1.05)], 0.07, 0.06, 0.006))
+        m.add("rahmen", bar([(x, 0.03, -0.20), (x, 0.03, 1.05)], 0.07, 0.06, PROFIL_R))
         foot_cap(m, x, 0.03, 1.06, w=0.075, h=0.065, d=0.02, axis="z")
         foot_cap(m, x, 0.03, -0.21, w=0.075, h=0.065, d=0.02, axis="z")
         post(m, x, 0, 0.06, 2.20, 0.08)
@@ -307,10 +306,10 @@ def latzug():
     beam_x(m, -0.24, 0.24, 0.03, 1.0, 0.06)
     beam_x(m, -0.24, 0.24, 2.18, 0, 0.08)
     weight_stack(m, 0, 0.0, plates=14, w=0.28, d=0.14, rods=0.09, top=2.12)
-    # Seitenverkleidung
-    for x in (-0.205, 0.205):
-        m.add("kunststoff", rbox((0.008, 1.8, 0.20), 0.004, 2, center=(x, 1.08, 0.0)))
-        m.add("rahmen_rot", rbox((0.010, 0.25, 0.202), 0.004, 2, center=(x, 1.75, 0.0)))
+    # Gewichtsabdeckung mit Schlitz für den Wahlstift, roter Streifen seitlich
+    stack_shroud(m, 0, 0.0, 0.28, 0.14, 0.10, 1.95)
+    for x in (-0.211, 0.211):
+        m.add("rahmen_rot", rbox((0.006, 0.25, 0.20), 0.003, 2, center=(x, 1.75, 0.0)))
     # Ausleger mit Rolle und Seil
     m.add("rahmen", bar([(0, 2.24, -0.05), (0, 2.24, 0.82)], 0.08, 0.10, 0.008))
     m.put(pulley(), chain(T(0, 2.13, 0.80), Ry(math.pi)))
@@ -323,11 +322,11 @@ def latzug():
         m.add("griff", cylinder(0.16, 0.019, 20, bevel=0.004), chain(T(s * 0.49, 1.79, 0.78), Rz(s * (math.pi / 2 - 0.5))))
     m.add("chrom", torus(0.02, 0.005, 20, 8), chain(T(0, 1.86, 0.78), Rx(math.pi / 2)))
     # Sitz mit Säule
-    m.add("rahmen", bar([(0, 0.06, 0.82), (0, 0.40, 0.82)], 0.07, 0.07, 0.006, up=(0, 0, 1)))
+    m.add("rahmen", bar([(0, 0.06, 0.82), (0, 0.40, 0.82)], 0.07, 0.07, PROFIL_R, up=(0, 0, 1)))
     m.add("polster", superpad((0.40, 0.08, 0.38), 0.4, 8, center=(0, 0.46, 0.82)))
     m.add("rahmen_grau", rbox((0.3, 0.012, 0.3), 0.004, 2, center=(0, 0.414, 0.82)))
     # Knierollen
-    m.add("rahmen", bar([(0, 0.06, 0.58), (0, 0.70, 0.58)], 0.06, 0.06, 0.006, up=(0, 0, 1)))
+    m.add("rahmen", bar([(0, 0.06, 0.58), (0, 0.70, 0.58)], 0.06, 0.06, PROFIL_R, up=(0, 0, 1)))
     _upright_holes(m, 0, 0.58, 0.45, 0.66, faces=("+z",), w=0.06)
     m.add("chrom", cylinder(0.12, 0.015, 16), chain(T(0, 0.72, 0.62), Rz(math.pi / 2)))
     for s in (-1, 1):
@@ -364,7 +363,7 @@ def beinpresse():
     """45°-Beinpresse mit Schlitten und Scheiben; Sitz bei −z, Fußplatte bei +z"""
     m = Model()
     for x in (-0.36, 0.36):
-        m.add("rahmen", bar([(x, 0.04, -0.98), (x, 0.04, 1.05)], 0.08, 0.08, 0.008))
+        m.add("rahmen", bar([(x, 0.04, -0.98), (x, 0.04, 1.05)], 0.08, 0.08, PROFIL_R))
         foot_cap(m, x, 0.04, 1.06, w=0.085, h=0.085, d=0.02, axis="z")
         foot_cap(m, x, 0.04, -0.99, w=0.085, h=0.085, d=0.02, axis="z")
     for z in (-0.95, 0.15, 1.0):
@@ -380,8 +379,8 @@ def beinpresse():
         m.add("chrom", tube([(x, top[1] - 0.95 * math.sin(a) + 0.075, top[2] - 0.95 * math.cos(a) - 0.05),
                              (x, top[1] + 0.075, top[2] - 0.05)], 0.012, n=12))
     for x in (-0.20, 0.20):
-        m.add("rahmen", bar([(x, 0.08, p1[2]), (x, p1[1], p1[2])], 0.09, 0.09, 0.008, up=(0, 0, 1)))
-        m.add("rahmen", bar([(x, 0.08, 0.15), (x, p0[1] + d[1] * 0.35, p0[2] + d[2] * 0.35)], 0.08, 0.08, 0.008, up=(0, 0, 1)))
+        m.add("rahmen", bar([(x, 0.08, p1[2]), (x, p1[1], p1[2])], 0.09, 0.09, PROFIL_R, up=(0, 0, 1)))
+        m.add("rahmen", bar([(x, 0.08, 0.15), (x, p0[1] + d[1] * 0.35, p0[2] + d[2] * 0.35)], 0.08, 0.08, PROFIL_R, up=(0, 0, 1)))
     beam_x(m, -0.2, 0.2, p1[1] - 0.05, p1[2], 0.09)
     # Schlitten mit Fußplatte und Hantelhörnern
     sled_c = p0 + d * 1.10
@@ -405,11 +404,11 @@ def beinpresse():
         sled.add("rahmen_rot", tube([(s * 0.31, 0.13, 0.20), (s * 0.31, 0.13, 0.32), (s * 0.24, 0.13, 0.36)], 0.012, bend=0.03))
     m.put(sled, chain(T(*sled_c), rot))
     # Sitz und Rückenlehne
-    m.add("rahmen", bar([(0, 0.08, -0.55), (0, 0.36, -0.50)], 0.08, 0.08, 0.008, up=(0, 0, 1)))
-    m.add("rahmen", bar([(0, 0.36, -0.30), (0, 0.42, -0.95)], 0.08, 0.06, 0.006))
+    m.add("rahmen", bar([(0, 0.08, -0.55), (0, 0.36, -0.50)], 0.08, 0.08, PROFIL_R, up=(0, 0, 1)))
+    m.add("rahmen", bar([(0, 0.36, -0.30), (0, 0.42, -0.95)], 0.08, 0.06, PROFIL_R))
     m.add("polster", superpad((0.50, 0.09, 0.42), 0.35, 8), chain(T(0, 0.44, -0.48), Rx(-0.12)))
     m.add("polster", superpad((0.50, 0.09, 0.70), 0.35, 8), chain(T(0, 0.75, -0.80), Rx(1.05)))
-    m.add("rahmen", bar([(0, 0.45, -0.85), (0, 0.95, -0.98)], 0.07, 0.05, 0.006, up=(0, 0, 1)))
+    m.add("rahmen", bar([(0, 0.45, -0.85), (0, 0.95, -0.98)], 0.07, 0.05, PROFIL_R, up=(0, 0, 1)))
     for s in (-1, 1):
         m.add("rahmen", tube([(s * 0.30, 0.42, -0.38), (s * 0.30, 0.55, -0.38), (s * 0.30, 0.55, -0.62)], 0.014, bend=0.04))
         m.add("griff", cylinder(0.14, 0.019, 20, bevel=0.004), chain(T(s * 0.30, 0.55, -0.53), Rx(math.pi / 2)))
@@ -421,10 +420,10 @@ def kraftturm():
     m = Model()
     for s in (-1, 1):
         x = s * 0.55
-        m.add("rahmen", bar([(x, 0.03, -0.40), (x, 0.03, 0.55)], 0.07, 0.06, 0.006))
+        m.add("rahmen", bar([(x, 0.03, -0.40), (x, 0.03, 0.55)], 0.07, 0.06, PROFIL_R))
         foot_cap(m, x, 0.03, 0.56, w=0.075, h=0.065, d=0.02, axis="z")
         foot_cap(m, x, 0.03, -0.41, w=0.075, h=0.065, d=0.02, axis="z")
-        m.add("rahmen", bar([(x, 0.06, -0.05), (x * 0.7, 2.32, -0.05)], 0.07, 0.07, 0.006, up=(0, 0, 1)))
+        m.add("rahmen", bar([(x, 0.06, -0.05), (x * 0.7, 2.32, -0.05)], 0.07, 0.07, PROFIL_R, up=(0, 0, 1)))
         leveler(m, x, -0.35)
         leveler(m, x, 0.50)
         # Dip-Griffe und Armpolster
@@ -456,7 +455,7 @@ def brustpresse():
     """Brust- und Schulterpresse (Steckgewicht); Turm bei −z, Sitz bei +z, Benutzer schaut nach +z"""
     m = Model()
     for x in (-0.30, 0.30):
-        m.add("rahmen", bar([(x, 0.03, -0.72), (x, 0.03, 0.62)], 0.07, 0.06, 0.006))
+        m.add("rahmen", bar([(x, 0.03, -0.72), (x, 0.03, 0.62)], 0.07, 0.06, PROFIL_R))
         foot_cap(m, x, 0.03, 0.63, w=0.075, h=0.065, d=0.02, axis="z")
         foot_cap(m, x, 0.03, -0.73, w=0.075, h=0.065, d=0.02, axis="z")
         leveler(m, x, -0.68)
@@ -467,19 +466,18 @@ def brustpresse():
         post(m, x, -0.55, 0.06, 2.05, 0.08)
     beam_x(m, -0.2, 0.2, 2.02, -0.55, 0.08)
     weight_stack(m, 0, -0.55, plates=15, w=0.28, d=0.14, rods=0.09, top=1.98)
-    for x in (-0.165, 0.165):
-        m.add("kunststoff", rbox((0.008, 1.7, 0.22), 0.004, 2, center=(x, 1.0, -0.55)))
+    stack_shroud(m, 0, -0.55, 0.28, 0.14, 0.10, 1.85)
     m.add("rahmen_rot", rbox((0.46, 0.10, 0.30), 0.03, 4, center=(0, 2.10, -0.55)))
     m.add("aufkleber", quad(0.24, 0.03, center=(0, 2.10, -0.3995), normal="z"))
     # Sitz und Rückenlehne
-    m.add("rahmen", bar([(0, 0.06, 0.10), (0, 0.40, 0.10)], 0.08, 0.08, 0.006, up=(0, 0, 1)))
+    m.add("rahmen", bar([(0, 0.06, 0.10), (0, 0.40, 0.10)], 0.08, 0.08, PROFIL_R, up=(0, 0, 1)))
     _upright_holes(m, 0, 0.10, 0.15, 0.38, faces=("+z",), w=0.08)
     m.add("polster", superpad((0.46, 0.09, 0.42), 0.35, 8, center=(0, 0.47, 0.12)))
-    m.add("rahmen", bar([(0, 0.40, -0.10), (0, 1.40, -0.20)], 0.08, 0.06, 0.006, up=(0, 0, 1)))
-    m.add("rahmen", bar([(0, 0.40, 0.10), (0, 0.40, -0.12)], 0.07, 0.06, 0.006))
+    m.add("rahmen", bar([(0, 0.40, -0.10), (0, 1.40, -0.20)], 0.08, 0.06, PROFIL_R, up=(0, 0, 1)))
+    m.add("rahmen", bar([(0, 0.40, 0.10), (0, 0.40, -0.12)], 0.07, 0.06, PROFIL_R))
     m.add("polster", superpad((0.44, 0.09, 0.72), 0.35, 8), chain(T(0, 0.98, -0.11), Rx(-math.pi / 2 + 0.12)))
     # Pressarme: Drehpunkt oben hinter der Lehne, Griffe vorn
-    m.add("rahmen", bar([(0, 1.78, -0.55), (0, 1.78, -0.22)], 0.08, 0.08, 0.006))
+    m.add("rahmen", bar([(0, 1.78, -0.55), (0, 1.78, -0.22)], 0.08, 0.08, PROFIL_R))
     m.add("stahl", cylinder(0.78, 0.022, 20), chain(T(0, 1.78, -0.22), Rz(math.pi / 2)))
     for s in (-1, 1):
         pts = [(s * 0.36, 1.78, -0.22), (s * 0.40, 1.60, -0.05), (s * 0.40, 1.28, 0.25), (s * 0.34, 1.18, 0.42)]
