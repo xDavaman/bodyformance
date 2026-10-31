@@ -6,11 +6,50 @@
 	objectVersion = 110;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5BF00003A1B2C3D4E5F60718 /* BFCWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5BF00000A1B2C3D4E5F60718 /* BFCWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5BF00005A1B2C3D4E5F60718 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 338BB7B230782E5700519319 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BF00007A1B2C3D4E5F60718;
+			remoteInfo = BFCWidgets;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5BF00004A1B2C3D4E5F60718 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				5BF00003A1B2C3D4E5F60718 /* BFCWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		5BF00000A1B2C3D4E5F60718 /* BFCWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BFCWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		338BB7BA30782E5700519319 /* FitScan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitScan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		5BF00001A1B2C3D4E5F60718 /* BFCWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = BFCWidgets;
+			sourceTree = "<group>";
+		};
+		5BF00002A1B2C3D4E5F60718 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
+			sourceTree = "<group>";
+		};
 		338BB7BC30782E5700519319 /* FitScan */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = FitScan;
@@ -19,6 +58,11 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5BF00009A1B2C3D4E5F60718 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
 		338BB7B730782E5700519319 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
@@ -31,6 +75,8 @@
 			isa = PBXGroup;
 			children = (
 				338BB7BC30782E5700519319 /* FitScan */,
+				5BF00001A1B2C3D4E5F60718 /* BFCWidgets */,
+				5BF00002A1B2C3D4E5F60718 /* Shared */,
 				338BB7BB30782E5700519319 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -39,6 +85,7 @@
 			isa = PBXGroup;
 			children = (
 				338BB7BA30782E5700519319 /* FitScan.app */,
+				5BF00000A1B2C3D4E5F60718 /* BFCWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -46,6 +93,27 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5BF00007A1B2C3D4E5F60718 /* BFCWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5BF0000BA1B2C3D4E5F60718 /* Build configuration list for PBXNativeTarget "BFCWidgets" */;
+			buildPhases = (
+				5BF00008A1B2C3D4E5F60718 /* Sources */,
+				5BF00009A1B2C3D4E5F60718 /* Frameworks */,
+				5BF0000AA1B2C3D4E5F60718 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5BF00001A1B2C3D4E5F60718 /* BFCWidgets */,
+				5BF00002A1B2C3D4E5F60718 /* Shared */,
+			);
+			name = BFCWidgets;
+			productName = BFCWidgets;
+			productReference = 5BF00000A1B2C3D4E5F60718 /* BFCWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		338BB7B930782E5700519319 /* FitScan */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 338BB7C530782E5800519319 /* Build configuration list for PBXNativeTarget "FitScan" */;
@@ -53,11 +121,16 @@
 				338BB7B630782E5700519319 /* Sources */,
 				338BB7B730782E5700519319 /* Frameworks */,
 				338BB7B830782E5700519319 /* Resources */,
+				5BF00004A1B2C3D4E5F60718 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
+			dependencies = (
+				5BF00006A1B2C3D4E5F60718 /* PBXTargetDependency */,
+			);
 			fileSystemSynchronizedGroups = (
 				338BB7BC30782E5700519319 /* FitScan */,
+				5BF00002A1B2C3D4E5F60718 /* Shared */,
 			);
 			name = FitScan;
 			productName = FitScan;
@@ -77,6 +150,9 @@
 					338BB7B930782E5700519319 = {
 						CreatedOnToolsVersion = 27.0;
 					};
+					5BF00007A1B2C3D4E5F60718 = {
+						CreatedOnToolsVersion = 27.0;
+					};
 				};
 			};
 			buildConfigurationList = 338BB7B530782E5700519319 /* Build configuration list for PBXProject "FitScan" */;
@@ -94,11 +170,17 @@
 			projectRoot = "";
 			targets = (
 				338BB7B930782E5700519319 /* FitScan */,
+				5BF00007A1B2C3D4E5F60718 /* BFCWidgets */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5BF0000AA1B2C3D4E5F60718 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
 		338BB7B830782E5700519319 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
@@ -107,6 +189,11 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5BF00008A1B2C3D4E5F60718 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
 		338BB7B630782E5700519319 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
@@ -114,7 +201,75 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		5BF00006A1B2C3D4E5F60718 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BF00007A1B2C3D4E5F60718 /* BFCWidgets */;
+			targetProxy = 5BF00005A1B2C3D4E5F60718 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		5BF0000CA1B2C3D4E5F60718 /* Debug configuration for PBXNativeTarget "BFCWidgets" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = BFCWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MXCNAB4A3J;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "BFCWidgets-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Bodyformance;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = test.FitScan.BFCWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		5BF0000DA1B2C3D4E5F60718 /* Release configuration for PBXNativeTarget "BFCWidgets" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = BFCWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MXCNAB4A3J;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "BFCWidgets-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Bodyformance;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = test.FitScan.BFCWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		338BB7C330782E5800519319 /* Debug configuration for PBXProject "FitScan" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -250,6 +405,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_NSCameraUsageDescription = "BFC nutzt die Kamera für den Körperscan und zum Scannen von Lebensmitteln (Barcode, Foto).";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "BFC liest Schritte, Workouts, Gewicht, Puls, Herzfrequenzvariabilität, Schlaf und Achtsamkeitsminuten aus Apple Health, um Fortschritt, Erholung und Rang zu berechnen. Die Daten bleiben auf deinem iPhone.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "BFC speichert deine aufgezeichneten Trainings in Apple Health.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "BFC zeigt deine Strecke live auf der Karte und zeichnet sie während eines Trainings draußen auf.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "BFC zählt deine Schritte live und zeichnet Training mit dem Bewegungssensor auf.";
@@ -308,6 +464,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_NSCameraUsageDescription = "BFC nutzt die Kamera für den Körperscan und zum Scannen von Lebensmitteln (Barcode, Foto).";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "BFC liest Schritte, Workouts, Gewicht, Puls, Herzfrequenzvariabilität, Schlaf und Achtsamkeitsminuten aus Apple Health, um Fortschritt, Erholung und Rang zu berechnen. Die Daten bleiben auf deinem iPhone.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "BFC speichert deine aufgezeichneten Trainings in Apple Health.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "BFC zeigt deine Strecke live auf der Karte und zeichnet sie während eines Trainings draußen auf.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "BFC zählt deine Schritte live und zeichnet Training mit dem Bewegungssensor auf.";
@@ -350,6 +507,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5BF0000BA1B2C3D4E5F60718 /* Build configuration list for PBXNativeTarget "BFCWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BF0000CA1B2C3D4E5F60718 /* Debug configuration for PBXNativeTarget "BFCWidgets" */,
+				5BF0000DA1B2C3D4E5F60718 /* Release configuration for PBXNativeTarget "BFCWidgets" */,
+			);
+			defaultConfigurationName = Release;
+		};
 		338BB7B530782E5700519319 /* Build configuration list for PBXProject "FitScan" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

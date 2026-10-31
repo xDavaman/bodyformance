@@ -379,6 +379,8 @@ final class WorkoutFlow: ObservableObject {
 struct WorkoutFlowView: View {
     /// fester Krafttag aus dem Plan (nil = heutige Einheit laut Wochenplan)
     var dayIndex: Int? = nil
+    /// aus Widget „Start“: gleich loslegen
+    var autoStart = false
 
     @EnvironmentObject var profile: UserProfile
     @EnvironmentObject var store: TrainingStore
@@ -431,6 +433,11 @@ struct WorkoutFlowView: View {
         flow.bodyWeightKg = profile.weightKg
         flow.restSeconds = profile.restSeconds
         if flow.isActive { prefill(); return }
+        defer { if autoStart && flow.state == .idle && !flow.steps.isEmpty { flow.start() } }
+        // abgeschlossenes Training von einem anderen Tag (oder Start aus dem Widget): neu beginnen
+        if flow.state == .finished && (autoStart || !(flow.startedAt.map { Calendar.current.isDateInToday($0) } ?? false)) {
+            flow.reset()
+        }
         if flow.state == .finished { return }
         if let i = dayIndex ?? choice {
             load(dayAt: i)

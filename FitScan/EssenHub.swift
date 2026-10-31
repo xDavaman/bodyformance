@@ -52,6 +52,9 @@ final class AppNav: ObservableObject {
     /// Index des Bereichs, siehe AppTab (0 Profil, 1 Trainingsplan, 2 Rezepte, 3 Mobility, 4 Einstellungen)
     @Published var tab = AppTab.profile.rawValue
     @Published var essenPage: EssenPage = .recipes
+    /// Trainingstag öffnen (aus Widget oder Sperrbildschirm), optional gleich starten
+    @Published var openWorkout = false
+    var autoStartWorkout = false
 
     func open(_ t: AppTab) { tab = t.rawValue }
     func isOn(_ t: AppTab) -> Bool { tab == t.rawValue }

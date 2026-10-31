@@ -48,6 +48,7 @@ struct FitScanApp: App {
                     if phase == .active {
                         if consentGiven { steps.start() }
                         if health.isAuthorized { Task { await health.refreshToday() } }
+                        LiveWorkout.refreshPlan()
                     } else if !session.running { steps.stop() }
                 }
                 .onAppear {
@@ -58,6 +59,7 @@ struct FitScanApp: App {
                     health.sessionLog = sessionLog
                     WorkoutFlow.shared.store = store
                     WorkoutFlow.shared.sessionLog = sessionLog
+                    LiveWorkout.install(profile: profile, store: store)
                 }
         }
     }

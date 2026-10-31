@@ -25,6 +25,13 @@ struct ContentView: View {
             MainTabBar()
         }
         .onChange(of: nav.tab) { _, t in visited.insert(t) }
+        .onOpenURL { url in
+            // bodyformance://training (öffnen) und bodyformance://training/start (gleich starten)
+            guard url.scheme == "bodyformance", url.host == "training" else { return }
+            nav.autoStartWorkout = url.path == "/start"
+            nav.open(.plan)
+            nav.openWorkout = true
+        }
         .task(id: consentHealth) {
             if consentHealth {
                 await health.requestAuthorization()

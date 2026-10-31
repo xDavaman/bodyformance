@@ -1,11 +1,9 @@
 # Bodyformance – Funktionsplan
 
-## Noch nie gebaut (Priorität)
-1. Trainingsplan automatisch erzeugen (Ziel, Tage, Equipment)
-2. Aktuelle Übung mit Gewicht, Wiederholungen, Sätzen
-3. Nächste Übung als Symbol anzeigen
-4. Gewicht frei als Zahl eingeben
-5. Live Activity / Sperrbildschirm mit aktueller Übung (ActivityKit)
+## Gebaut (Oktober 2026)
+- Trainingstag mit Aufwärmen → Hauptteil → Mobility-Abschluss, aktuelle und nächste Übung mit Gerät und Gewicht (`WorkoutFlow.swift`)
+- Live Activity / Sperrbildschirm und Homescreen-Widgets (`BFCWidgets/`, gemeinsamer Code in `Shared/`, App Group `group.test.FitScan`)
+- Monatsbericht mit Excel/PDF/CSV, Supplements, Schlaf und Vitalwerte aus Apple Health
 
 ## 3D-Figur (offen)
 - Weg A: FitScan-Repo (Anny + Video + Maße 181 cm / 88,8 kg) → GLB → Blender/Cascadeur → Animationen → `FitScan_Motions.bin`
