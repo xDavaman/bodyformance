@@ -677,6 +677,7 @@ extension GymRoom {
 
     /// Pendelleuchten mit grünen Emaille-Schirmen, warmes Punkt- und Richtungslicht
     func buildLighting() {
+        if hasHall { buildHallLighting(); return }
         let L = GymLook.self
         var enamel = PhysicallyBasedMaterial()
         enamel.baseColor = .init(tint: L.forest)
@@ -712,6 +713,42 @@ extension GymRoom {
         let fill = DirectionalLight()
         fill.light.intensity = 900
         fill.light.color = UIColor(red: 1.0, green: 0.95, blue: 0.90, alpha: 1)
+        fill.look(at: .zero, from: [-2.0, 1.6, -2.5], relativeTo: nil)
+        root.addChild(fill)
+    }
+
+    /// Licht für die Boxhalle: die Hängelampen der Halle hängen in 4,2 m Höhe über der Gerätezone,
+    /// darunter warme Punktlichter; drei weitere hellen die Ziegelwände ringsum auf.
+    private func buildHallLighting() {
+        let L = GymLook.self
+        for x: Float in [-1.6, 1.6] {
+            for z: Float in [-1.6, 1.6] {
+                let p = PointLight()
+                p.light.intensity = 160_000
+                p.light.attenuationRadius = 14
+                p.light.color = L.warmLight
+                p.position = [x, 4.0, z]
+                root.addChild(p)
+            }
+        }
+        for pos: SIMD3<Float> in [[0, 3.6, -5.2], [-4.6, 3.6, 0.5], [5.5, 3.6, 2.5]] {
+            let p = PointLight()
+            p.light.intensity = 120_000
+            p.light.attenuationRadius = 9
+            p.light.color = UIColor(red: 1.0, green: 0.84, blue: 0.66, alpha: 1)
+            p.position = pos
+            root.addChild(p)
+        }
+        // Abendsonne durch die Fabrikfenster (Fensterfront liegt vor der Figur, bei +z)
+        let sun = DirectionalLight()
+        sun.light.intensity = 2600
+        sun.light.color = UIColor(red: 1.0, green: 0.86, blue: 0.68, alpha: 1)
+        sun.shadow = DirectionalLightComponent.Shadow(maximumDistance: 9, depthBias: 2)
+        sun.look(at: .zero, from: [1.2, 3.2, 3.0], relativeTo: nil)
+        root.addChild(sun)
+        let fill = DirectionalLight()
+        fill.light.intensity = 700
+        fill.light.color = UIColor(red: 1.0, green: 0.93, blue: 0.86, alpha: 1)
         fill.look(at: .zero, from: [-2.0, 1.6, -2.5], relativeTo: nil)
         root.addChild(fill)
     }
