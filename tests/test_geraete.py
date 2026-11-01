@@ -7,6 +7,8 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 APP = ROOT / "FitScan"
+# Modelle, die nicht aus tools/geraete stammen (Name -> erzeugendes Werkzeug)
+EXTERN = {"Halle": "tools/halle"}
 
 
 def _used() -> set[str]:
@@ -27,7 +29,7 @@ def test_app_modelle_vorhanden():
     assert used, "keine Geräte in der App gefunden"
     missing = sorted(n for n in used if not (APP / f"Gym_{n}.usdz").exists())
     assert not missing, f"fehlende usdz-Dateien: {missing}"
-    unknown = sorted(used - _defined())
+    unknown = sorted(used - _defined() - EXTERN.keys())
     assert not unknown, f"nicht in tools/geraete/modelle.py: {unknown}"
 
 
