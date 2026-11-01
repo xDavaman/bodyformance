@@ -180,15 +180,24 @@ final class GymRoom {
         stations.append((station, e))
     }
 
+    /// Boxhalle (Gym_Halle.usdz aus tools/halle); ohne Datei der alte, prozedural gebaute Raum
+    private(set) var hasHall = false
+
     init() {
-        buildInterior()
+        let hall = GymModels.make("Halle")
+        hasHall = !hall.children.isEmpty
+        if hasHall {
+            root.addChild(hall)
+        } else {
+            buildInterior()
+        }
         buildLighting()
         buildTower()
         buildBenchRack()
         buildPullRig()
         buildSquatRack()
         buildDecor()
-        buildDecorations()
+        if !hasHall { buildDecorations() }
         buildMat()
         for e in [tower, pullRig, squatRack, benchRack] { e.isEnabled = false; root.addChild(e) }
         mat.isEnabled = false
