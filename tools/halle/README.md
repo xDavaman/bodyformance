@@ -17,3 +17,11 @@ Raum prozedural (`buildInterior`/`buildDecorations` in `GymLook.swift`).
    `python3 tools/halle/build_usdz.py <app_export> <tex>` → `FitScan/Gym_Halle.usdz` (≈ 12 MB)
    - Blender Z-oben → RealityKit Y-oben, Figur schaut nach +Z (Fensterfront), Rückwand mit Plakaten bei −Z.
    - Poly-Haven-Texturen (CC0) bekommen Würfel-UVs, Farbtöne werden eingebacken (Diffus 1024 px, Normal/Rauheit 512 px).
+
+## Wandbilder
+
+`bilder.json` hängt nostalgische Bilder an die Hallenwände (`hinten` = hinter der Figur, `links`, `vorne` =
+Fensterfront). `pos` = Meter nach rechts, vom Raum aus auf die Wand geschaut; `hoehe` = Bildmitte; `h`/`b` = Bildgröße;
+`rahmen` = `holz`, `schwarz` oder `schmal`. Die Bilder in `bilder/` sind KI-generiert (Higgsfield) und zeigen
+erfundene Personen, die Plakate sind frei erfunden – keine echten Sportler, Filmfiguren oder Marken.
+`build_usdz.py` baut sie mit Rahmen in `Gym_Halle.usdz` ein.

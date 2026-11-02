@@ -112,6 +112,106 @@ def weld(P, N, U):
     return P[first], N[first], U[first], inv.reshape(-1).astype(np.int32)
 
 
+# ------------------------------------------------------------------ Wandbilder (tools/halle/bilder.json)
+HERE = Path(__file__).resolve().parent
+# Innenflächen der Wände in App-Koordinaten: Punkt auf der Wand, Normale in den Raum, "rechts" für den Betrachter
+WAENDE = {
+    "hinten": (np.array([0.0, 0.0, -6.9]), np.array([0.0, 0.0, 1.0]), np.array([1.0, 0.0, 0.0])),
+    "links": (np.array([-7.0, 0.0, 0.0]), np.array([1.0, 0.0, 0.0]), np.array([0.0, 0.0, -1.0])),
+    "vorne": (np.array([0.0, 0.0, 8.1]), np.array([0.0, 0.0, -1.0]), np.array([-1.0, 0.0, 0.0])),
+}
+RAHMEN = {"holz": ([0.09, 0.05, 0.025], 0.045), "schwarz": ([0.02, 0.02, 0.02], 0.035), "schmal": ([0.015, 0.015, 0.015], 0.012)}
+UP = np.array([0.0, 1.0, 0.0])
+
+
+def quad(c, r, u, w, h):
+    """Rechteck um c (Breite entlang r, Höhe entlang u) als zwei Dreiecke, Ecken unten links zuerst."""
+    pts = [c - r * w / 2 - u * h / 2, c + r * w / 2 - u * h / 2, c + r * w / 2 + u * h / 2, c - r * w / 2 + u * h / 2]
+    return np.array(pts), np.array([[0, 1, 2], [0, 2, 3]])
+
+
+def box_tris(c, r, u, n, w, h, d):
+    """Quader (Rahmen) mit Rückseite an der Wand: Breite w entlang r, Höhe h entlang u, Tiefe d entlang n."""
+    P, N, I = [], [], []
+    for axis, size, a, b, sa, sb in ((n, d, r, u, w, h), (r, w, u, n, h, d), (u, h, n, r, d, w)):
+        for sgn in (1, -1):
+            fc = c + n * d / 2 + axis * sgn * size / 2
+            q, idx = quad(fc, a * sgn, b, sa, sb)
+            I.append(idx + sum(len(x) for x in P))
+            P.append(q)
+            N.append(np.repeat((axis * sgn)[None], 4, 0))
+    return np.concatenate(P), np.concatenate(N), np.concatenate(I)
+
+
+def add_mesh(st, path, P, N, idx, mat, U=None):
+    mesh = UsdGeom.Mesh.Define(st, path)
+    mesh.CreatePointsAttr(Vt.Vec3fArray.FromNumpy(P.astype(np.float32)))
+    mesh.CreateNormalsAttr(Vt.Vec3fArray.FromNumpy(N.astype(np.float32)))
+    mesh.SetNormalsInterpolation(UsdGeom.Tokens.vertex)
+    if U is not None:
+        UsdGeom.PrimvarsAPI(mesh).CreatePrimvar("st", Sdf.ValueTypeNames.TexCoord2fArray, UsdGeom.Tokens.vertex).Set(
+            Vt.Vec2fArray.FromNumpy(U.astype(np.float32)))
+    mesh.CreateFaceVertexCountsAttr(Vt.IntArray.FromNumpy(np.full(len(idx), 3, np.int32)))
+    mesh.CreateFaceVertexIndicesAttr(Vt.IntArray.FromNumpy(np.asarray(idx, np.int32).reshape(-1)))
+    mesh.CreateSubdivisionSchemeAttr(UsdGeom.Tokens.none)
+    lo, hi = P.min(0), P.max(0)
+    mesh.CreateExtentAttr(Vt.Vec3fArray([Gf.Vec3f(*map(float, lo)), Gf.Vec3f(*map(float, hi))]))
+    UsdShade.MaterialBindingAPI.Apply(mesh.GetPrim()).Bind(mat)
+
+
+def flat_material(st, path, col, rough):
+    mp = UsdShade.Material.Define(st, path)
+    sh = UsdShade.Shader.Define(st, path + "/Oberflaeche")
+    sh.CreateIdAttr("UsdPreviewSurface")
+    sh.CreateInput("diffuseColor", Sdf.ValueTypeNames.Color3f).Set(Gf.Vec3f(*col))
+    sh.CreateInput("roughness", Sdf.ValueTypeNames.Float).Set(rough)
+    mp.CreateSurfaceOutput().ConnectToSource(sh.ConnectableAPI(), "surface")
+    return mp
+
+
+def picture_material(st, path, file):
+    mp = UsdShade.Material.Define(st, path)
+    sh = UsdShade.Shader.Define(st, path + "/Oberflaeche")
+    sh.CreateIdAttr("UsdPreviewSurface")
+    rd = UsdShade.Shader.Define(st, path + "/UV")
+    rd.CreateIdAttr("UsdPrimvarReader_float2")
+    rd.CreateInput("varname", Sdf.ValueTypeNames.Token).Set("st")
+    t = UsdShade.Shader.Define(st, path + "/Bild")
+    t.CreateIdAttr("UsdUVTexture")
+    t.CreateInput("file", Sdf.ValueTypeNames.Asset).Set(file)
+    t.CreateInput("st", Sdf.ValueTypeNames.Float2).ConnectToSource(rd.CreateOutput("result", Sdf.ValueTypeNames.Float2))
+    t.CreateInput("wrapS", Sdf.ValueTypeNames.Token).Set("clamp")
+    t.CreateInput("wrapT", Sdf.ValueTypeNames.Token).Set("clamp")
+    t.CreateInput("sourceColorSpace", Sdf.ValueTypeNames.Token).Set("sRGB")
+    sh.CreateInput("diffuseColor", Sdf.ValueTypeNames.Color3f).ConnectToSource(t.CreateOutput("rgb", Sdf.ValueTypeNames.Float3))
+    sh.CreateInput("roughness", Sdf.ValueTypeNames.Float).Set(0.55)
+    mp.CreateSurfaceOutput().ConnectToSource(sh.ConnectableAPI(), "surface")
+    return mp
+
+
+def add_pictures(st, tmp):
+    cfg = HERE / "bilder.json"
+    if not cfg.exists():
+        return 0
+    frames = {k: flat_material(st, f"/Gym_Halle/Materialien/Rahmen_{k}", v[0], 0.5) for k, v in RAHMEN.items()}
+    items = json.loads(cfg.read_text())
+    for i, it in enumerate(items):
+        o, n, r = WAENDE[it["wand"]]
+        c = o + r * it["pos"] + UP * it["hoehe"]   # pos: Meter nach rechts, vom Raum aus auf die Wand geschaut
+        w, h = it["b"], it["h"]
+        border = RAHMEN[it["rahmen"]][1]
+        P, N, I = box_tris(c, r, UP, n, w + 2 * border, h + 2 * border, 0.03)
+        add_mesh(st, f"/Gym_Halle/Bild_{i:02d}_rahmen", P, N, I, frames[it["rahmen"]])
+        P, I = quad(c + n * 0.031, r, UP, w, h)
+        name = Path(it["datei"]).name
+        (tmp / "bilder").mkdir(exist_ok=True)
+        (tmp / "bilder" / name).write_bytes((HERE / it["datei"]).read_bytes())
+        mat = picture_material(st, f"/Gym_Halle/Materialien/Bild_{i:02d}", "./bilder/" + name)
+        add_mesh(st, f"/Gym_Halle/Bild_{i:02d}", P, np.repeat(n[None], 4, 0), I, mat,
+                 U=np.array([[0, 0], [1, 0], [1, 1], [0, 1]], np.float32))
+    return len(items)
+
+
 # Materialien zusammenfassen (Gusseisen.001 … -> Gusseisen)
 groups = {}
 for name, info in meta["materials"].items():
@@ -207,8 +307,9 @@ with tempfile.TemporaryDirectory() as tmp:
         lo, hi = P.min(0), P.max(0)
         mesh.CreateExtentAttr(Vt.Vec3fArray([Gf.Vec3f(*map(float, lo)), Gf.Vec3f(*map(float, hi))]))
         UsdShade.MaterialBindingAPI.Apply(mesh.GetPrim()).Bind(mp)
+    n_pics = add_pictures(st, tmp)
     st.GetRootLayer().Save()
     if DST.exists():
         DST.unlink()
     UsdUtils.CreateNewUsdzPackage(Sdf.AssetPath(str(tmp / "Gym_Halle.usdc")), str(DST))
-    print(f"{DST}: {DST.stat().st_size / 1e6:.1f} MB, {total_tris} Dreiecke, {total_verts} Punkte, {len(groups)} Materialien")
+    print(f"{DST}: {DST.stat().st_size / 1e6:.1f} MB, {total_tris} Dreiecke, {total_verts} Punkte, {len(groups)} Materialien, {n_pics} Wandbilder")
