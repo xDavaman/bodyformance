@@ -17,3 +17,22 @@ Raum prozedural (`buildInterior`/`buildDecorations` in `GymLook.swift`).
    `python3 tools/halle/build_usdz.py <app_export> <tex>` → `FitScan/Gym_Halle.usdz` (≈ 12 MB)
    - Blender Z-oben → RealityKit Y-oben, Figur schaut nach +Z (Fensterfront), Rückwand mit Plakaten bei −Z.
    - Poly-Haven-Texturen (CC0) bekommen Würfel-UVs, Farbtöne werden eingebacken (Diffus 1024 px, Normal/Rauheit 512 px).
+
+## Wandbilder
+
+`bilder.json` hängt nostalgische Bilder an die Hallenwände (`hinten` = hinter der Figur, `links`, `vorne` =
+Fensterfront). `pos` = Meter nach rechts, vom Raum aus auf die Wand geschaut; `hoehe` = Bildmitte; `h`/`b` = Bildgröße;
+`rahmen` = `holz`, `schwarz` oder `schmal`. Die Bilder in `bilder/` sind KI-generiert (Higgsfield) und zeigen
+erfundene Personen, die Plakate sind frei erfunden – keine echten Sportler, Filmfiguren oder Marken.
+`build_usdz.py` baut sie mit Rahmen in `Gym_Halle.usdz` ein.
+
+## Retro-Remaster, echte Geräte, Licht nach Tageszeit
+
+- Die Halle ist ein „Remastered“-Gym im Stil der 70er/80er: Retro-Streifen, Leuchtschriften, Eisen-Chaos,
+  Hebeplattform, Standsack, Slam-Balls, Fächerregal, Erste Hilfe/Desinfektion, Wasserspender, Trainingstafel.
+  Erzeugt auf Seans PC mit `add_extras.py` und `retro_remaster.py` (auf `boxing_gym.blend`, Ergebnis `boxing_gym_v9.blend`).
+- `export_app_geraete.py` exportiert Geräte der Halle einzeln; `build_usdz.py` baut daraus `Gym_Echt_<Name>.usdz`.
+  `GymRoom` (GymScene.swift) setzt sie statt der einfachen Modelle ein, wenn die Halle geladen ist
+  (Power-Rack, Latzug, Beinpresse, Scheibenständer, Multistation, Laufband + Spinning-Rad, Flach- und Schrägbank).
+- Licht (`buildHallLighting` in GymLook.swift): 7–18 Uhr Sonne durch die Fenster, abends gedimmt mit warmen
+  Hängelampen, dunklen Fenstern und leuchtenden Schriftzügen.

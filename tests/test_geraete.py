@@ -16,7 +16,10 @@ def _extern() -> set[str]:
     for f in (ROOT / "tools").rglob("*.py"):
         if "geraete" in f.parts:
             continue
-        names |= set(re.findall(r"Gym_(\w+)\.usdz", f.read_text(errors="ignore")))
+        text = f.read_text(errors="ignore")
+        names |= set(re.findall(r"Gym_(\w+)\.usdz", text))
+        if "Gym_Echt_" in text:   # echte Geräte aus der Halle: Gym_Echt_<Name>.usdz, Name aus dem Export
+            names |= {p.stem[len("Gym_"):] for p in APP.glob("Gym_Echt_*.usdz")}
     return names
 
 

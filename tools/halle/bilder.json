@@ -1,0 +1,155 @@
+[
+ {
+  "datei": "bilder/strand_posing.jpg",
+  "wand": "hinten",
+  "pos": 1.2,
+  "hoehe": 2.45,
+  "h": 1.4,
+  "b": 1.05,
+  "rahmen": "holz"
+ },
+ {
+  "datei": "bilder/plakat_iron_era.jpg",
+  "wand": "hinten",
+  "pos": 2.8,
+  "hoehe": 2.45,
+  "h": 1.45,
+  "b": 0.929,
+  "rahmen": "schmal"
+ },
+ {
+  "datei": "bilder/eisenhalle_1960.jpg",
+  "wand": "hinten",
+  "pos": 4.75,
+  "hoehe": 2.45,
+  "h": 1.1,
+  "b": 1.466,
+  "rahmen": "holz"
+ },
+ {
+  "datei": "bilder/ringkampf_1940.jpg",
+  "wand": "links",
+  "pos": 2.55,
+  "hoehe": 2.5,
+  "h": 1.1,
+  "b": 1.466,
+  "rahmen": "holz"
+ },
+ {
+  "datei": "bilder/sandsack_1950.jpg",
+  "wand": "links",
+  "pos": 4.1,
+  "hoehe": 2.5,
+  "h": 1.2,
+  "b": 0.899,
+  "rahmen": "schwarz"
+ },
+ {
+  "datei": "bilder/plakat_friday_night.jpg",
+  "wand": "links",
+  "pos": 0.75,
+  "hoehe": 2.85,
+  "h": 1.15,
+  "b": 0.718,
+  "rahmen": "schmal"
+ },
+ {
+  "datei": "bilder/buehne_1980.jpg",
+  "wand": "vorne",
+  "pos": 1.75,
+  "hoehe": 2.6,
+  "h": 1.3,
+  "b": 0.975,
+  "rahmen": "schwarz"
+ },
+ {
+  "datei": "bilder/plakat_train_hard.jpg",
+  "wand": "vorne",
+  "pos": -2.75,
+  "hoehe": 2.6,
+  "h": 1.3,
+  "b": 0.974,
+  "rahmen": "schmal"
+ },
+ {
+  "datei": "bilder/seilspringen_1970.jpg",
+  "wand": "vorne",
+  "pos": 6.2,
+  "hoehe": 2.6,
+  "h": 1.3,
+  "b": 0.974,
+  "rahmen": "holz"
+ },
+ {
+  "datei": "bilder/plakat_gym_rules.jpg",
+  "wand": "hinten",
+  "pos": -4.6,
+  "hoehe": 2.9,
+  "h": 0.85,
+  "b": 0.637,
+  "rahmen": "schwarz"
+ },
+ {
+  "datei": "bilder/handschuhe_nagel.jpg",
+  "wand": "hinten",
+  "pos": -6.1,
+  "hoehe": 2.9,
+  "h": 0.8,
+  "b": 0.6,
+  "rahmen": "holz"
+ },
+ {
+  "datei": "bilder/strandgruppe_1970.jpg",
+  "wand": "rechts",
+  "pos": 5.0,
+  "hoehe": 2.5,
+  "h": 1.0,
+  "b": 1.333,
+  "rahmen": "holz"
+ },
+ {
+  "datei": "bilder/gewichtheber_1960.jpg",
+  "wand": "rechts",
+  "pos": 6.9,
+  "hoehe": 2.5,
+  "h": 1.2,
+  "b": 0.9,
+  "rahmen": "schwarz"
+ },
+ {
+  "datei": "bilder/plakat_mitgliedschaft.jpg",
+  "wand": "rechts",
+  "pos": -5.2,
+  "hoehe": 2.5,
+  "h": 1.2,
+  "b": 0.9,
+  "rahmen": "schmal"
+ },
+ {
+  "datei": "bilder/trainer_bandagen_1950.jpg",
+  "wand": "vorne",
+  "pos": -7.25,
+  "hoehe": 2.6,
+  "h": 1.3,
+  "b": 0.975,
+  "rahmen": "schwarz"
+ },
+ {
+  "datei": "bilder/plakat_remastered.jpg",
+  "wand": "vorne",
+  "pos": -11.75,
+  "hoehe": 2.6,
+  "h": 1.3,
+  "b": 0.975,
+  "rahmen": "schmal"
+ },
+ {
+  "datei": "bilder/eisenhalle_1980.jpg",
+  "wand": "vorne",
+  "pos": -16.2,
+  "hoehe": 2.6,
+  "h": 1.0,
+  "b": 1.333,
+  "rahmen": "holz"
+ }
+]
