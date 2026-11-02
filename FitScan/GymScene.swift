@@ -182,11 +182,14 @@ final class GymRoom {
 
     /// Boxhalle (Gym_Halle.usdz aus tools/halle); ohne Datei der alte, prozedural gebaute Raum
     private(set) var hasHall = false
+    /// Die geladene Halle (für das tageszeitabhängige Licht: Fenster, Leuchtschriften)
+    private(set) var hall: Entity?
 
     init() {
         let hall = GymModels.make("Halle")
         hasHall = !hall.children.isEmpty
         if hasHall {
+            self.hall = hall
             root.addChild(hall)
         } else {
             buildInterior()
@@ -306,11 +309,40 @@ final class GymRoom {
     /// Gerät aus tools/geraete an eine Stelle setzen (optional gedreht um y)
     @discardableResult
     func place(_ name: String, _ pos: SIMD3<Float>, yaw: Float = 0, parent: Entity? = nil) -> Entity {
-        let e = GymModels.make(name)
+        let e = echtVersion(of: name) ?? GymModels.make(name)
         e.position = pos
         if yaw != 0 { e.orientation = simd_quatf(angle: yaw, axis: [0, 1, 0]) }
         (parent ?? root).addChild(e)
         return e
+    }
+
+    /// In der Boxhalle stehen statt der einfachen Modelle die echten Geräte aus der Halle (Gym_Echt_*.usdz aus
+    /// tools/halle). Teile mit Versatz im Stationskoordinatensystem; Cardio = Laufband und Spinning-Rad.
+    private static let echteGeraete: [String: [(String, SIMD3<Float>)]] = [
+        "PowerRack": [("Echt_PowerRack", .zero)],
+        "Latzug": [("Echt_Latzug", .zero)],
+        "Beinpresse": [("Echt_Beinpresse", .zero)],
+        "Scheibenbaum": [("Echt_Scheibenstaender", .zero)],
+        "Brustpresse": [("Echt_Multistation", .zero)],
+        "Cardio": [("Echt_Laufband", [-0.6, 0, 0]), ("Echt_Spinningrad", [0.7, 0, 0])],
+    ]
+
+    /// Echtes Gerät aus der Halle oder nil (ohne Halle oder ohne Datei bleibt das alte Modell)
+    func echt(_ model: String) -> Entity? {
+        guard hasHall else { return nil }
+        let e = GymModels.make(model)
+        return e.children.isEmpty ? nil : e
+    }
+
+    private func echtVersion(of name: String) -> Entity? {
+        guard let parts = Self.echteGeraete[name] else { return nil }
+        let group = Entity()
+        for (model, offset) in parts {
+            guard let m = echt(model) else { return nil }
+            m.position = offset
+            group.addChild(m)
+        }
+        return group
     }
 
     /// Ablage für die Langhantel am Kopfende der Bank (Bankdrücken mit Langhantel)
@@ -340,11 +372,11 @@ final class GymRoom {
         // Latzug in der vorderen rechten Ecke, zur Raummitte gedreht (außerhalb der Kamerabahn)
         register(place("Latzug", [3.45, 0, 2.95], yaw: Float(atan2(-3.45, -2.95))), as: .latStation)
         // Zwei weitere Bänke: eine flach, eine schräg gestellt
-        let flat = GymProps.bench()
+        let flat = echt("Echt_Flachbank") ?? GymProps.bench()
         flat.position = [-3.50, 0, 1.55]
         root.addChild(flat)
         register(flat, as: .bench)
-        let incline = GymProps.bench(incline: 0.6)
+        let incline = echt("Echt_Schraegbank") ?? GymProps.bench(incline: 0.6)
         incline.position = [3.45, 0, -2.10]
         incline.orientation = simd_quatf(angle: .pi, axis: [0, 1, 0])
         root.addChild(incline)

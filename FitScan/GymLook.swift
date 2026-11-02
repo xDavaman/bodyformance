@@ -576,8 +576,14 @@ enum GymLook {
     }
 
     /// Setzt das warme Umgebungslicht auf eine 3D-Ansicht (einmal erzeugt, dann geteilt)
+    /// Abends (18–7 Uhr) ist die Halle gedimmt, tagsüber hell
+    static func isEvening(_ date: Date = Date()) -> Bool {
+        let h = Calendar.current.component(.hour, from: date)
+        return h >= 18 || h < 7
+    }
+
     static func applyEnvironment(to view: ARView) {
-        view.environment.lighting.intensityExponent = 0.4
+        view.environment.lighting.intensityExponent = isEvening() ? -0.4 : 0.5
         if let environment {
             view.environment.lighting.resource = environment
             return
@@ -717,40 +723,55 @@ extension GymRoom {
         root.addChild(fill)
     }
 
-    /// Licht für die Boxhalle: die Hängelampen der Halle hängen in 4,2 m Höhe über der Gerätezone,
-    /// darunter warme Punktlichter; drei weitere hellen die Ziegelwände ringsum auf.
+    /// Licht für die Boxhalle, abhängig von der Uhrzeit:
+    /// tagsüber (7–18 Uhr) fällt helle Sonne durch die Fabrikfenster, abends ist die Halle gedimmt – warme
+    /// Hängelampen über der Figur, dunkle Fenster, die Leuchtschriften stechen heraus.
     private func buildHallLighting() {
+        let evening = GymLook.isEvening()
         let L = GymLook.self
         for x: Float in [-1.6, 1.6] {
             for z: Float in [-1.6, 1.6] {
                 let p = PointLight()
-                p.light.intensity = 160_000
-                p.light.attenuationRadius = 14
-                p.light.color = L.warmLight
+                p.light.intensity = evening ? 210_000 : 120_000
+                p.light.attenuationRadius = evening ? 9 : 14
+                p.light.color = evening ? UIColor(red: 1.0, green: 0.78, blue: 0.52, alpha: 1) : L.warmLight
                 p.position = [x, 4.0, z]
                 root.addChild(p)
             }
         }
         for pos: SIMD3<Float> in [[0, 3.6, -5.2], [-4.6, 3.6, 0.5], [5.5, 3.6, 2.5]] {
             let p = PointLight()
-            p.light.intensity = 120_000
+            p.light.intensity = evening ? 45_000 : 110_000
             p.light.attenuationRadius = 9
             p.light.color = UIColor(red: 1.0, green: 0.84, blue: 0.66, alpha: 1)
             p.position = pos
             root.addChild(p)
         }
-        // Abendsonne durch die Fabrikfenster (Fensterfront liegt vor der Figur, bei +z)
-        let sun = DirectionalLight()
-        sun.light.intensity = 2600
-        sun.light.color = UIColor(red: 1.0, green: 0.86, blue: 0.68, alpha: 1)
-        sun.shadow = DirectionalLightComponent.Shadow(maximumDistance: 9, depthBias: 2)
-        sun.look(at: .zero, from: [1.2, 3.2, 3.0], relativeTo: nil)
-        root.addChild(sun)
-        let fill = DirectionalLight()
-        fill.light.intensity = 700
-        fill.light.color = UIColor(red: 1.0, green: 0.93, blue: 0.86, alpha: 1)
-        fill.look(at: .zero, from: [-2.0, 1.6, -2.5], relativeTo: nil)
-        root.addChild(fill)
+        if evening {
+            // Nur ein schwaches, kühles Restlicht von draußen; die Fenster werden dunkel
+            let moon = DirectionalLight()
+            moon.light.intensity = 250
+            moon.light.color = UIColor(red: 0.62, green: 0.70, blue: 1.0, alpha: 1)
+            moon.look(at: .zero, from: [1.2, 3.2, 3.0], relativeTo: nil)
+            root.addChild(moon)
+            if let glass = hall?.findEntity(named: "Glas_verschmutzt_netz") as? ModelEntity, var model = glass.model {
+                model.materials = [UnlitMaterial(color: UIColor(red: 0.05, green: 0.07, blue: 0.13, alpha: 1))]
+                glass.model = model
+            }
+        } else {
+            // Sonne durch die Fabrikfenster (Fensterfront liegt vor der Figur, bei +z)
+            let sun = DirectionalLight()
+            sun.light.intensity = 3400
+            sun.light.color = UIColor(red: 1.0, green: 0.88, blue: 0.70, alpha: 1)
+            sun.shadow = DirectionalLightComponent.Shadow(maximumDistance: 9, depthBias: 2)
+            sun.look(at: .zero, from: [1.2, 3.2, 3.0], relativeTo: nil)
+            root.addChild(sun)
+            let fill = DirectionalLight()
+            fill.light.intensity = 900
+            fill.light.color = UIColor(red: 1.0, green: 0.93, blue: 0.86, alpha: 1)
+            fill.look(at: .zero, from: [-2.0, 1.6, -2.5], relativeTo: nil)
+            root.addChild(fill)
+        }
     }
 
     /// Gerahmtes Bild an einer Wand. `yaw`: 0 = Rückwand, π = Vorderwand, −π/2 = rechte Wand, π/2 = linke Wand

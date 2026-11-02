@@ -25,3 +25,14 @@ Fensterfront). `pos` = Meter nach rechts, vom Raum aus auf die Wand geschaut; `h
 `rahmen` = `holz`, `schwarz` oder `schmal`. Die Bilder in `bilder/` sind KI-generiert (Higgsfield) und zeigen
 erfundene Personen, die Plakate sind frei erfunden – keine echten Sportler, Filmfiguren oder Marken.
 `build_usdz.py` baut sie mit Rahmen in `Gym_Halle.usdz` ein.
+
+## Retro-Remaster, echte Geräte, Licht nach Tageszeit
+
+- Die Halle ist ein „Remastered“-Gym im Stil der 70er/80er: Retro-Streifen, Leuchtschriften, Eisen-Chaos,
+  Hebeplattform, Standsack, Slam-Balls, Fächerregal, Erste Hilfe/Desinfektion, Wasserspender, Trainingstafel.
+  Erzeugt auf Seans PC mit `add_extras.py` und `retro_remaster.py` (auf `boxing_gym.blend`, Ergebnis `boxing_gym_v9.blend`).
+- `export_app_geraete.py` exportiert Geräte der Halle einzeln; `build_usdz.py` baut daraus `Gym_Echt_<Name>.usdz`.
+  `GymRoom` (GymScene.swift) setzt sie statt der einfachen Modelle ein, wenn die Halle geladen ist
+  (Power-Rack, Latzug, Beinpresse, Scheibenständer, Multistation, Laufband + Spinning-Rad, Flach- und Schrägbank).
+- Licht (`buildHallLighting` in GymLook.swift): 7–18 Uhr Sonne durch die Fenster, abends gedimmt mit warmen
+  Hängelampen, dunklen Fenstern und leuchtenden Schriftzügen.
