@@ -1,10 +1,13 @@
 """Retro-Remaster der Boxhalle: 70er/80er-Look, frisch neu eröffnet, mit etwas Eisen-Chaos.
 blender -b boxing_gym_v8.blend --python retro_remaster.py -- <zwischen-Ordner>
-(nutzt die Helfer aus add_extras.py; speichert boxing_gym_v9.blend und rendert Tag- und Abend-Vorschau)
+(nutzt die Helfer aus halle_bau.py; speichert boxing_gym_v9.blend und rendert Tag- und Abend-Vorschau)
 """
 import os, sys
-_src = open(os.path.join(sys.argv[sys.argv.index("--") + 1], "add_extras.py"), encoding="utf-8").read()
-exec(_src[:_src.index("# ------------------------------------------------------------------ Was in echten")])
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from halle_bau import *  # noqa: F401,F403  (box, cyl, rod, text, simple, pbr, MAT, RW, RD, Z, sc …)
+import bpy
+from mathutils import Vector
+
 import random
 random.seed(74)
 
